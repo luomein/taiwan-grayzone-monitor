@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-04T05:24:36.144732Z",
+  "updated_at": "2026-10-04T16:19:43.617971Z",
   "zones": {
     "east": {
       "name": "台灣東部海域",
@@ -25,8 +25,8 @@
     "covered": 60,
     "no_coverage": 0,
     "by_zone": {
-      "southwest": 45,
-      "east": 15
+      "southwest": 37,
+      "east": 23
     },
     "products_indexed": 70,
     "date_range": {
@@ -36,8 +36,8 @@
   },
   "targets": [
     {
-      "lat": 22.97,
-      "lon": 117.77,
+      "lat": 23.22,
+      "lon": 118.26,
       "date": "2026-09-30",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -45,14 +45,59 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.97 117.77 2026-09-30 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.22 118.26 2026-09-30 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 22.94,
+      "lon": 118.05,
+      "date": "2026-09-30",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 22.94 118.05 2026-09-30 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.12,
+      "lon": 118.27,
+      "date": "2026-09-30",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.12 118.27 2026-09-30 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.13,
+      "lon": 118.24,
+      "date": "2026-09-30",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.13 118.24 2026-09-30 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
       "lat": 23.21,
-      "lon": 117.99,
+      "lon": 118.03,
       "date": "2026-09-30",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -60,14 +105,14 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.21 117.99 2026-09-30 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.21 118.03 2026-09-30 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.09,
-      "lon": 118.02,
+      "lat": 23.44,
+      "lon": 118.08,
       "date": "2026-09-30",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -75,14 +120,14 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.09 118.02 2026-09-30 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.44 118.08 2026-09-30 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.19,
-      "lon": 118.41,
+      "lat": 23.23,
+      "lon": 118.45,
       "date": "2026-09-30",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -90,14 +135,14 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.19 118.41 2026-09-30 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.23 118.45 2026-09-30 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.06,
-      "lon": 117.81,
+      "lat": 23.49,
+      "lon": 117.09,
       "date": "2026-09-30",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -105,104 +150,119 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.06 117.81 2026-09-30 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.49 117.09 2026-09-30 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.05,
-      "lon": 118.01,
-      "date": "2026-09-30",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.05 118.01 2026-09-30 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.96,
-      "lon": 118.0,
-      "date": "2026-09-30",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.96 118.0 2026-09-30 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.04,
-      "lon": 118.38,
-      "date": "2026-09-30",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.04 118.38 2026-09-30 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.07,
-      "lon": 117.98,
-      "date": "2026-09-30",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260930T101650_20260930T101719_004806_00904A_59B0_COG.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.07 117.98 2026-09-30 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 24.35,
-      "lon": 124.1,
+      "lat": 25.14,
+      "lon": 122.02,
       "date": "2026-09-28",
       "zone": "east",
-      "maritime_zone": "eez",
+      "maritime_zone": "internal_waters",
       "in_ais_coverage": true,
       "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260928T094402_20260928T094432_009646_013332_31AF_COG.SAFE",
-      "time": "09:44:02",
-      "command": "python fetch_sar_chip.py 24.35 124.1 2026-09-28 --time 09:44",
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 25.14 122.02 2026-09-28 --time 21:51",
       "alt_times": [
-        "09:44:02"
+        "21:51:24"
       ]
     },
     {
-      "lat": 22.44,
-      "lon": 120.2,
+      "lat": 22.47,
+      "lon": 120.38,
       "date": "2026-09-28",
       "zone": "southwest",
-      "maritime_zone": "territorial_sea",
+      "maritime_zone": "internal_waters",
       "in_ais_coverage": true,
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260928T215153_20260928T215218_009653_01336F_247E_COG.SAFE",
       "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.44 120.2 2026-09-28 --time 21:51",
+      "command": "python fetch_sar_chip.py 22.47 120.38 2026-09-28 --time 21:51",
       "alt_times": [
         "21:51:53"
       ]
     },
     {
-      "lat": 22.55,
-      "lon": 122.37,
+      "lat": 24.64,
+      "lon": 121.92,
+      "date": "2026-09-28",
+      "zone": "east",
+      "maritime_zone": "territorial_sea",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 24.64 121.92 2026-09-28 --time 21:51",
+      "alt_times": [
+        "21:51:24"
+      ]
+    },
+    {
+      "lat": 24.88,
+      "lon": 121.92,
+      "date": "2026-09-28",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 24.88 121.92 2026-09-28 --time 21:51",
+      "alt_times": [
+        "21:51:24"
+      ]
+    },
+    {
+      "lat": 25.26,
+      "lon": 121.81,
+      "date": "2026-09-28",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 25.26 121.81 2026-09-28 --time 21:51",
+      "alt_times": [
+        "21:51:24"
+      ]
+    },
+    {
+      "lat": 25.17,
+      "lon": 121.78,
+      "date": "2026-09-28",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 25.17 121.78 2026-09-28 --time 21:51",
+      "alt_times": [
+        "21:51:24"
+      ]
+    },
+    {
+      "lat": 25.36,
+      "lon": 121.66,
+      "date": "2026-09-28",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+      "time": "21:51:24",
+      "command": "python fetch_sar_chip.py 25.36 121.66 2026-09-28 --time 21:51",
+      "alt_times": [
+        "21:51:24"
+      ]
+    },
+    {
+      "lat": 22.1,
+      "lon": 122.31,
       "date": "2026-09-26",
       "zone": "east",
       "maritime_zone": "eez",
@@ -210,223 +270,103 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260926T095951_20260926T100021_009617_01323B_13C7_COG.SAFE",
       "time": "09:59:51",
-      "command": "python fetch_sar_chip.py 22.55 122.37 2026-09-26 --time 09:59",
+      "command": "python fetch_sar_chip.py 22.1 122.31 2026-09-26 --time 09:59",
       "alt_times": [
         "09:59:51"
       ]
     },
     {
-      "lat": 23.61,
-      "lon": 121.56,
-      "date": "2026-09-20",
-      "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260920T100028_20260920T100058_004660_008B41_C700_COG.SAFE",
-      "time": "10:00:28",
-      "command": "python fetch_sar_chip.py 23.61 121.56 2026-09-20 --time 10:00",
-      "alt_times": [
-        "10:00:28"
-      ]
-    },
-    {
-      "lat": 23.17,
-      "lon": 117.91,
-      "date": "2026-09-18",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.17 117.91 2026-09-18 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.86,
-      "lon": 117.49,
-      "date": "2026-09-18",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.86 117.49 2026-09-18 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.83,
-      "lon": 117.62,
-      "date": "2026-09-18",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.83 117.62 2026-09-18 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.25,
-      "lon": 118.39,
-      "date": "2026-09-18",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.25 118.39 2026-09-18 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.12,
-      "lon": 118.13,
-      "date": "2026-09-18",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.12 118.13 2026-09-18 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.28,
-      "lon": 120.58,
-      "date": "2026-09-16",
+      "lat": 22.39,
+      "lon": 120.45,
+      "date": "2026-09-26",
       "zone": "southwest",
       "maritime_zone": "internal_waters",
       "in_ais_coverage": true,
       "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
-      "time": "21:52:18",
-      "command": "python fetch_sar_chip.py 22.28 120.58 2026-09-16 --time 21:52",
+      "product": "S1C_IW_GRDH_1SDV_20260926T095951_20260926T100021_009617_01323B_13C7_COG.SAFE",
+      "time": "09:59:51",
+      "command": "python fetch_sar_chip.py 22.39 120.45 2026-09-26 --time 09:59",
       "alt_times": [
-        "21:52:18"
-      ]
-    },
-    {
-      "lat": 22.44,
-      "lon": 120.25,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.44 120.25 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:53"
-      ]
-    },
-    {
-      "lat": 22.63,
-      "lon": 120.15,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.63 120.15 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:53"
-      ]
-    },
-    {
-      "lat": 24.87,
-      "lon": 121.85,
-      "date": "2026-09-16",
-      "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
-      "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 24.87 121.85 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:23"
-      ]
-    },
-    {
-      "lat": 22.4,
-      "lon": 120.28,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
-      "time": "21:52:18",
-      "command": "python fetch_sar_chip.py 22.4 120.28 2026-09-16 --time 21:52",
-      "alt_times": [
-        "21:52:18"
+        "09:59:51"
       ]
     },
     {
       "lat": 23.02,
-      "lon": 120.01,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
+      "lon": 122.5,
+      "date": "2026-09-26",
+      "zone": "east",
+      "maritime_zone": "eez",
       "in_ais_coverage": true,
       "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 23.02 120.01 2026-09-16 --time 21:51",
+      "product": "S1C_IW_GRDH_1SDV_20260926T095951_20260926T100021_009617_01323B_13C7_COG.SAFE",
+      "time": "09:59:51",
+      "command": "python fetch_sar_chip.py 23.02 122.5 2026-09-26 --time 09:59",
       "alt_times": [
-        "21:51:53"
+        "09:59:51"
       ]
     },
     {
-      "lat": 23.65,
-      "lon": 121.57,
-      "date": "2026-09-16",
+      "lat": 25.27,
+      "lon": 121.96,
+      "date": "2026-09-21",
       "zone": "east",
       "maritime_zone": "internal_waters",
       "in_ais_coverage": true,
       "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260921T095208_20260921T095249_009544_012FE8_5D06_COG.SAFE",
+      "time": "09:52:08",
+      "command": "python fetch_sar_chip.py 25.27 121.96 2026-09-21 --time 09:52",
+      "alt_times": [
+        "09:52:08"
+      ]
+    },
+    {
+      "lat": 23.41,
+      "lon": 117.23,
+      "date": "2026-09-18",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.41 117.23 2026-09-18 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.29,
+      "lon": 117.0,
+      "date": "2026-09-18",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260918T101650_20260918T101719_004631_008A32_F2C5.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.29 117.0 2026-09-18 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 22.93,
+      "lon": 119.98,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
       "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 23.65 121.57 2026-09-16 --time 21:51",
+      "command": "python fetch_sar_chip.py 22.93 119.98 2026-09-16 --time 21:51",
       "alt_times": [
         "21:51:53"
       ]
     },
     {
-      "lat": 22.34,
-      "lon": 119.51,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
-      "time": "21:52:18",
-      "command": "python fetch_sar_chip.py 22.34 119.51 2026-09-16 --time 21:52",
-      "alt_times": [
-        "21:52:18"
-      ]
-    },
-    {
-      "lat": 22.81,
+      "lat": 22.74,
       "lon": 120.16,
       "date": "2026-09-16",
       "zone": "southwest",
@@ -435,59 +375,14 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
       "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.81 120.16 2026-09-16 --time 21:51",
+      "command": "python fetch_sar_chip.py 22.74 120.16 2026-09-16 --time 21:51",
       "alt_times": [
         "21:51:53"
       ]
     },
     {
-      "lat": 24.73,
-      "lon": 122.18,
-      "date": "2026-09-16",
-      "zone": "east",
-      "maritime_zone": "contiguous_zone",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
-      "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 24.73 122.18 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:23"
-      ]
-    },
-    {
-      "lat": 22.61,
-      "lon": 119.51,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "contiguous_zone",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.61 119.51 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:53"
-      ]
-    },
-    {
-      "lat": 22.59,
-      "lon": 120.24,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.59 120.24 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:53"
-      ]
-    },
-    {
-      "lat": 25.35,
-      "lon": 122.18,
+      "lat": 24.55,
+      "lon": 121.96,
       "date": "2026-09-16",
       "zone": "east",
       "maritime_zone": "territorial_sea",
@@ -495,44 +390,14 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
       "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 25.35 122.18 2026-09-16 --time 21:51",
+      "command": "python fetch_sar_chip.py 24.55 121.96 2026-09-16 --time 21:51",
       "alt_times": [
         "21:51:23"
-      ]
-    },
-    {
-      "lat": 24.86,
-      "lon": 122.07,
-      "date": "2026-09-16",
-      "zone": "east",
-      "maritime_zone": "territorial_sea",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
-      "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 24.86 122.07 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:23"
-      ]
-    },
-    {
-      "lat": 22.68,
-      "lon": 120.19,
-      "date": "2026-09-16",
-      "zone": "southwest",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
-      "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.68 120.19 2026-09-16 --time 21:51",
-      "alt_times": [
-        "21:51:53"
       ]
     },
     {
       "lat": 22.7,
-      "lon": 120.07,
+      "lon": 120.17,
       "date": "2026-09-16",
       "zone": "southwest",
       "maritime_zone": "internal_waters",
@@ -540,14 +405,14 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
       "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.7 120.07 2026-09-16 --time 21:51",
+      "command": "python fetch_sar_chip.py 22.7 120.17 2026-09-16 --time 21:51",
       "alt_times": [
         "21:51:53"
       ]
     },
     {
-      "lat": 22.87,
-      "lon": 120.05,
+      "lat": 23.28,
+      "lon": 119.78,
       "date": "2026-09-16",
       "zone": "southwest",
       "maritime_zone": "internal_waters",
@@ -555,29 +420,119 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
       "time": "21:51:53",
-      "command": "python fetch_sar_chip.py 22.87 120.05 2026-09-16 --time 21:51",
+      "command": "python fetch_sar_chip.py 23.28 119.78 2026-09-16 --time 21:51",
       "alt_times": [
         "21:51:53"
       ]
     },
     {
-      "lat": 22.42,
-      "lon": 120.2,
+      "lat": 21.76,
+      "lon": 119.33,
       "date": "2026-09-16",
       "zone": "southwest",
-      "maritime_zone": "territorial_sea",
+      "maritime_zone": "eez",
       "in_ais_coverage": true,
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
       "time": "21:52:18",
-      "command": "python fetch_sar_chip.py 22.42 120.2 2026-09-16 --time 21:52",
+      "command": "python fetch_sar_chip.py 21.76 119.33 2026-09-16 --time 21:52",
       "alt_times": [
         "21:52:18"
       ]
     },
     {
-      "lat": 22.26,
-      "lon": 119.91,
+      "lat": 25.06,
+      "lon": 122.09,
+      "date": "2026-09-16",
+      "zone": "east",
+      "maritime_zone": "territorial_sea",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 25.06 122.09 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 22.88,
+      "lon": 120.06,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.88 120.06 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 22.16,
+      "lon": 119.6,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
+      "time": "21:52:18",
+      "command": "python fetch_sar_chip.py 22.16 119.6 2026-09-16 --time 21:52",
+      "alt_times": [
+        "21:52:18"
+      ]
+    },
+    {
+      "lat": 24.73,
+      "lon": 122.2,
+      "date": "2026-09-16",
+      "zone": "east",
+      "maritime_zone": "contiguous_zone",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 24.73 122.2 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 22.6,
+      "lon": 120.25,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.6 120.25 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 25.49,
+      "lon": 122.02,
+      "date": "2026-09-16",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 25.49 122.02 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 22.17,
+      "lon": 119.92,
       "date": "2026-09-16",
       "zone": "southwest",
       "maritime_zone": "contiguous_zone",
@@ -585,29 +540,119 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260916T215218_20260916T215232_009478_012DA9_303C.SAFE",
       "time": "21:52:18",
-      "command": "python fetch_sar_chip.py 22.26 119.91 2026-09-16 --time 21:52",
+      "command": "python fetch_sar_chip.py 22.17 119.92 2026-09-16 --time 21:52",
       "alt_times": [
         "21:52:18"
       ]
     },
     {
-      "lat": 25.48,
-      "lon": 121.91,
-      "date": "2026-09-09",
+      "lat": 22.69,
+      "lon": 120.18,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.69 120.18 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 22.73,
+      "lon": 119.63,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "territorial_sea",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.73 119.63 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 22.48,
+      "lon": 120.28,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.48 120.28 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 22.71,
+      "lon": 120.18,
+      "date": "2026-09-16",
+      "zone": "southwest",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215153_20260916T215218_009478_012DA9_EEA8.SAFE",
+      "time": "21:51:53",
+      "command": "python fetch_sar_chip.py 22.71 120.18 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:53"
+      ]
+    },
+    {
+      "lat": 25.16,
+      "lon": 121.95,
+      "date": "2026-09-16",
       "zone": "east",
       "maritime_zone": "internal_waters",
       "in_ais_coverage": true,
       "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260916T215123_20260916T215153_009478_012DA9_C838_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 25.16 121.95 2026-09-16 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 21.85,
+      "lon": 120.57,
+      "date": "2026-09-14",
+      "zone": "southwest",
+      "maritime_zone": "territorial_sea",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260914T095951_20260914T100020_009442_012C7F_51BB_COG.SAFE",
+      "time": "09:59:51",
+      "command": "python fetch_sar_chip.py 21.85 120.57 2026-09-14 --time 09:59",
+      "alt_times": [
+        "09:59:51"
+      ]
+    },
+    {
+      "lat": 23.84,
+      "lon": 124.27,
+      "date": "2026-09-09",
+      "zone": "east",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260909T095208_20260909T095249_009369_012A2F_DA23.SAFE",
       "time": "09:52:08",
-      "command": "python fetch_sar_chip.py 25.48 121.91 2026-09-09 --time 09:52",
+      "command": "python fetch_sar_chip.py 23.84 124.27 2026-09-09 --time 09:52",
       "alt_times": [
         "09:52:08"
       ]
     },
     {
-      "lat": 24.24,
-      "lon": 124.21,
+      "lat": 24.31,
+      "lon": 124.2,
       "date": "2026-09-09",
       "zone": "east",
       "maritime_zone": "eez",
@@ -615,163 +660,43 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260909T095208_20260909T095249_009369_012A2F_DA23.SAFE",
       "time": "09:52:08",
-      "command": "python fetch_sar_chip.py 24.24 124.21 2026-09-09 --time 09:52",
+      "command": "python fetch_sar_chip.py 24.31 124.2 2026-09-09 --time 09:52",
       "alt_times": [
         "09:52:08"
-      ]
-    },
-    {
-      "lat": 25.13,
-      "lon": 121.97,
-      "date": "2026-09-08",
-      "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260908T100057_20260908T100122_004485_008536_6A68.SAFE",
-      "time": "10:00:57",
-      "command": "python fetch_sar_chip.py 25.13 121.97 2026-09-08 --time 10:00",
-      "alt_times": [
-        "10:00:57"
-      ]
-    },
-    {
-      "lat": 23.34,
-      "lon": 117.27,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.34 117.27 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.96,
-      "lon": 117.24,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.96 117.24 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.91,
-      "lon": 117.87,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.91 117.87 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.31,
-      "lon": 118.26,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.31 118.26 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
       ]
     },
     {
       "lat": 23.5,
-      "lon": 117.12,
-      "date": "2026-09-06",
-      "zone": "southwest",
+      "lon": 123.54,
+      "date": "2026-09-09",
+      "zone": "east",
       "maritime_zone": "eez",
       "in_ais_coverage": true,
       "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.5 117.12 2026-09-06 --time 10:16",
+      "product": "S1C_IW_GRDH_1SDV_20260909T095208_20260909T095249_009369_012A2F_DA23.SAFE",
+      "time": "09:52:08",
+      "command": "python fetch_sar_chip.py 23.5 123.54 2026-09-09 --time 09:52",
       "alt_times": [
-        "10:16:50"
+        "09:52:08"
       ]
     },
     {
-      "lat": 23.13,
-      "lon": 117.05,
-      "date": "2026-09-06",
-      "zone": "southwest",
+      "lat": 24.39,
+      "lon": 123.45,
+      "date": "2026-09-09",
+      "zone": "east",
       "maritime_zone": "eez",
       "in_ais_coverage": true,
       "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.13 117.05 2026-09-06 --time 10:16",
+      "product": "S1C_IW_GRDH_1SDV_20260909T095208_20260909T095249_009369_012A2F_DA23.SAFE",
+      "time": "09:52:08",
+      "command": "python fetch_sar_chip.py 24.39 123.45 2026-09-09 --time 09:52",
       "alt_times": [
-        "10:16:50"
+        "09:52:08"
       ]
     },
     {
-      "lat": 23.09,
-      "lon": 117.04,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.09 117.04 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.31,
-      "lon": 118.32,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.31 118.32 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 22.93,
-      "lon": 118.36,
-      "date": "2026-09-06",
-      "zone": "southwest",
-      "maritime_zone": "eez",
-      "in_ais_coverage": true,
-      "covered": true,
-      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
-      "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 22.93 118.36 2026-09-06 --time 10:16",
-      "alt_times": [
-        "10:16:50"
-      ]
-    },
-    {
-      "lat": 23.26,
+      "lat": 23.36,
       "lon": 118.25,
       "date": "2026-09-06",
       "zone": "southwest",
@@ -780,13 +705,73 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.26 118.25 2026-09-06 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.36 118.25 2026-09-06 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.28,
+      "lat": 23.38,
+      "lon": 118.12,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.38 118.12 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 22.97,
+      "lon": 118.51,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 22.97 118.51 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 22.95,
+      "lon": 118.48,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 22.95 118.48 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.07,
+      "lon": 117.94,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.07 117.94 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.31,
       "lon": 118.27,
       "date": "2026-09-06",
       "zone": "southwest",
@@ -795,14 +780,14 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.28 118.27 2026-09-06 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.31 118.27 2026-09-06 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 23.04,
-      "lon": 118.32,
+      "lat": 23.28,
+      "lon": 118.16,
       "date": "2026-09-06",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -810,14 +795,14 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.04 118.32 2026-09-06 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.28 118.16 2026-09-06 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
       "lat": 23.0,
-      "lon": 118.36,
+      "lon": 117.19,
       "date": "2026-09-06",
       "zone": "southwest",
       "maritime_zone": "eez",
@@ -825,14 +810,44 @@
       "covered": true,
       "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
       "time": "10:16:50",
-      "command": "python fetch_sar_chip.py 23.0 118.36 2026-09-06 --time 10:16",
+      "command": "python fetch_sar_chip.py 23.0 117.19 2026-09-06 --time 10:16",
       "alt_times": [
         "10:16:50"
       ]
     },
     {
-      "lat": 25.48,
-      "lon": 121.96,
+      "lat": 23.03,
+      "lon": 117.5,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.03 117.5 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 23.3,
+      "lon": 117.22,
+      "date": "2026-09-06",
+      "zone": "southwest",
+      "maritime_zone": "eez",
+      "in_ais_coverage": true,
+      "covered": true,
+      "product": "S1D_IW_GRDH_1SDV_20260906T101650_20260906T101719_004456_008426_62EC.SAFE",
+      "time": "10:16:50",
+      "command": "python fetch_sar_chip.py 23.3 117.22 2026-09-06 --time 10:16",
+      "alt_times": [
+        "10:16:50"
+      ]
+    },
+    {
+      "lat": 24.82,
+      "lon": 121.88,
       "date": "2026-09-04",
       "zone": "east",
       "maritime_zone": "internal_waters",
@@ -840,14 +855,59 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
       "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 25.48 121.96 2026-09-04 --time 21:51",
+      "command": "python fetch_sar_chip.py 24.82 121.88 2026-09-04 --time 21:51",
       "alt_times": [
         "21:51:23"
       ]
     },
     {
-      "lat": 23.12,
-      "lon": 119.98,
+      "lat": 23.94,
+      "lon": 121.64,
+      "date": "2026-09-04",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": false,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 23.94 121.64 2026-09-04 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 25.32,
+      "lon": 121.81,
+      "date": "2026-09-04",
+      "zone": "east",
+      "maritime_zone": "internal_waters",
+      "in_ais_coverage": false,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 25.32 121.81 2026-09-04 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 24.43,
+      "lon": 122.13,
+      "date": "2026-09-04",
+      "zone": "east",
+      "maritime_zone": "contiguous_zone",
+      "in_ais_coverage": false,
+      "covered": true,
+      "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
+      "time": "21:51:23",
+      "command": "python fetch_sar_chip.py 24.43 122.13 2026-09-04 --time 21:51",
+      "alt_times": [
+        "21:51:23"
+      ]
+    },
+    {
+      "lat": 23.31,
+      "lon": 119.87,
       "date": "2026-09-04",
       "zone": "southwest",
       "maritime_zone": "internal_waters",
@@ -855,84 +915,24 @@
       "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260904T215152_20260904T215217_009303_0127E4_008E.SAFE",
       "time": "21:51:52",
-      "command": "python fetch_sar_chip.py 23.12 119.98 2026-09-04 --time 21:51",
+      "command": "python fetch_sar_chip.py 23.31 119.87 2026-09-04 --time 21:51",
       "alt_times": [
         "21:51:52"
       ]
     },
     {
-      "lat": 24.23,
-      "lon": 121.76,
+      "lat": 24.67,
+      "lon": 121.95,
       "date": "2026-09-04",
       "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": false,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
-      "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 24.23 121.76 2026-09-04 --time 21:51",
-      "alt_times": [
-        "21:51:23"
-      ]
-    },
-    {
-      "lat": 22.75,
-      "lon": 119.78,
-      "date": "2026-09-04",
-      "zone": "southwest",
       "maritime_zone": "territorial_sea",
       "in_ais_coverage": false,
       "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260904T215152_20260904T215217_009303_0127E4_008E.SAFE",
-      "time": "21:51:52",
-      "command": "python fetch_sar_chip.py 22.75 119.78 2026-09-04 --time 21:51",
-      "alt_times": [
-        "21:51:52"
-      ]
-    },
-    {
-      "lat": 25.29,
-      "lon": 121.85,
-      "date": "2026-09-04",
-      "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": false,
-      "covered": true,
       "product": "S1C_IW_GRDH_1SDV_20260904T215123_20260904T215152_009303_0127E4_76AE_COG.SAFE",
       "time": "21:51:23",
-      "command": "python fetch_sar_chip.py 25.29 121.85 2026-09-04 --time 21:51",
+      "command": "python fetch_sar_chip.py 24.67 121.95 2026-09-04 --time 21:51",
       "alt_times": [
         "21:51:23"
-      ]
-    },
-    {
-      "lat": 22.8,
-      "lon": 121.52,
-      "date": "2026-09-04",
-      "zone": "east",
-      "maritime_zone": "internal_waters",
-      "in_ais_coverage": false,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260904T215152_20260904T215217_009303_0127E4_008E.SAFE",
-      "time": "21:51:52",
-      "command": "python fetch_sar_chip.py 22.8 121.52 2026-09-04 --time 21:51",
-      "alt_times": [
-        "21:51:52"
-      ]
-    },
-    {
-      "lat": 22.77,
-      "lon": 119.57,
-      "date": "2026-09-04",
-      "zone": "southwest",
-      "maritime_zone": "territorial_sea",
-      "in_ais_coverage": false,
-      "covered": true,
-      "product": "S1C_IW_GRDH_1SDV_20260904T215152_20260904T215217_009303_0127E4_008E.SAFE",
-      "time": "21:51:52",
-      "command": "python fetch_sar_chip.py 22.77 119.57 2026-09-04 --time 21:51",
-      "alt_times": [
-        "21:51:52"
       ]
     }
   ]
