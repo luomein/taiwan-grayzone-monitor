@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-03T15:37:06.502233+00:00",
+  "updated_at": "2026-10-04T05:24:36.445395+00:00",
   "methodology": "Gov Vessel Formation Detection",
   "criteria": {
     "formation_radius_km": 10.0,
@@ -33,9 +33,9 @@
     {
       "id": "GF-20261003T0135-400014528-412414710",
       "first_seen": "2026-10-03T01:35:38.611545+00:00",
-      "last_seen": "2026-10-03T15:36:09.585442+00:00",
-      "duration_hours": 14.0,
-      "observations": 6,
+      "last_seen": "2026-10-03T21:54:58.489818+00:00",
+      "duration_hours": 20.3,
+      "observations": 8,
       "vessel_count": 4,
       "max_vessels": 4,
       "members": [
@@ -43,33 +43,33 @@
           "mmsi": "400014528",
           "name": "CHINACOASTGUARD14528",
           "category": "coastguard",
-          "observations": 5,
-          "last_lat": 26.31762,
-          "last_lon": 119.88083
+          "observations": 6,
+          "last_lat": 26.31763,
+          "last_lon": 119.88081
         },
         {
           "mmsi": "413294310",
           "name": "HAI XUN 06",
           "category": "msa",
-          "observations": 5,
-          "last_lat": 26.29979,
-          "last_lon": 119.86502
+          "observations": 7,
+          "last_lat": 26.29995,
+          "last_lon": 119.86614
         },
         {
           "mmsi": "412414710",
           "name": "HAIXUN0811",
           "category": "msa",
-          "observations": 4,
-          "last_lat": 26.31934,
-          "last_lon": 119.87918
+          "observations": 6,
+          "last_lat": 26.31935,
+          "last_lon": 119.87908
         },
         {
           "mmsi": "413046050",
           "name": "DONG HAI JIU 115",
           "category": "rescue",
-          "observations": 6,
-          "last_lat": 26.24535,
-          "last_lon": 119.81445
+          "observations": 8,
+          "last_lat": 26.24542,
+          "last_lon": 119.81522
         }
       ],
       "categories": {
@@ -78,10 +78,10 @@
         "rescue": 1
       },
       "escorted_research": false,
-      "mean_radius_km": 9.27,
+      "mean_radius_km": 9.56,
       "max_radius_km": 10.46,
-      "centroid_displacement_km": 5.8,
-      "median_speed_kn": 0.1,
+      "centroid_displacement_km": 6.85,
+      "median_speed_kn": 0,
       "centroid_track": [
         {
           "t": "2026-10-03T01:35:38.611545+00:00",
@@ -118,19 +118,31 @@
           "lat": 26.28759,
           "lon": 119.85343,
           "n": 3
+        },
+        {
+          "t": "2026-10-03T18:27:50.822185+00:00",
+          "lat": 26.28815,
+          "lon": 119.85292,
+          "n": 3
+        },
+        {
+          "t": "2026-10-03T21:54:58.489818+00:00",
+          "lat": 26.29559,
+          "lon": 119.86031,
+          "n": 4
         }
       ],
-      "last_lat": 26.28759,
-      "last_lon": 119.85343,
+      "last_lat": 26.29559,
+      "last_lon": 119.86031,
       "severity": "medium",
       "active": true
     },
     {
       "id": "GF-20261003T0135-413238290-413292950",
       "first_seen": "2026-10-03T01:35:38.611545+00:00",
-      "last_seen": "2026-10-03T14:05:48.048675+00:00",
-      "duration_hours": 12.5,
-      "observations": 5,
+      "last_seen": "2026-10-03T18:27:50.822185+00:00",
+      "duration_hours": 16.9,
+      "observations": 6,
       "vessel_count": 3,
       "max_vessels": 3,
       "members": [
@@ -146,17 +158,17 @@
           "mmsi": "413292950",
           "name": "HAI XUN08616",
           "category": "msa",
-          "observations": 5,
+          "observations": 6,
           "last_lat": 24.52272,
-          "last_lon": 118.56391
+          "last_lon": 118.56392
         },
         {
           "mmsi": "413238290",
           "name": "HAI XUN 08606",
           "category": "msa",
-          "observations": 4,
-          "last_lat": 24.52277,
-          "last_lon": 118.564
+          "observations": 5,
+          "last_lat": 24.52273,
+          "last_lon": 118.56397
         }
       ],
       "categories": {
@@ -164,7 +176,7 @@
         "msa": 2
       },
       "escorted_research": false,
-      "mean_radius_km": 2.76,
+      "mean_radius_km": 2.3,
       "max_radius_km": 6.36,
       "centroid_displacement_km": 2.12,
       "median_speed_kn": 0.1,
@@ -198,10 +210,16 @@
           "lat": 24.52275,
           "lon": 118.56395,
           "n": 2
+        },
+        {
+          "t": "2026-10-03T18:27:50.822185+00:00",
+          "lat": 24.52273,
+          "lon": 118.56394,
+          "n": 2
         }
       ],
-      "last_lat": 24.52275,
-      "last_lon": 118.56395,
+      "last_lat": 24.52273,
+      "last_lon": 118.56394,
       "severity": "low",
       "active": true
     }
@@ -600,7 +618,7 @@
   "vessel_index": {
     "400014528": {
       "count": 2,
-      "max_duration_hours": 17.4,
+      "max_duration_hours": 20.3,
       "escorted_research": false,
       "severity": "medium",
       "formation_ids": [
@@ -646,7 +664,7 @@
     },
     "413875308": {
       "count": 1,
-      "max_duration_hours": 12.5,
+      "max_duration_hours": 16.9,
       "escorted_research": false,
       "severity": "low",
       "formation_ids": [
@@ -665,7 +683,7 @@
     },
     "413238290": {
       "count": 1,
-      "max_duration_hours": 12.5,
+      "max_duration_hours": 16.9,
       "escorted_research": false,
       "severity": "low",
       "formation_ids": [
