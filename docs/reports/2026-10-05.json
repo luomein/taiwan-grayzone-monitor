@@ -1,25 +1,25 @@
 {
   "date": "2026-10-05",
-  "generated_at": "2026-10-05T05:15:08.997106Z",
-  "data_updated_at": "2026-10-05T05:15:08.328611Z",
-  "ais_vessels": 6295,
-  "dark_vessels": 17182,
-  "dark_ratio": 46.3,
-  "suspicious_count": 709,
-  "critical_count": 242,
-  "high_count": 467,
-  "cable_near_count": 546,
-  "sts_active": 44,
-  "sts_suspicious": 97,
+  "generated_at": "2026-10-05T20:16:13.644905Z",
+  "data_updated_at": "2026-10-05T20:16:13.226403Z",
+  "ais_vessels": 5525,
+  "dark_vessels": 17499,
+  "dark_ratio": 46.6,
+  "suspicious_count": 697,
+  "critical_count": 232,
+  "high_count": 465,
+  "cable_near_count": 538,
+  "sts_active": 53,
+  "sts_suspicious": 95,
   "top_suspicious": [
     {
-      "mmsi": "413000000",
-      "name": "HUINONGYUN09977",
-      "risk_score": 30,
+      "mmsi": "412466829",
+      "name": "66829",
+      "risk_score": 26,
       "risk_level": "critical",
-      "vessel_type": "cargo",
-      "zone": "territorial_sea",
-      "cable_band": "beyond_10km"
+      "vessel_type": "unknown",
+      "zone": "eez",
+      "cable_band": "within_5km"
     },
     {
       "mmsi": "412441932",
@@ -31,47 +31,47 @@
       "cable_band": "beyond_10km"
     },
     {
-      "mmsi": "677073600",
-      "name": "LYDIA 1",
-      "risk_score": 24,
-      "risk_level": "critical",
-      "vessel_type": "tanker",
-      "zone": "eez",
-      "cable_band": "within_1km"
-    },
-    {
       "mmsi": "667001298",
       "name": "CHERRY 168",
       "risk_score": 23,
       "risk_level": "critical",
       "vessel_type": "tanker",
-      "zone": "territorial_sea",
+      "zone": "contiguous_zone",
+      "cable_band": "beyond_10km"
+    },
+    {
+      "mmsi": "608683405",
+      "name": "83405",
+      "risk_score": 22,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "eez",
       "cable_band": "within_10km"
     },
     {
-      "mmsi": "667001341",
-      "name": "KUN PENG",
-      "risk_score": 23,
+      "mmsi": "677067100",
+      "name": "ALBATROS 1",
+      "risk_score": 21,
       "risk_level": "critical",
       "vessel_type": "tanker",
-      "zone": "internal_waters",
-      "cable_band": "within_5km"
+      "zone": "eez",
+      "cable_band": "beyond_10km"
     }
   ],
   "sar_ais_matching": {
-    "dark_total": 17182,
-    "infrastructure_filtered": 3432,
+    "dark_total": 17499,
+    "infrastructure_filtered": 3677,
     "rematched_local": 746,
-    "residual_dark": 13004,
-    "in_ais_coverage": 13307,
-    "no_ais_coverage": 443,
-    "rematch_rate_of_coverage_pct": 5.6,
-    "false_dark_removed_pct": 24.3,
-    "ais_vessels_indexed": 18910,
-    "s1_real_pass_dates": 26,
-    "ais_coverage_start": "2026-09-07T10:32:14.025579Z",
-    "ais_coverage_end": "2026-10-05T05:07:09.060537Z",
-    "updated_at": "2026-10-05T05:08:01.444342Z"
+    "residual_dark": 13076,
+    "in_ais_coverage": 7132,
+    "no_ais_coverage": 6690,
+    "rematch_rate_of_coverage_pct": 10.5,
+    "false_dark_removed_pct": 25.3,
+    "ais_vessels_indexed": 18303,
+    "s1_real_pass_dates": 27,
+    "ais_coverage_start": "2026-09-17T15:23:12.849902Z",
+    "ais_coverage_end": "2026-10-05T20:10:26.196124Z",
+    "updated_at": "2026-10-05T20:11:17.583721Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-05",
