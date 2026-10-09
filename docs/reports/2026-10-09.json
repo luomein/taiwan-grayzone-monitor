@@ -1,25 +1,25 @@
 {
   "date": "2026-10-09",
-  "generated_at": "2026-10-09T05:45:12.270448Z",
-  "data_updated_at": "2026-10-09T05:45:11.592777Z",
-  "ais_vessels": 7332,
-  "dark_vessels": 17378,
-  "dark_ratio": 48.9,
-  "suspicious_count": 785,
-  "critical_count": 265,
-  "high_count": 520,
-  "cable_near_count": 564,
-  "sts_active": 229,
-  "sts_suspicious": 137,
+  "generated_at": "2026-10-09T17:58:43.653466Z",
+  "data_updated_at": "2026-10-09T17:58:43.061993Z",
+  "ais_vessels": 7175,
+  "dark_vessels": 17444,
+  "dark_ratio": 48.7,
+  "suspicious_count": 836,
+  "critical_count": 291,
+  "high_count": 545,
+  "cable_near_count": 599,
+  "sts_active": 97,
+  "sts_suspicious": 94,
   "top_suspicious": [
     {
-      "mmsi": "412466829",
-      "name": "66829",
-      "risk_score": 26,
+      "mmsi": "677073600",
+      "name": "LYDIA 1",
+      "risk_score": 25,
       "risk_level": "critical",
-      "vessel_type": "unknown",
+      "vessel_type": "tanker",
       "zone": "eez",
-      "cable_band": "within_5km"
+      "cable_band": "within_1km"
     },
     {
       "mmsi": "667001298",
@@ -31,13 +31,13 @@
       "cable_band": "within_5km"
     },
     {
-      "mmsi": "677073600",
-      "name": "LYDIA 1",
+      "mmsi": "412466829",
+      "name": "66829",
       "risk_score": 24,
       "risk_level": "critical",
-      "vessel_type": "tanker",
+      "vessel_type": "unknown",
       "zone": "eez",
-      "cable_band": "within_1km"
+      "cable_band": "within_10km"
     },
     {
       "mmsi": "608683405",
@@ -59,19 +59,19 @@
     }
   ],
   "sar_ais_matching": {
-    "dark_total": 17378,
-    "infrastructure_filtered": 4132,
-    "rematched_local": 757,
-    "residual_dark": 12489,
-    "in_ais_coverage": 7956,
-    "no_ais_coverage": 5290,
-    "rematch_rate_of_coverage_pct": 9.5,
-    "false_dark_removed_pct": 28.1,
-    "ais_vessels_indexed": 19121,
-    "s1_real_pass_dates": 26,
+    "dark_total": 17444,
+    "infrastructure_filtered": 4169,
+    "rematched_local": 754,
+    "residual_dark": 12521,
+    "in_ais_coverage": 7986,
+    "no_ais_coverage": 5289,
+    "rematch_rate_of_coverage_pct": 9.4,
+    "false_dark_removed_pct": 28.2,
+    "ais_vessels_indexed": 19130,
+    "s1_real_pass_dates": 27,
     "ais_coverage_start": "2026-09-17T15:23:12.849902Z",
-    "ais_coverage_end": "2026-10-08T18:19:19.646947Z",
-    "updated_at": "2026-10-09T05:41:02.785302Z"
+    "ais_coverage_end": "2026-10-09T17:54:12.925326Z",
+    "updated_at": "2026-10-09T17:54:41.027328Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-09",
