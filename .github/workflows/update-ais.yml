@@ -66,6 +66,11 @@ jobs:
       - name: Generate dashboard data
         run: python src/generate_dashboard.py
 
+      # Mini Taiwan Pulse 兵推地圖「灰色地帶情資」圖層的精簡檔（24h 航跡＋高風險＋暗船＋海纜障礙）
+      - name: Build Pulse feed
+        run: python src/build_pulse_feed.py
+        continue-on-error: true
+
       - name: Save large data cache
         uses: actions/cache/save@v4
         if: always()
