@@ -73,6 +73,13 @@ const DATA = {
                 { mmsi: '413701510', name: 'XIANG YANG HONG 03', category: 'research' },
             ],
         }],
+        // 伴航船：船名是 AIS 廣播字串 —— 惡意船名同樣必須轉義
+        active_companions: [{
+            id: 'GC-TEST', mmsi: '412450186', name: 'MINFUDINGYU<b>07902',
+            anchor_mmsi: '413701510', anchor_name: 'XIANGYANGHONG03',
+            anchor_category: 'research', observations: 16, duration_hours: 93.7,
+            max_dark_gap_hours: 56.9, last_lat: 23.596, last_lon: 122.449,
+        }],
     },
     suspicious_analysis: { summary: {}, suspicious_vessels: [] },
     dark_vessels: {},
@@ -164,6 +171,12 @@ ctx.App.loadData().then(() => {
     assert(html.includes('gov-formation'), 'formation banner rendered');
     assert(html.includes('sev-high'), 'severity class applied');
     assert(html.includes('idx.gov_formation_escort'), 'escorted-survey label used');
+
+    // 8. 伴航船列：標籤、斷訊時數、座標定位、船名轉義
+    assert(html.includes('idx.gov_companion'), 'companion row rendered');
+    assert(html.includes('idx.gov_companion_dark:57'), 'mid-escort AIS blackout shown');
+    assert(html.includes('App.focusSuspicious(23.596, 122.449)'), 'companion row focuses by coordinates');
+    assert(html.includes('MINFUDINGYU&lt;b&gt;'), 'companion name escaped');
 
     // 6. 磚上的數字算的是 48h 名冊（4 艘），不是快照（1 艘）
     assert.strictEqual(element('metricGov').textContent, '5',

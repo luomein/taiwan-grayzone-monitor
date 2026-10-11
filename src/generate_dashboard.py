@@ -566,6 +566,11 @@ def main():
                 'criteria': fdata.get('criteria', {}),
                 'summary': fdata.get('summary', {}),
                 'active_formations': fdata.get('active_formations', [])[:10],
+                # 伴航船：去掉逐點航跡（完整檔另複製到 docs/）
+                'active_companions': [
+                    {k: v for k, v in c.items() if k != 'track'}
+                    for c in fdata.get('active_companions', [])[:10]
+                ],
             }
             print(f"🛡️ 公務船編隊: 進行中 "
                   f"{fdata.get('summary', {}).get('active_formations', 0)} 件"

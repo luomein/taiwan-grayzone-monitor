@@ -69,7 +69,7 @@ Summary carries `stale_skipped` + `active_window_days`; the dashboard stat tile 
 6b. `sanctions_blacklist.json` — multi-agency shadow-fleet tanker blacklist (1400+ vessels: OFAC/UK-FCDO/UANI/EU/SECO/MFAT…), built from `sanctions_blacklist.csv` by `build_sanctions_blacklist.py`. **IMO-match only** (name matching disabled — 1400+ common names collide); merged into the sanction IMO set by `load_sanctions_list()`. On an IMO hit whose AIS-broadcast name ≠ the sanctions-registered name, an identity-concealment flag is raised (`sanction_identity_concealment`)
 7. `itu_mars_cache.json` — ITU MARS ship station registry cache (30-day expiry)
 8. `ship_transfers.json` — STS rendezvous detection results
-9. `gov_formations.json` — 公務船編隊事件（`detect_gov_formation.py`；`vessel_index` 供計分查表）
+9. `gov_formations.json` — 公務船編隊事件（`detect_gov_formation.py`；`vessel_index` 供計分查表）＋伴航船（`companion_index`，非公務船跟著公務船移動）
 
 ### Two-Tier Track Storage
 - **Tier-1** (`ais_track_history.json`): CN fishing vessels + suspicious → used for animation + analysis
@@ -98,13 +98,25 @@ Current rules:
 
 **To add a new exclusion rule:** Append a dict to `EXCLUSION_RULES` list. No other code changes needed.
 
+**Invalid-MMSI safety valve** (`ALIAS_OVERRIDABLE_RULES`): a vessel excluded *only* by
+`mmsi_malformed` / `mmsi_unassigned_mid` is still analyzed when it (a) shares a normalized
+ship name with a valid-MMSI vessel (`build_name_alias_index`: upper-case, punctuation
+stripped, ≥6 chars with both letters and digits; net-beacon MMSIs skipped since beacons
+reuse the mother ship's name), or (b) is a gov companion. Motivating case: 閩福鼎漁07902 is
+412450186 in the Port Bureau feed but surfaced elsewhere as **400449914** (MID 400
+unassigned) — the rule would have dropped the fake identity outright. The output carries
+`exclusion_overridden`; summary adds `exclusion_overridden` / `identity_alias` counts.
+Measured on the 2026-10-11 data: 363 vessels share a name with another MMSI, 42 of them
+invalid-MMSI → rescued; net effect +1 suspicious (`123456789` "MINDONGYU61284": identity
+changes + teleports + 18 zigzag turns).
+
 **Taiwan-vessel exclusion** (in `classify_vessel`, not `EXCLUSION_RULES` — needs track/event
 data): vessels are also excluded when (a) the MMSI MID is `416` (Taiwan flag,
 `flag_taiwan`), or (b) the **last position** is inside a Taiwan port from `geofence.PORTS`
 (`moored_taiwan_port`; CN ports do NOT trigger this). **Anti-spoofing safety valve**: a
 vessel matching either rule is still fully analyzed if it has identity-change events
-(7-day window) or a UN sanctions hit — a CN vessel broadcasting a fake `416` MMSI must
-not escape detection. Both ids appear in the output's `exclusion_rules` list and
+(7-day window), a UN sanctions hit, or is a gov companion — a CN vessel broadcasting a
+fake `416` MMSI must not escape detection. Both ids appear in the output's `exclusion_rules` list and
 `summary.exclusion_breakdown`.
 
 ### Scoring Criteria (8 criteria)
@@ -124,6 +136,8 @@ not escape detection. Both ids appear in the output's `exclusion_rules` list and
 | 10 | Offshore Loitering | Commercial vessel (tanker/cargo/lng) milling offshore ≥5 days (`check_offshore_loitering`: >50% points <3kn, median radius from centre ≤20km, low-speed run spans ≥5 days, in-port excluded) — **cable-independent** shadow-fleet standby pattern. Scored **only when also non-top-10 flag** (FoC); plain loitering may be legitimate berth-waiting. | +4 |
 | 11 | Survey Pattern (割草式測線) | Parallel + reversing + low-speed legs in one survey box: `grid` (≥3 distinct equidistant lines, spacing CV ≤0.6) or `repeat_transect` (same line re-run, offset MAD ≤5km, mean leg ≥10km). ≥60% of leg **mileage** must be on-axis (count-based would approach 0.5 — a real grid has N-1 short cross legs). Signal gaps >6h split legs; in-port points excluded. | +3 |
 | 12 | Gov Vessel Formation | `gov_formations.json` hit: escorted research (研究船 + 海警/海巡) +6, plain gov formation +4 | +4/+6 |
+| 13 | Gov Companion 伴航船 | `gov_formations.json` `companion_index` hit — a **non-gov** vessel ≤10km from a moving gov/research vessel in ≥6 snapshots over ≥6h, having itself travelled ≥20km (`detect_gov_formation.track_companions`). Following a research ship +6, other gov ship +5; **+2 more** if it went dark >18h mid-episode. Not multiplied (most companions are fishing boats; ×0.2 would erase it) | +5/+6 (+2) |
+| 14 | Identity Alias 同名分身 | Invalid-MMSI vessel (`mmsi_malformed`/`mmsi_unassigned_mid`) broadcasting the same normalized name as a valid-MMSI vessel (`build_name_alias_index`). The valid side is only flagged (`name_aliases`), not scored | +2 |
 
 **Survey-pattern false positives** — AIS ship-type codes are unreliable for CN vessels:
 Fujian trawlers (MINDONGYU63179 etc.) broadcast as `other`/`unknown`/`cargo`/`tanker`, and

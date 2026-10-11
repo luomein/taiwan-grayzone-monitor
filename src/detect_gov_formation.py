@@ -17,6 +17,18 @@ Detect ≥2 China government / research vessels operating together
   - 門檻：持續 ≥6 小時才成案
   - 科研船 + 海警/海巡同框 → escorted_research（護航科考），最高關注
 
+伴航船（companion）：上面只看公務船之間，跟著公務船走的非公務船完全看不到。
+2026-08-12~16 閩福鼎漁07902（MMSI 412450186，漁船）從福鼎一路跟著向陽紅03
+穿越台灣海峽南段、巴士海峽，到花蓮外海與海警2502/1306 同區活動，16 個快照
+距離 3-9km、同步轉向，中間兩度關 AIS 各約 57h —— 是事後翻 ais-archive 才
+發現的。`track_companions()` 把「非公務船 ≤10km 跟著某艘公務船移動」當成
+另一種事件：
+  - 兩船都不在港內、都在移動（共存點速度中位數 ≥2kn）—— 停在漁場上的救助船
+    旁邊永遠圍著一圈漁船，那是同一片漁場，不是伴航
+  - 伴航船在共存期間位移 ≥20km —— 真的跟著走了一段，不是錯身而過
+  - ≥6 個共存快照、持續 ≥6h；斷訊 ≤72h 視為同一段（伴航中關 AIS 正是要抓的）
+  - 2026-08 整月 tier-1 實測：只有 07902 成案（對向陽紅03 與海警2504）
+
 輸出 data/gov_formations.json，由 analyze_suspicious.py 讀取計分
 （高威脅指標，**不受船型乘數影響** — 科研船的 ×0.5 會把編隊訊號抹平）。
 ================================================================================
@@ -52,6 +64,18 @@ MAX_CENTROID_POINTS = 120           # 中心軌跡輸出上限（避免 JSON 膨
 # 幾乎不動 → 是碼頭或錨地，不是海上編隊作業。
 FORMATION_MIN_DISPLACEMENT_KM = 2.0   # 中心點位移上限（低於此且低速即抑制）
 FORMATION_BERTH_MAX_KNOTS = 1.0       # 成員速度中位數低於此視為停泊
+
+# ── 伴航船（非公務船跟著公務船移動）────────────────────
+COMPANION_RADIUS_KM = 10.0           # 與公務船距離 ≤10km 才算共存
+COMPANION_MIN_OBS = 6                # 至少 6 個共存快照
+COMPANION_MIN_DURATION_HOURS = 6.0   # 首末共存點相距 ≥6h
+COMPANION_MAX_GAP_HOURS = 72.0       # 共存點間隔 ≤72h 視為同一段 — 07902 兩度
+                                     # 關 AIS ~57h，6h 的編隊斷點會把它切碎
+COMPANION_MIN_TRAVEL_KM = 20.0       # 伴航船共存期間最大位移
+COMPANION_MIN_SPEED_KN = 2.0         # 兩船共存點速度中位數下限（排除漁場/錨地）
+COMPANION_DARK_GAP_HOURS = 18.0      # 伴航段內自身 AIS 消失 >18h → 伴航中斷訊
+                                     # （與 analyze_suspicious.GOING_DARK_GAP_HOURS 一致）
+MAX_COMPANION_TRACK_POINTS = 60
 
 # 公務/科研船類別（與 fetch_ais_data.classify_gov_vessel 一致）
 GOV_CATEGORIES = ('coastguard', 'msa', 'rescue', 'research')
@@ -167,6 +191,196 @@ def load_gov_snapshots(track_data, exclude_ports=True):
     if in_port_skipped:
         print(f"⚓ 港內公務船觀測點排除: {in_port_skipped}")
     return snapshots
+
+
+def load_companion_snapshots(track_data, exclude_ports=True):
+    """tier-1 航跡歷史 → [(datetime, [公務船], [其他船]), ...]，依時間排序。
+
+    港內的公務船不收；港內的其他船標 `in_port`、不參與配對（理由同
+    load_gov_snapshots），但仍保留 —— 伴航中斷訊要看的是「這艘船有沒有
+    被 AIS 看到」，靠港時看得到就不算關 AIS。沒有公務船的快照也保留，
+    否則會被誤算成斷訊。「其他船」不排除無效
+    MMSI —— 偽造身分的船正是要找的對象；漁網信標速度 0，會被速度門檻擋掉。
+    """
+    snapshots = []
+    for entry in track_data or []:
+        ts = parse_ts(entry.get('timestamp'))
+        if ts is None:
+            continue
+        govs, others = [], []
+        for v in entry.get('vessels', []):
+            lat, lon = v.get('lat'), v.get('lon')
+            if lat is None or lon is None or not v.get('mmsi'):
+                continue
+            in_port = exclude_ports and geofence.is_in_port_cached(lat, lon)
+            rec = {
+                'mmsi': str(v['mmsi']),
+                'name': v.get('name') or '',
+                'lat': lat,
+                'lon': lon,
+                'speed': v.get('speed') or 0,
+            }
+            cat = gov_category(v)
+            if cat:
+                if not in_port:
+                    rec['category'] = cat
+                    govs.append(rec)
+            else:
+                rec['type_name'] = v.get('type_name') or 'unknown'
+                rec['in_port'] = in_port
+                others.append(rec)
+        snapshots.append((ts, govs, others))
+    snapshots.sort(key=lambda x: x[0])
+    return snapshots
+
+
+def _median(values):
+    vals = sorted(values) or [0]
+    return vals[len(vals) // 2]
+
+
+def track_companions(snapshots,
+                     radius_km=COMPANION_RADIUS_KM,
+                     min_obs=COMPANION_MIN_OBS,
+                     min_duration_hours=COMPANION_MIN_DURATION_HOURS,
+                     max_gap_hours=COMPANION_MAX_GAP_HOURS):
+    """找出跟著公務船移動的非公務船（伴航船）。
+
+    以 (伴航船, 公務船) 為單位收集「同一快照距離 ≤radius_km」的共存點，
+    間隔 ≤max_gap_hours 串成一段，再套位移/速度/次數門檻。
+    回傳: [companion episode dict, ...]（依 last_seen 由新到舊）
+    """
+    pairs = {}
+    seen = {}   # 伴航候選船的全部觀測時戳（算伴航中斷訊）
+    # 緯度 0.1° ≈ 11km；經度在 20-30°N 間 0.12° ≈ 11-12.5km —— 先用經緯度
+    # 方框剔除，再算 haversine
+    dlat = radius_km / 111.0 + 0.01
+    dlon = radius_km / 96.0 + 0.01
+    for ts, govs, others in snapshots:
+        for o in others:
+            seen.setdefault(o['mmsi'], []).append(ts)
+            if o['in_port']:
+                continue
+            for g in govs:
+                if (abs(g['lat'] - o['lat']) > dlat
+                        or abs(g['lon'] - o['lon']) > dlon):
+                    continue
+                d = haversine_km(g['lat'], g['lon'], o['lat'], o['lon'])
+                if d <= radius_km:
+                    pairs.setdefault((o['mmsi'], g['mmsi']), []).append(
+                        (ts, d, o, g))
+
+    results = []
+    for (o_mmsi, g_mmsi), obs in pairs.items():
+        obs.sort(key=lambda x: x[0])
+        episode = [obs[0]]
+        for x in obs[1:]:
+            if (x[0] - episode[-1][0]).total_seconds() / 3600 > max_gap_hours:
+                results.append(episode)
+                episode = [x]
+            else:
+                episode.append(x)
+        results.append(episode)
+
+    companions = []
+    for episode in results:
+        if len(episode) < min_obs:
+            continue
+        hours = (episode[-1][0] - episode[0][0]).total_seconds() / 3600
+        if hours < min_duration_hours:
+            continue
+        o_speed = _median([x[2]['speed'] for x in episode])
+        g_speed = _median([x[3]['speed'] for x in episode])
+        if o_speed < COMPANION_MIN_SPEED_KN or g_speed < COMPANION_MIN_SPEED_KN:
+            continue
+        first = episode[0][2]
+        travel = max(haversine_km(first['lat'], first['lon'], x[2]['lat'], x[2]['lon'])
+                     for x in episode)
+        if travel < COMPANION_MIN_TRAVEL_KM:
+            continue
+        companions.append(_finalize_companion(
+            episode, hours, travel, o_speed, g_speed,
+            seen.get(episode[0][2]['mmsi'], [])))
+    companions.sort(key=lambda c: c['last_seen'], reverse=True)
+    return companions
+
+
+def _dark_gaps(times, start, end, min_hours=COMPANION_DARK_GAP_HOURS):
+    """伴航段 [start, end] 內，該船自身觀測間隔 >min_hours 的區段。"""
+    inside = sorted(t for t in times if start <= t <= end)
+    gaps = []
+    for a, b in zip(inside, inside[1:]):
+        h = (b - a).total_seconds() / 3600
+        if h > min_hours:
+            gaps.append({'start': a.isoformat(), 'end': b.isoformat(),
+                         'hours': round(h, 1)})
+    return gaps
+
+
+def _finalize_companion(episode, hours, travel, o_speed, g_speed, seen_times):
+    comp, anchor = episode[-1][2], episode[-1][3]
+    first_ts, last_ts = episode[0][0], episode[-1][0]
+    gaps = _dark_gaps(seen_times, first_ts, last_ts)
+    track = [{'t': ts.isoformat(), 'lat': o['lat'], 'lon': o['lon'],
+              'dist_km': round(d, 1)} for ts, d, o, _ in episode]
+    if len(track) > MAX_COMPANION_TRACK_POINTS:
+        step = len(track) / MAX_COMPANION_TRACK_POINTS
+        track = [track[int(i * step)] for i in range(MAX_COMPANION_TRACK_POINTS)] \
+            + [track[-1]]
+    dists = [d for _, d, _, _ in episode]
+    return {
+        'id': f"GC-{first_ts.strftime('%Y%m%dT%H%M')}-{comp['mmsi']}-{anchor['mmsi']}",
+        'mmsi': comp['mmsi'],
+        'name': comp['name'],
+        'type_name': comp.get('type_name', 'unknown'),
+        'anchor_mmsi': anchor['mmsi'],
+        'anchor_name': anchor['name'],
+        'anchor_category': anchor['category'],
+        'first_seen': first_ts.isoformat(),
+        'last_seen': last_ts.isoformat(),
+        'duration_hours': round(hours, 1),
+        'observations': len(episode),
+        'min_distance_km': round(min(dists), 1),
+        'median_distance_km': round(_median(dists), 1),
+        'travel_km': round(travel, 1),
+        'median_speed_kn': round(o_speed, 1),
+        'anchor_median_speed_kn': round(g_speed, 1),
+        'dark_gaps': gaps,
+        'max_dark_gap_hours': max((g['hours'] for g in gaps), default=0.0),
+        'track': track,
+        'last_lat': comp['lat'],
+        'last_lon': comp['lon'],
+    }
+
+
+def build_companion_index(companions):
+    """{mmsi: {count, anchors, max_duration_hours, max_observations,
+    max_dark_gap_hours, research_anchor, ids}} — 供 analyze_suspicious 計分。"""
+    idx = {}
+    for c in companions:
+        rec = idx.setdefault(c['mmsi'], {
+            'count': 0,
+            'anchors': [],
+            'max_duration_hours': 0.0,
+            'max_observations': 0,
+            'max_travel_km': 0.0,
+            'max_dark_gap_hours': 0.0,
+            'research_anchor': False,
+            'companion_ids': [],
+        })
+        rec['count'] += 1
+        if not any(a['mmsi'] == c['anchor_mmsi'] for a in rec['anchors']):
+            rec['anchors'].append({'mmsi': c['anchor_mmsi'],
+                                   'name': c['anchor_name'],
+                                   'category': c['anchor_category']})
+        rec['max_duration_hours'] = max(rec['max_duration_hours'], c['duration_hours'])
+        rec['max_observations'] = max(rec['max_observations'], c['observations'])
+        rec['max_travel_km'] = max(rec['max_travel_km'], c['travel_km'])
+        rec['max_dark_gap_hours'] = max(rec['max_dark_gap_hours'],
+                                        c['max_dark_gap_hours'])
+        rec['research_anchor'] |= c['anchor_category'] == 'research'
+        rec['companion_ids'].append(c['id'])
+    return idx
 
 
 def _new_formation(ts, group):
@@ -398,6 +612,10 @@ def main():
     active, history = split_active(formations)
     mmsi_index = build_mmsi_index(formations)
 
+    companions = track_companions(load_companion_snapshots(track_data))
+    companion_index = build_companion_index(companions)
+    active_companions, _ = split_active(companions)
+
     escorted = [f for f in formations if f['escorted_research']]
     output = {
         'updated_at': datetime.now(timezone.utc).isoformat(),
@@ -410,6 +628,13 @@ def main():
             'formation_active_hours': FORMATION_ACTIVE_HOURS,
             'gov_categories': list(GOV_CATEGORIES),
             'escort_categories': list(ESCORT_CATEGORIES),
+            'companion_radius_km': COMPANION_RADIUS_KM,
+            'companion_min_obs': COMPANION_MIN_OBS,
+            'companion_min_duration_hours': COMPANION_MIN_DURATION_HOURS,
+            'companion_max_gap_hours': COMPANION_MAX_GAP_HOURS,
+            'companion_min_travel_km': COMPANION_MIN_TRAVEL_KM,
+            'companion_min_speed_kn': COMPANION_MIN_SPEED_KN,
+            'companion_dark_gap_hours': COMPANION_DARK_GAP_HOURS,
         },
         'summary': {
             'total_formations': len(formations),
@@ -417,10 +642,16 @@ def main():
             'escorted_research': len(escorted),
             'vessels_involved': len(mmsi_index),
             'severity_distribution': _severity_counts(formations),
+            'companions': len(companions),
+            'active_companions': len(active_companions),
+            'companion_vessels': len(companion_index),
         },
         'active_formations': active,
         'history': history[:50],
         'vessel_index': mmsi_index,
+        'active_companions': active_companions,
+        'companions': companions[:50],
+        'companion_index': companion_index,
     }
     atomic_write_json(OUTPUT_FILE, output)
 
@@ -434,6 +665,12 @@ def main():
             f"{m['name'] or m['mmsi']}({m['category']})" for m in f['members'][:4])
         print(f"   • [{f['severity']}] {names} — {f['duration_hours']}h "
               f"@ {f['last_lat']:.3f},{f['last_lon']:.3f}")
+    print(f"   伴航船（非公務船跟隨公務船）: {len(companion_index)} 艘 / {len(companions)} 段")
+    for c in companions[:5]:
+        dark = f"，斷訊 {c['max_dark_gap_hours']}h" if c['dark_gaps'] else ''
+        print(f"   • {c['name'] or c['mmsi']}({c['mmsi']}) 跟隨 "
+              f"{c['anchor_name'] or c['anchor_mmsi']} — {c['observations']} 點 / "
+              f"{c['duration_hours']}h / 位移 {c['travel_km']}km{dark}")
     print(f"\n📁 結果已輸出至: {OUTPUT_FILE}")
 
 

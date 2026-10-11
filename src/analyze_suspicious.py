@@ -163,6 +163,25 @@ GOV_FORMATION_ESCORT_SCORE = 6       # 護航科考（科研 + 海警/海巡同�
 # 會系統性低估。上調至 1.0（不放大、只是不再打折）。
 GOV_INTENT_MULTIPLIER_FLOOR = 1.0
 
+# ── 伴航船（detect_gov_formation.track_companions 的輸出）──────────
+# 非公務船跟著公務船移動（2026-08 閩福鼎漁07902 跟隨向陽紅03 四天）。
+# 伴航船多半是漁船，×0.2 會把訊號抹平，因此同屬高威脅指標、不乘船型係數。
+GOV_COMPANION_SCORE = 5              # 伴航公務船（≥6 快照、位移 ≥20km）
+GOV_COMPANION_RESEARCH_SCORE = 6     # 伴航科研船（同編隊的「護航科考」6 vs 4）
+GOV_COMPANION_DARK_SCORE = 2         # 伴航期間自身關 AIS >18h（加在上面之外）
+
+# ── 同名分身（同一船名出現在多個 MMSI）────────────────────────
+# 07902 在航港局 AIS 是 412450186，另一來源卻是 400449914（MID 400 未指配）。
+# 無效 MMSI 原本整艘被 mmsi_unassigned_mid / mmsi_malformed 排除，偽造身分
+# 等於直接消失。安全閥：無效 MMSI 只要與有效 MMSI 同名、或本身就是伴航船，
+# 就不排除、照常分析，並以「身分分身」計分。
+IDENTITY_ALIAS_SCORE = 2             # 無效 MMSI 冒用有效船的船名
+ALIAS_OVERRIDABLE_RULES = ('mmsi_malformed', 'mmsi_unassigned_mid')
+# 建立船名索引時略過的信標類規則 — 漁網信標常沿用母船船名
+ALIAS_BEACON_RULES = ('mmsi_9xx', 'mmsi_898', 'name_percent', 'name_buoy',
+                      'name_voltage_suffix', 'name_digit_percent_suffix')
+ALIAS_MIN_NAME_LEN = 6               # 正規化後船名至少 6 碼，且需同時含字母與數字
+
 # ── 船型威脅乘數 ──────────────────────────────────────────
 # 商船（cargo/tanker/lng）錨鍊長、噸位大，對海纜威脅高 → ×1.0
 # 漁船常態作業、體積小、危險性低 → ×0.2
@@ -360,6 +379,55 @@ def check_exclusion_rules(mmsi, names):
                 print(f"⚠️ 排除規則 {rule['id']} 檢查失敗: {e}")
             continue
     return len(matched) > 0, matched
+
+
+def normalize_ship_name(name):
+    """船名正規化：大寫、去掉空白與標點（'MIN FU DING YU 07902' ==
+    'MINFUDINGYU-07902' == 'MINFUDINGYU07902'）。"""
+    return re.sub(r'[^A-Z0-9]', '', str(name or '').upper())
+
+
+def is_invalid_mmsi(mmsi):
+    return is_malformed_mmsi(mmsi) or has_unassigned_mid(mmsi)
+
+
+def build_name_alias_index(names_by_mmsi):
+    """船名 → 多個 MMSI 的分身索引。
+
+    names_by_mmsi: {mmsi: [船名, ...]}
+    回傳: {mmsi: {'names': [正規化船名], 'aliases': [{'mmsi', 'invalid'}]}}，
+    只含至少有一個同名 MMSI 的船。
+
+    略過漁網信標（沿用母船船名，例 MINFUDINGYU01498-40）；船名需 ≥6 碼且同時
+    含字母與數字 —— 中國漁船船名都帶船號，純字母或純數字船名撞名太常見。
+    """
+    by_name = {}
+    for mmsi, names in names_by_mmsi.items():
+        names = [n for n in (names or []) if n]
+        _, rules = check_exclusion_rules(mmsi, names)
+        if any(r['id'] in ALIAS_BEACON_RULES for r in rules):
+            continue
+        for n in names:
+            key = normalize_ship_name(n)
+            if (len(key) >= ALIAS_MIN_NAME_LEN and re.search(r'[A-Z]', key)
+                    and re.search(r'\d', key)):
+                by_name.setdefault(key, set()).add(mmsi)
+
+    idx = {}
+    for key, mmsis in by_name.items():
+        if len(mmsis) < 2:
+            continue
+        for m in mmsis:
+            rec = idx.setdefault(m, {'names': [], 'aliases': {}})
+            rec['names'].append(key)
+            for other in mmsis - {m}:
+                rec['aliases'][other] = is_invalid_mmsi(other)
+    return {
+        m: {'names': sorted(r['names']),
+            'aliases': [{'mmsi': o, 'invalid': inv}
+                        for o, inv in sorted(r['aliases'].items())]}
+        for m, r in idx.items()
+    }
 
 
 # ── 台灣周邊 200m 等深線近似座標 ─────────────────────────
@@ -1581,6 +1649,22 @@ def load_gov_formations():
     return idx
 
 
+def load_gov_companions():
+    """載入 gov_formations.json 的 companion_index → {mmsi: {...}}。
+    舊版檔案沒有這個欄位 → 回傳空 dict，伴航計分自動略過。"""
+    if not GOV_FORMATIONS_FILE.exists():
+        return {}
+    try:
+        with open(GOV_FORMATIONS_FILE, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, IOError):
+        return {}
+    idx = data.get('companion_index', {}) or {}
+    dark = sum(1 for v in idx.values() if v.get('max_dark_gap_hours', 0) > 0)
+    print(f"🚤 伴航船: {len(idx)} 艘（{dark} 艘伴航中斷訊）")
+    return idx
+
+
 def load_itu_mars_cache():
     """
     載入 ITU MARS 快取資料（由 lookup_itu_mars.py 建立）。
@@ -1749,12 +1833,13 @@ def annotate_port_points(track_points):
 
 def classify_vessel(profile, track_points, identity_events=None,
                      sanctions_match=None, mars_record=None,
-                     sts_record=None, formation_record=None):
+                     sts_record=None, formation_record=None,
+                     companion_record=None, alias_record=None):
     """
     綜合分類單一船隻的可疑程度
     標準：海纜鄰近 + Z字型 + 200m等深線 + AIS變更 + UN制裁
           + AIS偽訊號 + ITU MARS 登記比對 + STS旁靠
-          + 割草式測線 + 公務船編隊
+          + 割草式測線 + 公務船編隊 + 伴航船 + 同名分身
     分數依船型乘數調整：商船 ×1.0、漁船 ×0.2、其他 ×0.5
     """
     mmsi = profile['mmsi']
@@ -1791,6 +1876,8 @@ def classify_vessel(profile, track_points, identity_events=None,
         'itu_mars_mismatch': False,
         'survey_pattern': False,
         'gov_formation': False,
+        'gov_companion': False,
+        'identity_alias': False,
         'ais_anomalies': [],
         'risk_level': 'normal',
         'flags': [],
@@ -1800,6 +1887,14 @@ def classify_vessel(profile, track_points, identity_events=None,
     # 提前檢查，避免對非船舶設備執行昂貴分析
     all_names = profile.get('names_seen', [])
     excluded, matched_rules = check_exclusion_rules(mmsi, all_names)
+    # 安全閥：只因 MMSI 無效而被排除的船，若與有效 MMSI 同名或本身是伴航船，
+    # 照常分析 —— 偽造身分的船不能因為身分是假的就消失
+    has_valid_alias = bool(alias_record) and any(
+        not a['invalid'] for a in alias_record.get('aliases', []))
+    if (excluded and (has_valid_alias or companion_record)
+            and all(r['id'] in ALIAS_OVERRIDABLE_RULES for r in matched_rules)):
+        excluded = False
+        classification['exclusion_overridden'] = matched_rules
     classification['excluded'] = excluded
     if excluded:
         if matched_rules:
@@ -1821,9 +1916,9 @@ def classify_vessel(profile, track_points, identity_events=None,
     # ── 台灣船隻排除（非監測對象；本監測針對大陸灰色地帶活動）──
     # 1. 船旗國為台灣：MMSI MID 416 開頭
     # 2. 停泊台灣港內：最後位置位於台灣港（geofence.PORTS；大陸港不觸發）
-    # 安全閥：有身分變更事件或命中 UN 制裁名單者不排除、照常分析 —
+    # 安全閥：有身分變更事件、命中 UN 制裁名單或是伴航船者不排除、照常分析 —
     # 防止大陸船偽冒台灣 MMSI 躲過偵測（實務上有案例）。
-    if not identity_events and not sanctions_match:
+    if not identity_events and not sanctions_match and not companion_record:
         tw_rules = []
         if mmsi.startswith('416'):
             tw_rules.append({'id': 'flag_taiwan',
@@ -2043,6 +2138,36 @@ def classify_vessel(profile, track_points, identity_events=None,
             classification['flags'].append(
                 f'公務船編隊：{formation_record.get("count", 1)} 次，最長 {hrs}h')
 
+    # ── Criterion 13: 伴航船（跟著公務船移動的非公務船）──
+    if companion_record:
+        classification['gov_companion'] = True
+        classification['gov_companion_details'] = companion_record
+        # 船名是未驗證的 AIS 廣播字串，前端以 innerHTML 呈現 flags → 去掉標記字元
+        anchors = '、'.join(re.sub(r'[<>&"\']', '', a.get('name') or a.get('mmsi') or '')
+                           for a in companion_record.get('anchors', [])[:3])
+        dark = companion_record.get('max_dark_gap_hours', 0)
+        dark_txt = f'，伴航中關 AIS {dark}h' if dark else ''
+        classification['flags'].append(
+            f'🚤 伴航公務船：跟隨 {anchors} '
+            f'{companion_record.get("max_observations", 0)} 個快照 / '
+            f'{companion_record.get("max_duration_hours", 0)}h，'
+            f'位移 {companion_record.get("max_travel_km", 0)}km{dark_txt}')
+
+    # ── Criterion 14: 同名分身（同一船名出現在多個 MMSI）──
+    if alias_record and alias_record.get('aliases'):
+        aliases = alias_record['aliases']
+        classification['name_aliases'] = aliases
+        others = '、'.join(a['mmsi'] + ('(無效)' if a['invalid'] else '')
+                          for a in aliases[:4])
+        if is_invalid_mmsi(mmsi) and has_valid_alias:
+            # 無效 MMSI 冒用有效船名 → 計分；有效那一側只標註、不加分
+            classification['identity_alias'] = True
+            classification['flags'].append(
+                f'🪪 身分分身：無效 MMSI 與 {others} 同名'
+                f'（{"、".join(alias_record["names"][:2])}）')
+        else:
+            classification['flags'].append(f'同名 MMSI：{others}')
+
     # ── 離岸長期徘徊（商船，獨立於海纜）──
     classification['offshore_loitering'] = False
     if track_points:
@@ -2188,6 +2313,18 @@ def classify_vessel(profile, track_points, identity_events=None,
                   if formation_record.get('escorted_research')
                   else GOV_FORMATION_SCORE)
 
+    # ── 伴航船（不受船型乘數影響）──
+    if classification['gov_companion']:
+        score += (GOV_COMPANION_RESEARCH_SCORE
+                  if companion_record.get('research_anchor')
+                  else GOV_COMPANION_SCORE)
+        if companion_record.get('max_dark_gap_hours', 0) > 0:
+            score += GOV_COMPANION_DARK_SCORE
+
+    # ── 同名分身（不受船型乘數影響）──
+    if classification['identity_alias']:
+        score += IDENTITY_ALIAS_SCORE
+
     # 四捨五入為整數
     score = round(score)
 
@@ -2286,6 +2423,7 @@ def main():
 
     # 載入公務船編隊事件
     formation_map = load_gov_formations()
+    companion_map = load_gov_companions()
 
     # 載入航跡歷史（用於海纜鄰近、Z字型、等深線分析）
     tracks = load_track_history()
@@ -2301,6 +2439,18 @@ def main():
         if is_recently_active(profiles.get(m, {}), m in tracks, now)
     }
     stale_skipped = len(all_mmsi) - len(active_mmsi)
+
+    # 船名 → MMSI 分身索引（profile 船名 + 航跡點船名；profile 冷啟動時可能為空）
+    names_by_mmsi = {}
+    for m in active_mmsi:
+        names = set(profiles.get(m, {}).get('names_seen', []) or [])
+        names.update(p.get('name') for p in tracks.get(m, []) if p.get('name'))
+        names_by_mmsi[m] = sorted(names)
+    alias_map = build_name_alias_index(names_by_mmsi)
+    invalid_alias = sum(1 for m, r in alias_map.items()
+                        if is_invalid_mmsi(m)
+                        and any(not a['invalid'] for a in r['aliases']))
+    print(f"🪪 同名分身: {len(alias_map)} 艘與他船同名（{invalid_alias} 艘為無效 MMSI 冒名）")
     print(f"\n📊 分析 {len(active_mmsi)} 艘活躍船隻"
           f"（跳過 {stale_skipped} 艘 >{ANALYSIS_ACTIVE_DAYS} 天未見）...")
 
@@ -2346,7 +2496,9 @@ def main():
                                  sanctions_match=sanction_hit,
                                  mars_record=mars_rec,
                                  sts_record=sts_rec,
-                                 formation_record=formation_rec)
+                                 formation_record=formation_rec,
+                                 companion_record=companion_map.get(mmsi),
+                                 alias_record=alias_map.get(mmsi))
         if result.get('excluded'):
             excluded_vessels.append(result)
         else:
@@ -2392,6 +2544,9 @@ def main():
     survey_type_counts = {}
     gov_formation_count = 0
     gov_formation_escort_count = 0
+    gov_companion_count = 0
+    identity_alias_count = 0
+    exclusion_overridden_count = 0
     zone_counts = {}
     cable_band_counts = {}
     cable_buffer_1km_count = 0
@@ -2444,6 +2599,12 @@ def main():
             gov_formation_count += 1
             if c.get('gov_formation_details', {}).get('escorted_research'):
                 gov_formation_escort_count += 1
+        if c.get('gov_companion'):
+            gov_companion_count += 1
+        if c.get('identity_alias'):
+            identity_alias_count += 1
+        if c.get('exclusion_overridden'):
+            exclusion_overridden_count += 1
 
     output = {
         'updated_at': datetime.now(timezone.utc).isoformat(),
@@ -2491,6 +2652,10 @@ def main():
             'survey_excludes_fishing_by_name': True,
             'gov_formation_score': GOV_FORMATION_SCORE,
             'gov_formation_escort_score': GOV_FORMATION_ESCORT_SCORE,
+            'gov_companion_score': GOV_COMPANION_SCORE,
+            'gov_companion_research_score': GOV_COMPANION_RESEARCH_SCORE,
+            'gov_companion_dark_score': GOV_COMPANION_DARK_SCORE,
+            'identity_alias_score': IDENTITY_ALIAS_SCORE,
             'gov_intent_multiplier_floor': GOV_INTENT_MULTIPLIER_FLOOR,
             'cable_buffer_1km_score': CABLE_BUFFER_1KM_SCORE,
             'cable_buffer_jurisdiction_score': CABLE_BUFFER_JURISDICTION_SCORE,
@@ -2530,6 +2695,9 @@ def main():
             'survey_pattern_types': survey_type_counts,
             'gov_formation': gov_formation_count,
             'gov_formation_escorted_research': gov_formation_escort_count,
+            'gov_companion': gov_companion_count,
+            'identity_alias': identity_alias_count,
+            'exclusion_overridden': exclusion_overridden_count,
             'cable_buffer_1km': cable_buffer_1km_count,
             'cable_buffer_jurisdiction': cable_buffer_jur_count,
             'risk_distribution': risk_counts,
@@ -2575,6 +2743,8 @@ def main():
     print(f"   割草式測線: {survey_pattern_count} {survey_type_counts}")
     print(f"   公務船編隊: {gov_formation_count} "
           f"(護航科考 {gov_formation_escort_count})")
+    print(f"   伴航船: {gov_companion_count}　同名分身: {identity_alias_count}"
+          f"（排除安全閥放行 {exclusion_overridden_count}）")
     print(f"   風險分布: {risk_counts}")
     print(f"\n📁 結果已輸出至: {OUTPUT_FILE}")
 
