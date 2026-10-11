@@ -614,6 +614,7 @@ def main():
 
     companions = track_companions(load_companion_snapshots(track_data))
     companion_index = build_companion_index(companions)
+    active_companions, _ = split_active(companions)
 
     escorted = [f for f in formations if f['escorted_research']]
     output = {
@@ -642,11 +643,13 @@ def main():
             'vessels_involved': len(mmsi_index),
             'severity_distribution': _severity_counts(formations),
             'companions': len(companions),
+            'active_companions': len(active_companions),
             'companion_vessels': len(companion_index),
         },
         'active_formations': active,
         'history': history[:50],
         'vessel_index': mmsi_index,
+        'active_companions': active_companions,
         'companions': companions[:50],
         'companion_index': companion_index,
     }

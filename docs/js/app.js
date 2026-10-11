@@ -500,12 +500,29 @@ const App = (function () {
         return Math.round(hours / 24) + (t('unit.day') === 'unit.day' ? 'd' : t('unit.day'));
     }
 
-    /** 進行中的公務船編隊橫幅（護航科考優先） */
+    /** 進行中的公務船編隊橫幅（護航科考優先）＋ 伴航船（非公務船跟著公務船） */
     function formationBannerHtml() {
         const t = typeof i18n !== 'undefined' ? i18n.t.bind(i18n) : k => k;
         const active = (govFormationsData && govFormationsData.active_formations) || [];
-        if (!active.length) return '';
-        return active.slice(0, 3).map((f) => {
+        const companions = (govFormationsData && govFormationsData.active_companions) || [];
+        const companionHtml = companions.slice(0, 3).map((c) => {
+            const dark = c.max_dark_gap_hours > 0
+                ? ' · ' + t('idx.gov_companion_dark', Math.round(c.max_dark_gap_hours))
+                : '';
+            return '<div class="gov-formation sev-high" ' +
+                'onclick="App.focusSuspicious(' + Number(c.last_lat) + ', ' +
+                    Number(c.last_lon) + ')">' +
+                '<span class="gov-formation-title">' + t('idx.gov_companion') + '</span>' +
+                '<span class="gov-formation-desc">' +
+                    escapeHtml(String(c.name || c.mmsi).substring(0, 16)) + ' → ' +
+                    escapeHtml(String(c.anchor_name || c.anchor_mmsi).substring(0, 16)) +
+                    ' · ' + t('idx.gov_companion_desc', c.observations, c.duration_hours) +
+                    dark +
+                '</span>' +
+            '</div>';
+        }).join('');
+        if (!active.length) return companionHtml;
+        return companionHtml + active.slice(0, 3).map((f) => {
             const label = f.escorted_research
                 ? t('idx.gov_formation_escort')
                 : t('idx.gov_formation');

@@ -2142,7 +2142,8 @@ def classify_vessel(profile, track_points, identity_events=None,
     if companion_record:
         classification['gov_companion'] = True
         classification['gov_companion_details'] = companion_record
-        anchors = '、'.join(a.get('name') or a.get('mmsi')
+        # 船名是未驗證的 AIS 廣播字串，前端以 innerHTML 呈現 flags → 去掉標記字元
+        anchors = '、'.join(re.sub(r'[<>&"\']', '', a.get('name') or a.get('mmsi') or '')
                            for a in companion_record.get('anchors', [])[:3])
         dark = companion_record.get('max_dark_gap_hours', 0)
         dark_txt = f'，伴航中關 AIS {dark}h' if dark else ''
