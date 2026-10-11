@@ -836,3 +836,105 @@ def test_profile_names_win_over_track_names():
                'types_seen': ['cargo'], 'total_snapshots': 3}
     result = asus.classify_vessel(profile, pts)
     assert result['names'] == ['PROFILE NAME']
+
+
+# =========================================================================
+# 伴航船 + 同名分身（2026-08 閩福鼎漁07902 事件）
+# =========================================================================
+
+COMPANION_REC = {
+    'count': 1,
+    'anchors': [{'mmsi': '413701510', 'name': 'XIANG YANG HONG 03',
+                 'category': 'research'}],
+    'max_duration_hours': 93.7, 'max_observations': 16,
+    'max_travel_km': 396.9, 'max_dark_gap_hours': 56.9,
+    'research_anchor': True, 'companion_ids': ['GC-x'],
+}
+
+
+def _fishing_profile(mmsi, name='MINFUDINGYU07902'):
+    return {'mmsi': mmsi, 'names_seen': [name],
+            'types_seen': ['fishing'], 'total_snapshots': 5}
+
+
+def test_companion_scores_unmultiplied_with_dark_bonus():
+    """漁船的 ×0.2 不能把伴航訊號抹掉。"""
+    base = asus.classify_vessel(_fishing_profile('412450186'), [])
+    result = asus.classify_vessel(_fishing_profile('412450186'), [],
+                                  companion_record=COMPANION_REC)
+    assert result['gov_companion'] is True
+    assert (result['risk_score'] - base['risk_score']
+            == asus.GOV_COMPANION_RESEARCH_SCORE + asus.GOV_COMPANION_DARK_SCORE)
+    assert any('伴航' in f for f in result['flags'])
+
+
+def test_companion_without_dark_gap_gets_base_score_only():
+    rec = dict(COMPANION_REC, max_dark_gap_hours=0.0, research_anchor=False)
+    base = asus.classify_vessel(_fishing_profile('412450186'), [])
+    result = asus.classify_vessel(_fishing_profile('412450186'), [],
+                                  companion_record=rec)
+    assert result['risk_score'] - base['risk_score'] == asus.GOV_COMPANION_SCORE
+
+
+def test_name_alias_index_normalizes_and_skips_beacons():
+    idx = asus.build_name_alias_index({
+        '412450186': ['MINFUDINGYU07902'],
+        '400449914': ['MIN FU DING YU 07902'],
+        '901498040': ['MINFUDINGYU07902'],          # 漁網信標沿用母船名
+        '412000001': ['ZHONGHUAN'],                 # 無船號，不建索引
+        '412000002': ['ZHONGHUAN'],
+    })
+    assert set(idx) == {'412450186', '400449914'}
+    assert idx['412450186']['aliases'] == [{'mmsi': '400449914', 'invalid': True}]
+    assert idx['400449914']['aliases'] == [{'mmsi': '412450186', 'invalid': False}]
+
+
+def test_invalid_mid_with_valid_alias_is_analyzed_not_excluded():
+    """400 開頭（MID 未指配）原本整艘被排除；與有效船同名 → 照常分析並計分。"""
+    profile = _fishing_profile('400449914', 'MIN FU DING YU 07902')
+    excluded = asus.classify_vessel(profile, [])
+    assert excluded['excluded'] is True
+
+    alias = {'names': ['MINFUDINGYU07902'],
+             'aliases': [{'mmsi': '412450186', 'invalid': False}]}
+    result = asus.classify_vessel(profile, [], alias_record=alias)
+    assert result['excluded'] is False
+    assert [r['id'] for r in result['exclusion_overridden']] == ['mmsi_unassigned_mid']
+    assert result['identity_alias'] is True
+    assert result['risk_score'] >= asus.IDENTITY_ALIAS_SCORE
+
+
+def test_invalid_mid_companion_is_analyzed_not_excluded():
+    profile = _fishing_profile('400449914', 'MIN FU DING YU 07902')
+    result = asus.classify_vessel(profile, [], companion_record=COMPANION_REC)
+    assert result['excluded'] is False
+    assert result['gov_companion'] is True
+
+
+def test_alias_does_not_rescue_beacons():
+    """信標類排除（9 開頭等）不在安全閥範圍內。"""
+    profile = _fishing_profile('901498040', 'MINFUDINGYU07902')
+    alias = {'names': ['MINFUDINGYU07902'],
+             'aliases': [{'mmsi': '412450186', 'invalid': False}]}
+    result = asus.classify_vessel(profile, [], alias_record=alias,
+                                  companion_record=COMPANION_REC)
+    assert result['excluded'] is True
+
+
+def test_valid_side_of_alias_is_flagged_but_not_scored():
+    alias = {'names': ['MINFUDINGYU07902'],
+             'aliases': [{'mmsi': '400449914', 'invalid': True}]}
+    base = asus.classify_vessel(_fishing_profile('412450186'), [])
+    result = asus.classify_vessel(_fishing_profile('412450186'), [],
+                                  alias_record=alias)
+    assert result['identity_alias'] is False
+    assert result['name_aliases'] == alias['aliases']
+    assert result['risk_score'] == base['risk_score']
+
+
+def test_companion_bypasses_taiwan_flag_exclusion():
+    """偽冒 416 的船若在伴航公務船，不能被台灣船排除規則放過。"""
+    profile = _fishing_profile('416999999')
+    assert asus.classify_vessel(profile, [])['excluded'] is True
+    result = asus.classify_vessel(profile, [], companion_record=COMPANION_REC)
+    assert result['excluded'] is False

@@ -174,3 +174,111 @@ def test_cluster_by_distance_respects_spread_cap():
         for i in range(12)   # 跨度 ~66km
     ]
     assert gf.cluster_by_distance(chain) == []
+
+
+# ── 伴航船（非公務船跟著公務船移動）────────────────────────────
+# 2026-08-12~16 閩福鼎漁07902 跟隨向陽紅03 的實例：漁船 3-9km 外同步移動，
+# 中間關 AIS ~57h。下面以合成資料重現其幾何，並確認三種常見誤報不成案。
+
+def _fish(mmsi, lat, lon, speed=8.0, name="MINFUDINGYU07902"):
+    return {"mmsi": mmsi, "name": name, "type_name": "fishing",
+            "lat": lat, "lon": lon, "speed": speed}
+
+
+def _follow_track(n, step=2, drift=0.1, offset=0.05, start=0,
+                  anchor_speed=8.0, fish_speed=8.0, fish=True):
+    """科研船每 step 小時東移 drift°（≈10km），漁船在其北方 offset°（≈5.5km）。"""
+    snaps = []
+    for i in range(n):
+        h = start + i * step
+        d = (start // step + i) * drift
+        vessels = [_v("413701510", "XIANG YANG HONG 03", "research",
+                      LAT, LON + d, speed=anchor_speed)]
+        if fish:
+            vessels.append(_fish("412450186", LAT + offset, LON + d,
+                                 speed=fish_speed))
+        snaps.append(_snap(BASE + timedelta(hours=h), vessels))
+    return snaps
+
+
+def _companions(snaps):
+    return gf.track_companions(gf.load_companion_snapshots(snaps))
+
+
+def test_companion_following_research_vessel_detected():
+    cs = _companions(_follow_track(8))
+    assert len(cs) == 1
+    c = cs[0]
+    assert c["mmsi"] == "412450186"
+    assert c["anchor_mmsi"] == "413701510"
+    assert c["anchor_category"] == "research"
+    assert c["observations"] == 8
+    assert c["travel_km"] >= gf.COMPANION_MIN_TRAVEL_KM
+    assert c["dark_gaps"] == []
+
+
+def test_companion_bridges_dark_gap_and_reports_it():
+    """兩邊同時關 AIS 40h 後再一起出現 —— 仍是同一段伴航，且記下斷訊。"""
+    snaps = _follow_track(4) + _follow_track(4, start=46)
+    cs = _companions(snaps)
+    assert len(cs) == 1
+    assert cs[0]["observations"] == 8
+    assert cs[0]["max_dark_gap_hours"] == 40.0
+
+
+def test_gap_beyond_companion_max_gap_splits_episode():
+    snaps = _follow_track(6) + _follow_track(6, start=100)
+    cs = _companions(snaps)
+    assert len(cs) == 2
+
+
+def test_fishing_beside_stationary_gov_vessel_not_companion():
+    """停在漁場上的救助/海巡船旁圍一圈漁船 —— 同一片漁場，不是伴航。"""
+    assert _companions(_follow_track(10, drift=0.0, anchor_speed=0.1,
+                                     fish_speed=0.3)) == []
+
+
+def test_companion_requires_travel():
+    """兩船都在動但原地繞圈（位移 <20km）—— 不成案。"""
+    assert _companions(_follow_track(10, drift=0.01)) == []
+
+
+def test_brief_crossing_not_companion():
+    assert _companions(_follow_track(3)) == []
+
+
+def test_companion_ignores_in_port_points():
+    snaps = []
+    for i in range(8):
+        snaps.append(_snap(BASE + timedelta(hours=2 * i), [
+            _v("413701510", "XIANG YANG HONG 03", "research",
+               22.6153, 120.2664 + 0.001 * i),     # 高雄港
+            _fish("412450186", 22.6160, 120.2664 + 0.001 * i),
+        ]))
+    assert _companions(snaps) == []
+
+
+def test_companion_index_aggregates_anchors():
+    snaps = _follow_track(8)
+    for s in snaps:   # 同一艘漁船也跟著第二艘海警
+        lon = s["vessels"][0]["lon"]
+        s["vessels"].append(_v("413875054", "CHINACOASTGUARD 2504",
+                               "coastguard", LAT - 0.03, lon))
+    idx = gf.build_companion_index(_companions(snaps))
+    rec = idx["412450186"]
+    assert rec["count"] == 2
+    assert {a["mmsi"] for a in rec["anchors"]} == {"413701510", "413875054"}
+    assert rec["research_anchor"] is True
+    assert "413875054" not in idx      # 公務船之間交給編隊偵測
+
+
+def test_snapshot_without_offshore_gov_is_not_counted_as_dark():
+    """科研船靠港的那幾個快照，漁船仍被 AIS 看到 —— 不能算伴航中關 AIS。"""
+    snaps = _follow_track(4)
+    for h in range(8, 40, 2):        # 32h 內只有漁船（科研船不在快照裡）
+        snaps.append(_snap(BASE + timedelta(hours=h),
+                           [_fish("412450186", LAT + 0.05, LON + 0.4)]))
+    snaps += _follow_track(4, start=40)
+    cs = _companions(snaps)
+    assert len(cs) == 1
+    assert cs[0]["dark_gaps"] == []
