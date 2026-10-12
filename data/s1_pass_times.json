@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-11T05:16:09.686585Z",
+  "updated_at": "2026-10-12T05:28:55.569294Z",
   "source": "cdse-odata",
   "bbox": {
     "lat_min": 15,
@@ -8,30 +8,10 @@
     "lon_max": 128
   },
   "range": {
-    "start": "2026-09-06",
-    "end": "2026-10-11"
+    "start": "2026-09-07",
+    "end": "2026-10-12"
   },
   "passes": {
-    "2026-09-06": [
-      {
-        "time": "09:28:05",
-        "direction": "ascending",
-        "platform": "S1C",
-        "frames": 8
-      },
-      {
-        "time": "10:16:50",
-        "direction": "ascending",
-        "platform": "S1D",
-        "frames": 18
-      },
-      {
-        "time": "21:32:12",
-        "direction": "descending",
-        "platform": "S1C",
-        "frames": 6
-      }
-    ],
     "2026-09-07": [
       {
         "time": "10:06:00",
@@ -554,6 +534,20 @@
         "direction": "descending",
         "platform": "S1C",
         "frames": 12
+      }
+    ],
+    "2026-10-11": [
+      {
+        "time": "21:44:39",
+        "direction": "descending",
+        "platform": "S1D",
+        "frames": 8
+      },
+      {
+        "time": "22:35:10",
+        "direction": "descending",
+        "platform": "S1C",
+        "frames": 2
       }
     ]
   }
