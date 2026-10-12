@@ -1,16 +1,52 @@
 {
-  "updated_at": "2026-10-12T05:33:16.525355Z",
+  "updated_at": "2026-10-12T06:18:28.926341Z",
   "active_transfers": [
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "413867812",
         "name": "XIANGTAIHUIHUANG",
         "type_name": "cargo",
-        "lat": 24.64284,
-        "lon": 118.25116,
+        "lat": 24.642877,
+        "lon": 118.251102,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "vessel2": {
+        "mmsi": "415555460",
+        "name": "XINNUOCESHI00046",
+        "type_name": "fishing",
+        "lat": 24.642878,
+        "lon": 118.2512,
+        "speed": 0.0,
+        "heading": 29.8
+      },
+      "min_distance_m": 9.9,
+      "location": {
+        "lat": 24.642877499999997,
+        "lon": 118.251151
+      },
+      "classification": "suspicious",
+      "risk_score": 70,
+      "risk_factors": [
+        "different_types",
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "413867812",
+        "name": "XIANGTAIHUIHUANG",
+        "type_name": "cargo",
+        "lat": 24.642877,
+        "lon": 118.251102,
         "speed": 0.0,
         "heading": 0.0
       },
@@ -18,15 +54,15 @@
         "mmsi": "799999992",
         "name": "TESTYY",
         "type_name": "fishing",
-        "lat": 24.642868,
+        "lat": 24.642888,
         "lon": 118.25108,
         "speed": 0.0,
-        "heading": 136.8
+        "heading": 0.0
       },
-      "min_distance_m": 8.7,
+      "min_distance_m": 2.5,
       "location": {
-        "lat": 24.642854,
-        "lon": 118.25112
+        "lat": 24.6428825,
+        "lon": 118.251091
       },
       "classification": "suspicious",
       "risk_score": 70,
@@ -38,31 +74,67 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "668450679",
-        "name": "MIN QUAN YU 00868",
-        "type_name": "fishing",
-        "lat": 24.850812,
-        "lon": 119.506977,
-        "speed": 0.1,
-        "heading": 186.6
+        "mmsi": "413867812",
+        "name": "XIANGTAIHUIHUANG",
+        "type_name": "cargo",
+        "lat": 24.642877,
+        "lon": 118.251102,
+        "speed": 0.0,
+        "heading": 0.0
       },
       "vessel2": {
+        "mmsi": "710777777",
+        "name": "SAISCESHI",
+        "type_name": "fishing",
+        "lat": 24.642912,
+        "lon": 118.251137,
+        "speed": 0.9,
+        "heading": 268.3
+      },
+      "min_distance_m": 5.3,
+      "location": {
+        "lat": 24.642894499999997,
+        "lon": 118.2511195
+      },
+      "classification": "suspicious",
+      "risk_score": 70,
+      "risk_factors": [
+        "different_types",
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
         "mmsi": "412121212",
         "name": "YUMING22205",
         "type_name": "unknown",
-        "lat": 24.850845,
-        "lon": 119.506947,
-        "speed": 0.1,
-        "heading": 137.0
+        "lat": 24.850702,
+        "lon": 119.507133,
+        "speed": 0.0,
+        "heading": 260.6
       },
-      "min_distance_m": 4.8,
+      "vessel2": {
+        "mmsi": "668450679",
+        "name": "MIN QUAN YU 00868",
+        "type_name": "fishing",
+        "lat": 24.850735,
+        "lon": 119.507155,
+        "speed": 0.4,
+        "heading": 112.9
+      },
+      "min_distance_m": 4.3,
       "location": {
-        "lat": 24.8508285,
-        "lon": 119.506962
+        "lat": 24.8507185,
+        "lon": 119.507144
       },
       "classification": "suspicious",
       "risk_score": 70,
@@ -74,31 +146,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416003617",
         "name": "HE JHOU",
         "type_name": "special",
-        "lat": 26.204475,
-        "lon": 119.966885,
-        "speed": 0.1,
-        "heading": 297.0
+        "lat": 26.204485,
+        "lon": 119.96692,
+        "speed": 0.2,
+        "heading": 40.4
       },
       "vessel2": {
         "mmsi": "413700720",
         "name": "AN QI 2 HAO",
         "type_name": "high_speed",
         "lat": 26.204552,
-        "lon": 119.966853,
-        "speed": 0.1,
+        "lon": 119.966893,
+        "speed": 0.0,
         "heading": 224.9
       },
-      "min_distance_m": 9.1,
+      "min_distance_m": 7.9,
       "location": {
-        "lat": 26.204513499999997,
-        "lon": 119.966869
+        "lat": 26.2045185,
+        "lon": 119.9669065
       },
       "classification": "suspicious",
       "risk_score": 70,
@@ -110,49 +182,84 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416000030",
-        "name": "HUNG YUNN NO.3",
-        "type_name": "special",
-        "lat": 24.235502,
-        "lon": 120.502673,
+        "mmsi": "994060901",
+        "name": "NEW TEST          3V",
+        "type_name": "unknown",
+        "lat": 22.573752,
+        "lon": 120.32465,
         "speed": 0.0,
-        "heading": 347.7
+        "heading": 122.2
       },
       "vessel2": {
-        "mmsi": "416237900",
-        "name": "HUNG YUNN",
+        "mmsi": "771123321",
+        "name": "ATEST",
         "type_name": "fishing",
-        "lat": 24.235535,
-        "lon": 120.502585,
+        "lat": 22.573775,
+        "lon": 120.324627,
         "speed": 0.0,
-        "heading": 0.0
+        "heading": 360.0
       },
-      "min_distance_m": 9.6,
+      "min_distance_m": 3.5,
       "location": {
-        "lat": 24.235518499999998,
-        "lon": 120.502629
+        "lat": 22.5737635,
+        "lon": 120.3246385
       },
       "classification": "suspicious",
-      "risk_score": 60,
+      "risk_score": 55,
       "risk_factors": [
         "different_types",
         "stationary",
-        "outside_hotspot"
+        "foreign_flag"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "994060901",
+        "name": "NEW TEST          3V",
+        "type_name": "unknown",
+        "lat": 22.573752,
+        "lon": 120.32465,
+        "speed": 0.0,
+        "heading": 122.2
+      },
+      "vessel2": {
+        "mmsi": "416010709",
+        "name": "JONG MEEI NO 6",
+        "type_name": "fishing",
+        "lat": 22.57382,
+        "lon": 120.324693,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 8.8,
+      "location": {
+        "lat": 22.573786,
+        "lon": 120.3246715
+      },
+      "classification": "suspicious",
+      "risk_score": 55,
+      "risk_factors": [
+        "different_types",
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "771123321",
         "name": "ATEST",
         "type_name": "fishing",
-        "lat": 22.573763,
+        "lat": 22.573775,
         "lon": 120.324627,
         "speed": 0.0,
         "heading": 360.0
@@ -161,15 +268,15 @@
         "mmsi": "416444449",
         "name": "H",
         "type_name": "unknown",
-        "lat": 22.573793,
-        "lon": 120.324678,
+        "lat": 22.573797,
+        "lon": 120.324698,
         "speed": 0.0,
-        "heading": 228.9
+        "heading": 258.8
       },
-      "min_distance_m": 6.2,
+      "min_distance_m": 7.7,
       "location": {
-        "lat": 22.573777999999997,
-        "lon": 120.32465250000001
+        "lat": 22.573786,
+        "lon": 120.3246625
       },
       "classification": "suspicious",
       "risk_score": 55,
@@ -180,345 +287,271 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "200010573",
-        "name": "NETFISHING       7V8",
-        "type_name": "unknown",
-        "lat": 22.86761,
-        "lon": 120.19427,
-        "speed": 0.0,
-        "heading": 0.0
-      },
-      "vessel2": {
-        "mmsi": "416005741",
-        "name": "YU CING NO88",
-        "type_name": "fishing",
-        "lat": 22.867643,
-        "lon": 120.194187,
-        "speed": 0.0,
-        "heading": 0.0
-      },
-      "min_distance_m": 9.3,
-      "location": {
-        "lat": 22.8676265,
-        "lon": 120.19422850000001
-      },
-      "classification": "suspicious",
-      "risk_score": 55,
-      "risk_factors": [
-        "different_types",
-        "stationary",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "412340081",
-        "name": "DONGSHON179",
-        "type_name": "fishing",
-        "lat": 23.31508,
-        "lon": 117.8632,
-        "speed": 1.5,
-        "heading": 8.4
-      },
-      "vessel2": {
-        "mmsi": "412446718",
-        "name": "MIN DONG YU 63179",
+        "mmsi": "36241002",
+        "name": "CT3-6241:2       7V8",
         "type_name": "other",
-        "lat": 23.315115,
-        "lon": 117.863218,
-        "speed": 1.6,
-        "heading": 350.0
+        "lat": 24.90451,
+        "lon": 121.870107,
+        "speed": 0.7,
+        "heading": 321.4
       },
-      "min_distance_m": 4.3,
+      "vessel2": {
+        "mmsi": "36241008",
+        "name": "CT3-6241:8       7V9",
+        "type_name": "unknown",
+        "lat": 24.904552,
+        "lon": 121.870167,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 7.6,
       "location": {
-        "lat": 23.3150975,
-        "lon": 117.86320900000001
+        "lat": 24.904531,
+        "lon": 121.870137
       },
       "classification": "suspicious",
-      "risk_score": 40,
+      "risk_score": 55,
       "risk_factors": [
         "different_types",
+        "stationary",
         "foreign_flag"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "511943000",
-        "name": "OCEAN WHALE",
-        "type_name": "cargo",
-        "lat": 24.264175,
-        "lon": 120.52313,
+        "mmsi": "36241008",
+        "name": "CT3-6241:8       7V9",
+        "type_name": "unknown",
+        "lat": 24.904552,
+        "lon": 121.870167,
         "speed": 0.0,
         "heading": 0.0
       },
       "vessel2": {
-        "mmsi": "511893000",
-        "name": "LEADER",
-        "type_name": "cargo",
-        "lat": 24.264263,
-        "lon": 120.523128,
-        "speed": 0.0,
-        "heading": 71.6
-      },
-      "min_distance_m": 9.8,
-      "location": {
-        "lat": 24.264219,
-        "lon": 120.523129
-      },
-      "classification": "suspicious",
-      "risk_score": 40,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "415555650",
-        "name": "XINNUOCESHI00065",
-        "type_name": "fishing",
-        "lat": 24.642857,
-        "lon": 118.25056,
-        "speed": 0.0,
-        "heading": 238.0
-      },
-      "vessel2": {
-        "mmsi": "415555300",
-        "name": "XINNUOCESHI00030",
-        "type_name": "fishing",
-        "lat": 24.642867,
-        "lon": 118.250587,
+        "mmsi": "36241016",
+        "name": "CT3-6241:16      8V1",
+        "type_name": "other",
+        "lat": 24.904558,
+        "lon": 121.870188,
         "speed": 0.1,
-        "heading": 52.9
+        "heading": 0.0
       },
-      "min_distance_m": 2.9,
+      "min_distance_m": 2.2,
       "location": {
-        "lat": 24.642862,
-        "lon": 118.2505735
+        "lat": 24.904555000000002,
+        "lon": 121.8701775
       },
       "classification": "suspicious",
-      "risk_score": 40,
+      "risk_score": 55,
       "risk_factors": [
+        "different_types",
         "stationary",
-        "outside_hotspot",
         "foreign_flag"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "415555650",
-        "name": "XINNUOCESHI00065",
-        "type_name": "fishing",
-        "lat": 24.642857,
-        "lon": 118.25056,
+        "mmsi": "416444449",
+        "name": "H",
+        "type_name": "unknown",
+        "lat": 22.573797,
+        "lon": 120.324698,
         "speed": 0.0,
-        "heading": 238.0
+        "heading": 258.8
       },
       "vessel2": {
-        "mmsi": "415555630",
-        "name": "XINNUOCESHI00063",
+        "mmsi": "416010709",
+        "name": "JONG MEEI NO 6",
         "type_name": "fishing",
-        "lat": 24.642868,
-        "lon": 118.250613,
+        "lat": 22.57382,
+        "lon": 120.324693,
         "speed": 0.0,
-        "heading": 356.4
-      },
-      "min_distance_m": 5.5,
-      "location": {
-        "lat": 24.6428625,
-        "lon": 118.2505865
-      },
-      "classification": "suspicious",
-      "risk_score": 40,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "415555650",
-        "name": "XINNUOCESHI00065",
-        "type_name": "fishing",
-        "lat": 24.642857,
-        "lon": 118.25056,
-        "speed": 0.0,
-        "heading": 238.0
-      },
-      "vessel2": {
-        "mmsi": "415555210",
-        "name": "XINNUOCESHI00021",
-        "type_name": "fishing",
-        "lat": 24.642872,
-        "lon": 118.250493,
-        "speed": 0.1,
-        "heading": 235.3
-      },
-      "min_distance_m": 7.0,
-      "location": {
-        "lat": 24.6428645,
-        "lon": 118.2505265
-      },
-      "classification": "suspicious",
-      "risk_score": 40,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "415555650",
-        "name": "XINNUOCESHI00065",
-        "type_name": "fishing",
-        "lat": 24.642857,
-        "lon": 118.25056,
-        "speed": 0.0,
-        "heading": 238.0
-      },
-      "vessel2": {
-        "mmsi": "415555290",
-        "name": "XINNUOCESHI00029",
-        "type_name": "fishing",
-        "lat": 24.642892,
-        "lon": 118.250613,
-        "speed": 0.0,
-        "heading": 225.9
-      },
-      "min_distance_m": 6.6,
-      "location": {
-        "lat": 24.642874499999998,
-        "lon": 118.2505865
-      },
-      "classification": "suspicious",
-      "risk_score": 40,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "415555300",
-        "name": "XINNUOCESHI00030",
-        "type_name": "fishing",
-        "lat": 24.642867,
-        "lon": 118.250587,
-        "speed": 0.1,
-        "heading": 52.9
-      },
-      "vessel2": {
-        "mmsi": "415555630",
-        "name": "XINNUOCESHI00063",
-        "type_name": "fishing",
-        "lat": 24.642868,
-        "lon": 118.250613,
-        "speed": 0.0,
-        "heading": 356.4
+        "heading": 0.0
       },
       "min_distance_m": 2.6,
       "location": {
-        "lat": 24.6428675,
-        "lon": 118.25059999999999
+        "lat": 22.5738085,
+        "lon": 120.32469549999999
       },
       "classification": "suspicious",
-      "risk_score": 40,
+      "risk_score": 45,
       "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
+        "different_types",
+        "stationary"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "415555300",
-        "name": "XINNUOCESHI00030",
-        "type_name": "fishing",
-        "lat": 24.642867,
-        "lon": 118.250587,
-        "speed": 0.1,
-        "heading": 52.9
+        "mmsi": "994524506",
+        "name": "JJ168-06          9V",
+        "type_name": "unknown",
+        "lat": 23.302748,
+        "lon": 121.503597,
+        "speed": 3.7,
+        "heading": 17.1
       },
       "vessel2": {
-        "mmsi": "415555210",
-        "name": "XINNUOCESHI00021",
+        "mmsi": "416008098",
+        "name": "JANN JI NO.168",
         "type_name": "fishing",
-        "lat": 24.642872,
-        "lon": 118.250493,
-        "speed": 0.1,
-        "heading": 235.3
+        "lat": 23.302793,
+        "lon": 121.503632,
+        "speed": 4.6,
+        "heading": 20.8
       },
-      "min_distance_m": 9.5,
+      "min_distance_m": 6.1,
       "location": {
-        "lat": 24.6428695,
-        "lon": 118.25054
+        "lat": 23.3027705,
+        "lon": 121.5036145
       },
       "classification": "suspicious",
       "risk_score": 40,
       "risk_factors": [
-        "stationary",
-        "outside_hotspot",
+        "different_types",
         "foreign_flag"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416008098",
+        "name": "JANN JI NO.168",
+        "type_name": "fishing",
+        "lat": 23.302793,
+        "lon": 121.503632,
+        "speed": 4.6,
+        "heading": 20.8
+      },
+      "vessel2": {
+        "mmsi": "994524513",
+        "name": "CT2-524513        9V",
+        "type_name": "unknown",
+        "lat": 23.3028,
+        "lon": 121.503628,
+        "speed": 4.4,
+        "heading": 16.6
+      },
+      "min_distance_m": 0.9,
+      "location": {
+        "lat": 23.3027965,
+        "lon": 121.50363
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "different_types",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "685",
+        "name": "685               9V",
+        "type_name": "unknown",
+        "lat": 23.327738,
+        "lon": 119.262415,
+        "speed": 4.6,
+        "heading": 183.4
+      },
+      "vessel2": {
+        "mmsi": "416003704",
+        "name": "JUI FU HSING NO.6",
+        "type_name": "fishing",
+        "lat": 23.32776,
+        "lon": 119.26247,
+        "speed": 2.8,
+        "heading": 179.2
+      },
+      "min_distance_m": 6.1,
+      "location": {
+        "lat": 23.327749,
+        "lon": 119.26244249999999
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "different_types",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412446127",
+        "name": "MINDONGYU63050",
+        "type_name": "other",
+        "lat": 23.445965,
+        "lon": 117.417827,
+        "speed": 1.5,
+        "heading": 326.6
+      },
+      "vessel2": {
+        "mmsi": "210400451",
+        "name": "03988",
+        "type_name": "fishing",
+        "lat": 23.446003,
+        "lon": 117.417815,
+        "speed": 1.0,
+        "heading": 102.9
+      },
+      "min_distance_m": 4.4,
+      "location": {
+        "lat": 23.445984000000003,
+        "lon": 117.417821
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "different_types",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "415555300",
         "name": "XINNUOCESHI00030",
         "type_name": "fishing",
-        "lat": 24.642867,
-        "lon": 118.250587,
-        "speed": 0.1,
-        "heading": 52.9
+        "lat": 24.642862,
+        "lon": 118.25052,
+        "speed": 0.0,
+        "heading": 269.3
       },
       "vessel2": {
-        "mmsi": "415555290",
-        "name": "XINNUOCESHI00029",
+        "mmsi": "415555250",
+        "name": "XINNUOCESHI00025",
         "type_name": "fishing",
         "lat": 24.642892,
         "lon": 118.250613,
         "speed": 0.0,
-        "heading": 225.9
+        "heading": 35.9
       },
-      "min_distance_m": 3.8,
+      "min_distance_m": 10.0,
       "location": {
-        "lat": 24.6428795,
-        "lon": 118.25059999999999
+        "lat": 24.642877,
+        "lon": 118.25056649999999
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -529,31 +562,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "799999992",
-        "name": "TESTYY",
+        "mmsi": "415555460",
+        "name": "XINNUOCESHI00046",
         "type_name": "fishing",
-        "lat": 24.642868,
-        "lon": 118.25108,
+        "lat": 24.642878,
+        "lon": 118.2512,
         "speed": 0.0,
-        "heading": 136.8
+        "heading": 29.8
       },
       "vessel2": {
         "mmsi": "710777777",
         "name": "SAISCESHI",
         "type_name": "fishing",
-        "lat": 24.642898,
-        "lon": 118.25106,
-        "speed": 0.0,
-        "heading": 337.4
+        "lat": 24.642912,
+        "lon": 118.251137,
+        "speed": 0.9,
+        "heading": 268.3
       },
-      "min_distance_m": 3.9,
+      "min_distance_m": 7.4,
       "location": {
-        "lat": 24.642882999999998,
-        "lon": 118.25107
+        "lat": 24.642895,
+        "lon": 118.2511685
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -564,66 +597,66 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "415555630",
-        "name": "XINNUOCESHI00063",
+        "mmsi": "799999992",
+        "name": "TESTYY",
         "type_name": "fishing",
-        "lat": 24.642868,
-        "lon": 118.250613,
+        "lat": 24.642888,
+        "lon": 118.25108,
         "speed": 0.0,
-        "heading": 356.4
+        "heading": 0.0
       },
       "vessel2": {
-        "mmsi": "415555290",
-        "name": "XINNUOCESHI00029",
+        "mmsi": "710777777",
+        "name": "SAISCESHI",
+        "type_name": "fishing",
+        "lat": 24.642912,
+        "lon": 118.251137,
+        "speed": 0.9,
+        "heading": 268.3
+      },
+      "min_distance_m": 6.3,
+      "location": {
+        "lat": 24.642899999999997,
+        "lon": 118.2511085
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "415555250",
+        "name": "XINNUOCESHI00025",
         "type_name": "fishing",
         "lat": 24.642892,
         "lon": 118.250613,
         "speed": 0.0,
-        "heading": 225.9
-      },
-      "min_distance_m": 2.7,
-      "location": {
-        "lat": 24.642879999999998,
-        "lon": 118.250613
-      },
-      "classification": "suspicious",
-      "risk_score": 40,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot",
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "108668792",
-        "name": "MMSI-108668792",
-        "type_name": "fishing",
-        "lat": 24.852273,
-        "lon": 119.552073,
-        "speed": 0.0,
-        "heading": 104.7
+        "heading": 35.9
       },
       "vessel2": {
-        "mmsi": "412451324",
-        "name": "MINQUANYU01618",
+        "mmsi": "415555240",
+        "name": "XINNUOCESHI00024",
         "type_name": "fishing",
-        "lat": 24.852287,
-        "lon": 119.552065,
-        "speed": 0.8,
-        "heading": 0.0
+        "lat": 24.642902,
+        "lon": 118.25064,
+        "speed": 0.1,
+        "heading": 87.6
       },
-      "min_distance_m": 1.8,
+      "min_distance_m": 2.9,
       "location": {
-        "lat": 24.85228,
-        "lon": 119.55206899999999
+        "lat": 24.642896999999998,
+        "lon": 118.25062650000001
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -634,31 +667,241 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "415555250",
+        "name": "XINNUOCESHI00025",
+        "type_name": "fishing",
+        "lat": 24.642892,
+        "lon": 118.250613,
+        "speed": 0.0,
+        "heading": 35.9
+      },
+      "vessel2": {
+        "mmsi": "415555210",
+        "name": "XINNUOCESHI00021",
+        "type_name": "fishing",
+        "lat": 24.642905,
+        "lon": 118.250627,
+        "speed": 0.1,
+        "heading": 118.1
+      },
+      "min_distance_m": 2.0,
+      "location": {
+        "lat": 24.6428985,
+        "lon": 118.25062
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "415555240",
+        "name": "XINNUOCESHI00024",
+        "type_name": "fishing",
+        "lat": 24.642902,
+        "lon": 118.25064,
+        "speed": 0.1,
+        "heading": 87.6
+      },
+      "vessel2": {
+        "mmsi": "415555210",
+        "name": "XINNUOCESHI00021",
+        "type_name": "fishing",
+        "lat": 24.642905,
+        "lon": 118.250627,
+        "speed": 0.1,
+        "heading": 118.1
+      },
+      "min_distance_m": 1.4,
+      "location": {
+        "lat": 24.6429035,
+        "lon": 118.25063349999999
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412452726",
+        "name": "MINHU\\MU0202HHH",
+        "type_name": "fishing",
+        "lat": 24.873412,
+        "lon": 119.519263,
+        "speed": 0.5,
+        "heading": 336.6
+      },
+      "vessel2": {
+        "mmsi": "700862566",
+        "name": "02029",
+        "type_name": "fishing",
+        "lat": 24.873415,
+        "lon": 119.519262,
+        "speed": 0.0,
+        "heading": 330.5
+      },
+      "min_distance_m": 0.3,
+      "location": {
+        "lat": 24.873413499999998,
+        "lon": 119.5192625
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412452726",
+        "name": "MINHU\\MU0202HHH",
+        "type_name": "fishing",
+        "lat": 24.873412,
+        "lon": 119.519263,
+        "speed": 0.5,
+        "heading": 336.6
+      },
+      "vessel2": {
+        "mmsi": "700452816",
+        "name": "MINLONGYU60310",
+        "type_name": "fishing",
+        "lat": 24.873422,
+        "lon": 119.519168,
+        "speed": 0.0,
+        "heading": 128.0
+      },
+      "min_distance_m": 9.6,
+      "location": {
+        "lat": 24.873417,
+        "lon": 119.5192155
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "700862566",
+        "name": "02029",
+        "type_name": "fishing",
+        "lat": 24.873415,
+        "lon": 119.519262,
+        "speed": 0.0,
+        "heading": 330.5
+      },
+      "vessel2": {
+        "mmsi": "700452816",
+        "name": "MINLONGYU60310",
+        "type_name": "fishing",
+        "lat": 24.873422,
+        "lon": 119.519168,
+        "speed": 0.0,
+        "heading": 128.0
+      },
+      "min_distance_m": 9.5,
+      "location": {
+        "lat": 24.8734185,
+        "lon": 119.519215
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412459968",
+        "name": "MINQUANYU01788",
+        "type_name": "fishing",
+        "lat": 24.874353,
+        "lon": 119.53887,
+        "speed": 0.3,
+        "heading": 319.5
+      },
+      "vessel2": {
+        "mmsi": "10867184",
+        "name": "MINQUANYU00788",
+        "type_name": "fishing",
+        "lat": 24.874387,
+        "lon": 119.538867,
+        "speed": 0.3,
+        "heading": 59.8
+      },
+      "min_distance_m": 3.8,
+      "location": {
+        "lat": 24.87437,
+        "lon": 119.5388685
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "413000915",
         "name": "MMSI-413000915",
         "type_name": "fishing",
-        "lat": 24.877123,
-        "lon": 119.448792,
-        "speed": 0.4,
-        "heading": 274.3
+        "lat": 24.877102,
+        "lon": 119.448947,
+        "speed": 0.5,
+        "heading": 137.2
       },
       "vessel2": {
         "mmsi": "412452733",
         "name": "MINHUIYU01382",
         "type_name": "fishing",
-        "lat": 24.877178,
-        "lon": 119.44881,
-        "speed": 0.1,
-        "heading": 153.5
+        "lat": 24.877145,
+        "lon": 119.448885,
+        "speed": 0.3,
+        "heading": 129.0
       },
-      "min_distance_m": 6.4,
+      "min_distance_m": 7.9,
       "location": {
-        "lat": 24.8771505,
-        "lon": 119.448801
+        "lat": 24.8771235,
+        "lon": 119.448916
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -669,31 +912,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "563029380",
         "name": "TAT HONG 821",
         "type_name": "fishing",
-        "lat": 26.238585,
-        "lon": 119.995452,
-        "speed": 0.1,
-        "heading": 68.6
+        "lat": 26.238603,
+        "lon": 119.995437,
+        "speed": 0.0,
+        "heading": 49.4
       },
       "vessel2": {
         "mmsi": "416006442",
         "name": "DONG PING NO.8",
         "type_name": "fishing",
-        "lat": 26.238647,
-        "lon": 119.99547,
-        "speed": 0.1,
+        "lat": 26.238645,
+        "lon": 119.995498,
+        "speed": 0.0,
         "heading": 66.3
       },
-      "min_distance_m": 7.1,
+      "min_distance_m": 7.7,
       "location": {
-        "lat": 26.238616,
-        "lon": 119.995461
+        "lat": 26.238624,
+        "lon": 119.99546749999999
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -704,31 +947,66 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416188700",
+        "name": "SHIN JYI FA NO.2",
+        "type_name": "fishing",
+        "lat": 26.264052,
+        "lon": 120.823523,
+        "speed": 0.4,
+        "heading": 51.0
+      },
+      "vessel2": {
+        "mmsi": "787859788",
+        "name": "HHHHHH",
+        "type_name": "fishing",
+        "lat": 26.264082,
+        "lon": 120.823547,
+        "speed": 0.0,
+        "heading": 356.7
+      },
+      "min_distance_m": 4.1,
+      "location": {
+        "lat": 26.264066999999997,
+        "lon": 120.82353499999999
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "412441951",
         "name": "MINLIANYU60617",
         "type_name": "fishing",
-        "lat": 26.365337,
-        "lon": 119.923025,
-        "speed": 0.2,
-        "heading": 319.0
+        "lat": 26.365297,
+        "lon": 119.923,
+        "speed": 0.0,
+        "heading": 16.3
       },
       "vessel2": {
         "mmsi": "412441948",
         "name": "MIN LIAN YU60618",
         "type_name": "fishing",
-        "lat": 26.365338,
-        "lon": 119.923032,
+        "lat": 26.365352,
+        "lon": 119.922977,
         "speed": 0.1,
-        "heading": 232.8
+        "heading": 29.4
       },
-      "min_distance_m": 0.7,
+      "min_distance_m": 6.5,
       "location": {
-        "lat": 26.365337500000003,
-        "lon": 119.9230285
+        "lat": 26.3653245,
+        "lon": 119.9229885
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -739,31 +1017,136 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "412441951",
-        "name": "MINLIANYU60617",
+        "mmsi": "412494053",
+        "name": "MIN XIA YU05798",
         "type_name": "fishing",
-        "lat": 26.365337,
-        "lon": 119.923025,
+        "lat": 26.586333,
+        "lon": 120.547437,
+        "speed": 0.0,
+        "heading": 176.1
+      },
+      "vessel2": {
+        "mmsi": "412442461",
+        "name": "MINXIAYU05768",
+        "type_name": "fishing",
+        "lat": 26.586363,
+        "lon": 120.547493,
+        "speed": 0.5,
+        "heading": 266.6
+      },
+      "min_distance_m": 6.5,
+      "location": {
+        "lat": 26.586348,
+        "lon": 120.547465
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "413374290",
+        "name": "BAO GANG TUO 7",
+        "type_name": "special",
+        "lat": 26.741658,
+        "lon": 119.72789,
+        "speed": 0.0,
+        "heading": 348.3
+      },
+      "vessel2": {
+        "mmsi": "413601130",
+        "name": "RUN ZHOU 67",
+        "type_name": "special",
+        "lat": 26.741737,
+        "lon": 119.727933,
+        "speed": 0.0,
+        "heading": 130.9
+      },
+      "min_distance_m": 9.8,
+      "location": {
+        "lat": 26.7416975,
+        "lon": 119.7279115
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412507683",
+        "name": "MINFUANYU21603",
+        "type_name": "fishing",
+        "lat": 26.812763,
+        "lon": 119.684003,
+        "speed": 0.6,
+        "heading": 322.7
+      },
+      "vessel2": {
+        "mmsi": "412507685",
+        "name": "MINFUANYU21513",
+        "type_name": "fishing",
+        "lat": 26.812812,
+        "lon": 119.683973,
+        "speed": 0.1,
+        "heading": 0.0
+      },
+      "min_distance_m": 6.2,
+      "location": {
+        "lat": 26.8127875,
+        "lon": 119.683988
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412507666",
+        "name": "MINFUANYU22023",
+        "type_name": "fishing",
+        "lat": 26.812775,
+        "lon": 119.684402,
         "speed": 0.2,
-        "heading": 319.0
+        "heading": 163.6
       },
       "vessel2": {
-        "mmsi": "412442284",
-        "name": "MIN_LIAN_YU_66881",
+        "mmsi": "412507617",
+        "name": "MINFUANYU21365",
         "type_name": "fishing",
-        "lat": 26.365387,
-        "lon": 119.923097,
-        "speed": 0.1,
-        "heading": 207.5
+        "lat": 26.812818,
+        "lon": 119.684325,
+        "speed": 0.3,
+        "heading": 0.0
       },
-      "min_distance_m": 9.1,
+      "min_distance_m": 9.0,
       "location": {
-        "lat": 26.365361999999998,
-        "lon": 119.92306099999999
+        "lat": 26.812796499999997,
+        "lon": 119.6843635
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -774,31 +1157,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "412441948",
-        "name": "MIN LIAN YU60618",
+        "mmsi": "412507666",
+        "name": "MINFUANYU22023",
         "type_name": "fishing",
-        "lat": 26.365338,
-        "lon": 119.923032,
-        "speed": 0.1,
-        "heading": 232.8
+        "lat": 26.812775,
+        "lon": 119.684402,
+        "speed": 0.2,
+        "heading": 163.6
       },
       "vessel2": {
-        "mmsi": "412442284",
-        "name": "MIN_LIAN_YU_66881",
+        "mmsi": "412507624",
+        "name": "MINFUANYU21358",
         "type_name": "fishing",
-        "lat": 26.365387,
-        "lon": 119.923097,
+        "lat": 26.812843,
+        "lon": 119.684353,
         "speed": 0.1,
-        "heading": 207.5
+        "heading": 0.0
       },
-      "min_distance_m": 8.5,
+      "min_distance_m": 9.0,
       "location": {
-        "lat": 26.3653625,
-        "lon": 119.92306450000001
+        "lat": 26.812809,
+        "lon": 119.68437750000001
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -809,30 +1192,65 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412507617",
+        "name": "MINFUANYU21365",
+        "type_name": "fishing",
+        "lat": 26.812818,
+        "lon": 119.684325,
+        "speed": 0.3,
+        "heading": 0.0
+      },
+      "vessel2": {
+        "mmsi": "412507624",
+        "name": "MINFUANYU21358",
+        "type_name": "fishing",
+        "lat": 26.812843,
+        "lon": 119.684353,
+        "speed": 0.1,
+        "heading": 0.0
+      },
+      "min_distance_m": 3.9,
+      "location": {
+        "lat": 26.8128305,
+        "lon": 119.684339
+      },
+      "classification": "suspicious",
+      "risk_score": 40,
+      "risk_factors": [
+        "stationary",
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "412507632",
         "name": "MINFUANYU21349",
         "type_name": "fishing",
-        "lat": 26.82108,
-        "lon": 119.692523,
-        "speed": 0.3,
-        "heading": 100.0
+        "lat": 26.821067,
+        "lon": 119.69252,
+        "speed": 0.0,
+        "heading": 178.0
       },
       "vessel2": {
         "mmsi": "412507615",
         "name": "MINFUANYU21368",
         "type_name": "fishing",
-        "lat": 26.82111,
-        "lon": 119.692567,
+        "lat": 26.821098,
+        "lon": 119.69257,
         "speed": 0.2,
-        "heading": 111.0
+        "heading": 90.9
       },
-      "min_distance_m": 5.5,
+      "min_distance_m": 6.0,
       "location": {
-        "lat": 26.821095,
+        "lat": 26.8210825,
         "lon": 119.692545
       },
       "classification": "suspicious",
@@ -844,31 +1262,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "412445205",
-        "name": "MINXIAYU-01415",
-        "type_name": "fishing",
-        "lat": 26.91351,
-        "lon": 120.22215,
-        "speed": 0.0,
-        "heading": 174.8
-      },
-      "vessel2": {
         "mmsi": "412466286",
         "name": "MINXIAYU01857",
         "type_name": "fishing",
-        "lat": 26.913527,
-        "lon": 120.222145,
-        "speed": 0.1,
+        "lat": 26.913555,
+        "lon": 120.222128,
+        "speed": 0.0,
         "heading": 0.0
       },
-      "min_distance_m": 2.0,
+      "vessel2": {
+        "mmsi": "412445205",
+        "name": "MINXIAYU01415",
+        "type_name": "fishing",
+        "lat": 26.913597,
+        "lon": 120.222138,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 4.8,
       "location": {
-        "lat": 26.9135185,
-        "lon": 120.2221475
+        "lat": 26.913576,
+        "lon": 120.222133
       },
       "classification": "suspicious",
       "risk_score": 40,
@@ -879,66 +1297,65 @@
       ]
     },
     {
-      "first_seen": "2026-10-11T06:04:08.782887+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 23.4,
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
       "vessel1": {
-        "mmsi": "412506208",
-        "name": "MINXIAYU20011",
+        "mmsi": "416068608",
+        "name": "CTR-CI7166",
         "type_name": "fishing",
-        "lat": 26.94244,
-        "lon": 120.23342,
-        "speed": 0.0,
-        "heading": 216.2
+        "lat": 23.438815,
+        "lon": 120.146827,
+        "speed": 0.6,
+        "heading": 201.0
       },
       "vessel2": {
-        "mmsi": "412506207",
-        "name": "MINXIAYU20010",
+        "mmsi": "416068419",
+        "name": "CTR-CI1289",
         "type_name": "fishing",
-        "lat": 26.94246,
-        "lon": 120.23351,
-        "speed": 2.3,
-        "heading": 238.7
+        "lat": 23.438825,
+        "lon": 120.146813,
+        "speed": 0.7,
+        "heading": 196.8
       },
-      "min_distance_m": 2.3,
+      "min_distance_m": 1.8,
       "location": {
-        "lat": 26.94245,
-        "lon": 120.233465
+        "lat": 23.43882,
+        "lon": 120.14681999999999
       },
       "classification": "normal",
-      "risk_score": 35,
+      "risk_score": 30,
       "risk_factors": [
-        "outside_hotspot",
-        "long_duration",
-        "foreign_flag"
+        "stationary",
+        "outside_hotspot"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416015825",
-        "name": "914050",
-        "type_name": "other",
-        "lat": 24.421738,
-        "lon": 118.297885,
-        "speed": 0.0,
-        "heading": 360.0
-      },
-      "vessel2": {
         "mmsi": "416016693",
         "name": "860127",
         "type_name": "other",
-        "lat": 24.421788,
-        "lon": 118.297812,
+        "lat": 24.421735,
+        "lon": 118.297802,
         "speed": 0.0,
         "heading": 360.0
       },
-      "min_distance_m": 9.2,
+      "vessel2": {
+        "mmsi": "416015825",
+        "name": "914050",
+        "type_name": "other",
+        "lat": 24.421755,
+        "lon": 118.297877,
+        "speed": 0.0,
+        "heading": 360.0
+      },
+      "min_distance_m": 7.9,
       "location": {
-        "lat": 24.421763,
-        "lon": 118.29784849999999
+        "lat": 24.421745,
+        "lon": 118.29783950000001
       },
       "classification": "normal",
       "risk_score": 30,
@@ -948,65 +1365,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416000735",
-        "name": "CHIN I SHIHSIANG",
-        "type_name": "fishing",
-        "lat": 26.263232,
-        "lon": 120.852977,
-        "speed": 0.7,
-        "heading": 209.5
+        "mmsi": "994060901",
+        "name": "NEW TEST          3V",
+        "type_name": "unknown",
+        "lat": 22.573752,
+        "lon": 120.32465,
+        "speed": 0.0,
+        "heading": 122.2
       },
       "vessel2": {
-        "mmsi": "416000705",
-        "name": "CHINIHSIANG",
-        "type_name": "fishing",
-        "lat": 26.263233,
-        "lon": 120.853022,
-        "speed": 0.1,
-        "heading": 50.2
-      },
-      "min_distance_m": 4.5,
-      "location": {
-        "lat": 26.2632325,
-        "lon": 120.8529995
-      },
-      "classification": "normal",
-      "risk_score": 30,
-      "risk_factors": [
-        "stationary",
-        "outside_hotspot"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "994111772",
-        "name": "GO-772            6V",
+        "mmsi": "416444449",
+        "name": "H",
         "type_name": "unknown",
-        "lat": 22.697612,
-        "lon": 120.348165,
+        "lat": 22.573797,
+        "lon": 120.324698,
         "speed": 0.0,
-        "heading": 287.3
+        "heading": 258.8
       },
-      "vessel2": {
-        "mmsi": "994111770",
-        "name": "770               7V",
-        "type_name": "unknown",
-        "lat": 22.69767,
-        "lon": 120.34822,
-        "speed": 0.0,
-        "heading": 149.4
-      },
-      "min_distance_m": 8.6,
+      "min_distance_m": 7.0,
       "location": {
-        "lat": 22.697640999999997,
-        "lon": 120.3481925
+        "lat": 22.5737745,
+        "lon": 120.324674
       },
       "classification": "normal",
       "risk_score": 25,
@@ -1016,31 +1399,167 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "771123321",
+        "name": "ATEST",
+        "type_name": "fishing",
+        "lat": 22.573775,
+        "lon": 120.324627,
+        "speed": 0.0,
+        "heading": 360.0
+      },
+      "vessel2": {
+        "mmsi": "416010709",
+        "name": "JONG MEEI NO 6",
+        "type_name": "fishing",
+        "lat": 22.57382,
+        "lon": 120.324693,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 8.4,
+      "location": {
+        "lat": 22.5737975,
+        "lon": 120.32466
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "200010566",
+        "name": "NETFISHING       7V4",
+        "type_name": "unknown",
+        "lat": 22.867703,
+        "lon": 120.194418,
+        "speed": 0.3,
+        "heading": 191.5
+      },
+      "vessel2": {
+        "mmsi": "200010573",
+        "name": "NETFISHING       7V8",
+        "type_name": "unknown",
+        "lat": 22.867762,
+        "lon": 120.194445,
+        "speed": 0.2,
+        "heading": 64.3
+      },
+      "min_distance_m": 7.1,
+      "location": {
+        "lat": 22.8677325,
+        "lon": 120.19443150000001
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "200010571",
+        "name": "NETFISHING       7V5",
+        "type_name": "unknown",
+        "lat": 22.870047,
+        "lon": 120.194923,
+        "speed": 0.2,
+        "heading": 180.0
+      },
+      "vessel2": {
+        "mmsi": "200010562",
+        "name": "NETFISHING       7V5",
+        "type_name": "unknown",
+        "lat": 22.870068,
+        "lon": 120.194982,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 6.5,
+      "location": {
+        "lat": 22.8700575,
+        "lon": 120.1949525
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412447688",
+        "name": "412447677",
+        "type_name": "fishing",
+        "lat": 24.219337,
+        "lon": 118.470327,
+        "speed": 2.1,
+        "heading": 41.2
+      },
+      "vessel2": {
+        "mmsi": "412447677",
+        "name": "MINLONGYU62288",
+        "type_name": "fishing",
+        "lat": 24.21934,
+        "lon": 118.47033,
+        "speed": 2.0,
+        "heading": 46.2
+      },
+      "min_distance_m": 0.5,
+      "location": {
+        "lat": 24.2193385,
+        "lon": 118.4703285
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416000158",
         "name": "SHIN SHI SHEN NO.12",
         "type_name": "fishing",
-        "lat": 24.836015,
-        "lon": 122.132853,
-        "speed": 0.6,
-        "heading": 164.1
+        "lat": 24.831983,
+        "lon": 122.146533,
+        "speed": 0.7,
+        "heading": 63.3
       },
       "vessel2": {
         "mmsi": "900018694",
         "name": "MMSI-900018694",
         "type_name": "fishing",
-        "lat": 24.836023,
-        "lon": 122.132832,
-        "speed": 0.2,
-        "heading": 195.4
+        "lat": 24.832022,
+        "lon": 122.146512,
+        "speed": 0.7,
+        "heading": 61.6
       },
-      "min_distance_m": 2.3,
+      "min_distance_m": 4.8,
       "location": {
-        "lat": 24.836019,
-        "lon": 122.1328425
+        "lat": 24.8320025,
+        "lon": 122.1465225
       },
       "classification": "normal",
       "risk_score": 25,
@@ -1050,31 +1569,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "15005809",
-        "name": "5809-15         11V2",
-        "type_name": "unknown",
-        "lat": 24.903422,
-        "lon": 121.868768,
-        "speed": 0.1,
-        "heading": 0.0
-      },
-      "vessel2": {
         "mmsi": "47524578",
         "name": "NET FISHING     11V8",
         "type_name": "unknown",
-        "lat": 24.903438,
-        "lon": 121.868732,
-        "speed": 0.0,
-        "heading": 250.9
+        "lat": 24.903418,
+        "lon": 121.868777,
+        "speed": 0.1,
+        "heading": 271.3
       },
-      "min_distance_m": 4.0,
+      "vessel2": {
+        "mmsi": "12005809",
+        "name": "5809-12         11V9",
+        "type_name": "unknown",
+        "lat": 24.903442,
+        "lon": 121.868842,
+        "speed": 0.6,
+        "heading": 312.2
+      },
+      "min_distance_m": 7.1,
       "location": {
         "lat": 24.90343,
-        "lon": 121.86875
+        "lon": 121.8688095
       },
       "classification": "normal",
       "risk_score": 25,
@@ -1084,31 +1603,65 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "8005809",
+        "name": "5809-8          11V5",
+        "type_name": "unknown",
+        "lat": 24.903505,
+        "lon": 121.868742,
+        "speed": 0.0,
+        "heading": 109.0
+      },
+      "vessel2": {
+        "mmsi": "14005809",
+        "name": "5809-14         12V5",
+        "type_name": "unknown",
+        "lat": 24.903538,
+        "lon": 121.868673,
+        "speed": 0.3,
+        "heading": 266.3
+      },
+      "min_distance_m": 7.9,
+      "location": {
+        "lat": 24.9035215,
+        "lon": 121.8687075
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "412451677",
         "name": "MINHUIYU01584",
         "type_name": "fishing",
-        "lat": 24.923545,
-        "lon": 119.50098,
-        "speed": 4.2,
-        "heading": 242.9
+        "lat": 24.904095,
+        "lon": 119.450352,
+        "speed": 4.0,
+        "heading": 252.9
       },
       "vessel2": {
         "mmsi": "412898089",
         "name": "MINHUIYU08224",
         "type_name": "fishing",
-        "lat": 24.923562,
-        "lon": 119.500973,
-        "speed": 3.9,
-        "heading": 238.3
+        "lat": 24.904118,
+        "lon": 119.450387,
+        "speed": 3.8,
+        "heading": 247.8
       },
-      "min_distance_m": 2.0,
+      "min_distance_m": 4.4,
       "location": {
-        "lat": 24.9235535,
-        "lon": 119.50097650000001
+        "lat": 24.9041065,
+        "lon": 119.4503695
       },
       "classification": "normal",
       "risk_score": 25,
@@ -1118,31 +1671,201 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "36241002",
+        "name": "CT3-6241:2       7V8",
+        "type_name": "other",
+        "lat": 24.90451,
+        "lon": 121.870107,
+        "speed": 0.7,
+        "heading": 321.4
+      },
+      "vessel2": {
+        "mmsi": "36241016",
+        "name": "CT3-6241:16      8V1",
+        "type_name": "other",
+        "lat": 24.904558,
+        "lon": 121.870188,
+        "speed": 0.1,
+        "heading": 0.0
+      },
+      "min_distance_m": 9.8,
+      "location": {
+        "lat": 24.904533999999998,
+        "lon": 121.8701475
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "stationary",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416005011",
+        "name": "QIAN CHUN NO.168",
+        "type_name": "fishing",
+        "lat": 25.847163,
+        "lon": 122.158565,
+        "speed": 2.3,
+        "heading": 115.7
+      },
+      "vessel2": {
+        "mmsi": "200041978",
+        "name": "MMSI-200041978",
+        "type_name": "fishing",
+        "lat": 25.847192,
+        "lon": 122.15865,
+        "speed": 2.5,
+        "heading": 118.5
+      },
+      "min_distance_m": 9.1,
+      "location": {
+        "lat": 25.8471775,
+        "lon": 122.15860749999999
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416000957",
+        "name": "HONG BAO MAAN",
+        "type_name": "fishing",
+        "lat": 26.212383,
+        "lon": 120.723333,
+        "speed": 1.2,
+        "heading": 158.3
+      },
+      "vessel2": {
+        "mmsi": "200023380",
+        "name": "MMSI-200023380",
+        "type_name": "fishing",
+        "lat": 26.212468,
+        "lon": 120.72332,
+        "speed": 0.1,
+        "heading": 154.3
+      },
+      "min_distance_m": 9.5,
+      "location": {
+        "lat": 26.212425500000002,
+        "lon": 120.7233265
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416005567",
+        "name": "YI ZAI 12",
+        "type_name": "unknown",
+        "lat": 26.352212,
+        "lon": 120.82496,
+        "speed": 1.0,
+        "heading": 69.8
+      },
+      "vessel2": {
+        "mmsi": "200000632",
+        "name": "MMSI-200000632",
+        "type_name": "unknown",
+        "lat": 26.352222,
+        "lon": 120.824893,
+        "speed": 0.4,
+        "heading": 344.4
+      },
+      "min_distance_m": 6.8,
+      "location": {
+        "lat": 26.352217000000003,
+        "lon": 120.8249265
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "412443201",
+        "name": "MINXIAYU28888",
+        "type_name": "fishing",
+        "lat": 26.94034,
+        "lon": 120.244873,
+        "speed": 1.2,
+        "heading": 282.4
+      },
+      "vessel2": {
+        "mmsi": "412443194",
+        "name": "MINXIAYU25555",
+        "type_name": "fishing",
+        "lat": 26.940372,
+        "lon": 120.244907,
+        "speed": 0.5,
+        "heading": 3.4
+      },
+      "min_distance_m": 4.9,
+      "location": {
+        "lat": 26.940356,
+        "lon": 120.24489
+      },
+      "classification": "normal",
+      "risk_score": 25,
+      "risk_factors": [
+        "outside_hotspot",
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416999999",
         "name": "MING MING HUI YAO",
         "type_name": "fishing",
         "lat": 22.275172,
-        "lon": 120.571973,
+        "lon": 120.571998,
         "speed": 0.1,
-        "heading": 203.8
+        "heading": 320.6
       },
       "vessel2": {
         "mmsi": "416071717",
         "name": "CTR-PT3238",
         "type_name": "fishing",
-        "lat": 22.275187,
-        "lon": 120.572018,
-        "speed": 0.1,
-        "heading": 138.6
+        "lat": 22.275185,
+        "lon": 120.572055,
+        "speed": 0.2,
+        "heading": 139.2
       },
-      "min_distance_m": 4.9,
+      "min_distance_m": 6.0,
       "location": {
-        "lat": 22.2751795,
-        "lon": 120.5719955
+        "lat": 22.275178500000003,
+        "lon": 120.57202649999999
       },
       "classification": "pair_trawling",
       "risk_score": 15,
@@ -1151,15 +1874,15 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416088900",
         "name": "YONG SHENG NO.2",
         "type_name": "fishing",
-        "lat": 22.55399,
-        "lon": 120.340508,
+        "lat": 22.553988,
+        "lon": 120.340503,
         "speed": 0.0,
         "heading": 0.0
       },
@@ -1167,15 +1890,15 @@
         "mmsi": "416171600",
         "name": "HUNG YI NO.2",
         "type_name": "fishing",
-        "lat": 22.55403,
-        "lon": 120.340558,
+        "lat": 22.554042,
+        "lon": 120.340548,
         "speed": 0.0,
         "heading": 0.0
       },
-      "min_distance_m": 6.8,
+      "min_distance_m": 7.6,
       "location": {
-        "lat": 22.554009999999998,
-        "lon": 120.340533
+        "lat": 22.554015,
+        "lon": 120.3405255
       },
       "classification": "pair_trawling",
       "risk_score": 15,
@@ -1184,31 +1907,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416003267",
-        "name": "S2 KMSC NO 701",
+        "mmsi": "416000843",
+        "name": "S6 DA REN NO2",
         "type_name": "special",
-        "lat": 22.562225,
-        "lon": 120.328783,
-        "speed": 0.1,
-        "heading": 136.7
+        "lat": 22.56222,
+        "lon": 120.32868,
+        "speed": 0.0,
+        "heading": 318.7
       },
       "vessel2": {
         "mmsi": "416003941",
         "name": "S11 KMSC NO 706",
         "type_name": "special",
-        "lat": 22.562228,
-        "lon": 120.328743,
-        "speed": 0.2,
-        "heading": 0.0
+        "lat": 22.562263,
+        "lon": 120.328742,
+        "speed": 0.0,
+        "heading": 237.5
       },
-      "min_distance_m": 4.1,
+      "min_distance_m": 8.0,
       "location": {
-        "lat": 22.5622265,
-        "lon": 120.32876300000001
+        "lat": 22.5622415,
+        "lon": 120.328711
       },
       "classification": "normal",
       "risk_score": 15,
@@ -1217,31 +1940,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
+        "mmsi": "416003941",
+        "name": "S11 KMSC NO 706",
+        "type_name": "special",
+        "lat": 22.562263,
+        "lon": 120.328742,
+        "speed": 0.0,
+        "heading": 237.5
+      },
+      "vessel2": {
         "mmsi": "416003267",
         "name": "S2 KMSC NO 701",
         "type_name": "special",
-        "lat": 22.562225,
-        "lon": 120.328783,
+        "lat": 22.56227,
+        "lon": 120.328828,
         "speed": 0.1,
-        "heading": 136.7
+        "heading": 5.8
       },
-      "vessel2": {
-        "mmsi": "416000439",
-        "name": "S3 CHIEN NAN NO 3",
-        "type_name": "special",
-        "lat": 22.562275,
-        "lon": 120.328812,
-        "speed": 0.1,
-        "heading": 170.0
-      },
-      "min_distance_m": 6.3,
+      "min_distance_m": 8.9,
       "location": {
-        "lat": 22.56225,
-        "lon": 120.32879750000001
+        "lat": 22.5622665,
+        "lon": 120.32878500000001
       },
       "classification": "normal",
       "risk_score": 15,
@@ -1250,31 +1973,64 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416003941",
         "name": "S11 KMSC NO 706",
         "type_name": "special",
-        "lat": 22.562228,
-        "lon": 120.328743,
-        "speed": 0.2,
-        "heading": 0.0
+        "lat": 22.562263,
+        "lon": 120.328742,
+        "speed": 0.0,
+        "heading": 237.5
       },
       "vessel2": {
         "mmsi": "416000439",
         "name": "S3 CHIEN NAN NO 3",
         "type_name": "special",
-        "lat": 22.562275,
-        "lon": 120.328812,
-        "speed": 0.1,
-        "heading": 170.0
+        "lat": 22.562277,
+        "lon": 120.328783,
+        "speed": 0.3,
+        "heading": 206.1
+      },
+      "min_distance_m": 4.5,
+      "location": {
+        "lat": 22.56227,
+        "lon": 120.32876250000001
+      },
+      "classification": "normal",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416003941",
+        "name": "S11 KMSC NO 706",
+        "type_name": "special",
+        "lat": 22.562263,
+        "lon": 120.328742,
+        "speed": 0.0,
+        "heading": 237.5
+      },
+      "vessel2": {
+        "mmsi": "416000844",
+        "name": "S18 YUNG TONG NO 18",
+        "type_name": "special",
+        "lat": 22.562302,
+        "lon": 120.328817,
+        "speed": 0.2,
+        "heading": 22.2
       },
       "min_distance_m": 8.8,
       "location": {
-        "lat": 22.562251500000002,
-        "lon": 120.3287775
+        "lat": 22.562282500000002,
+        "lon": 120.3287795
       },
       "classification": "normal",
       "risk_score": 15,
@@ -1283,31 +2039,163 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416003267",
+        "name": "S2 KMSC NO 701",
+        "type_name": "special",
+        "lat": 22.56227,
+        "lon": 120.328828,
+        "speed": 0.1,
+        "heading": 5.8
+      },
+      "vessel2": {
+        "mmsi": "416000439",
+        "name": "S3 CHIEN NAN NO 3",
+        "type_name": "special",
+        "lat": 22.562277,
+        "lon": 120.328783,
+        "speed": 0.3,
+        "heading": 206.1
+      },
+      "min_distance_m": 4.7,
+      "location": {
+        "lat": 22.562273500000003,
+        "lon": 120.3288055
+      },
+      "classification": "normal",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416003267",
+        "name": "S2 KMSC NO 701",
+        "type_name": "special",
+        "lat": 22.56227,
+        "lon": 120.328828,
+        "speed": 0.1,
+        "heading": 5.8
+      },
+      "vessel2": {
+        "mmsi": "416000844",
+        "name": "S18 YUNG TONG NO 18",
+        "type_name": "special",
+        "lat": 22.562302,
+        "lon": 120.328817,
+        "speed": 0.2,
+        "heading": 22.2
+      },
+      "min_distance_m": 3.7,
+      "location": {
+        "lat": 22.562286,
+        "lon": 120.3288225
+      },
+      "classification": "normal",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416000439",
+        "name": "S3 CHIEN NAN NO 3",
+        "type_name": "special",
+        "lat": 22.562277,
+        "lon": 120.328783,
+        "speed": 0.3,
+        "heading": 206.1
+      },
+      "vessel2": {
+        "mmsi": "416000844",
+        "name": "S18 YUNG TONG NO 18",
+        "type_name": "special",
+        "lat": 22.562302,
+        "lon": 120.328817,
+        "speed": 0.2,
+        "heading": 22.2
+      },
+      "min_distance_m": 4.5,
+      "location": {
+        "lat": 22.5622895,
+        "lon": 120.3288
+      },
+      "classification": "normal",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416018125",
+        "name": "CTS-4717",
+        "type_name": "fishing",
+        "lat": 22.872463,
+        "lon": 120.19974,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "vessel2": {
+        "mmsi": "416017659",
+        "name": "CTS-008277",
+        "type_name": "fishing",
+        "lat": 22.872492,
+        "lon": 120.199723,
+        "speed": 0.0,
+        "heading": 0.0
+      },
+      "min_distance_m": 3.7,
+      "location": {
+        "lat": 22.872477500000002,
+        "lon": 120.19973150000001
+      },
+      "classification": "pair_trawling",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416002602",
         "name": "JIN FU YU",
         "type_name": "fishing",
-        "lat": 23.98564,
-        "lon": 120.303448,
-        "speed": 1.3,
-        "heading": 184.0
+        "lat": 23.977697,
+        "lon": 120.300597,
+        "speed": 1.4,
+        "heading": 212.6
       },
       "vessel2": {
         "mmsi": "416333222",
         "name": "YEONG CHERN",
         "type_name": "fishing",
-        "lat": 23.985725,
-        "lon": 120.303433,
-        "speed": 0.7,
-        "heading": 185.7
+        "lat": 23.97772,
+        "lon": 120.300603,
+        "speed": 1.8,
+        "heading": 213.2
       },
-      "min_distance_m": 9.6,
+      "min_distance_m": 2.6,
       "location": {
-        "lat": 23.9856825,
-        "lon": 120.3034405
+        "lat": 23.9777085,
+        "lon": 120.3006
       },
       "classification": "pair_trawling",
       "risk_score": 15,
@@ -1316,81 +2204,15 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "416071803",
-        "name": "CTR-HL0216",
-        "type_name": "fishing",
-        "lat": 23.997135,
-        "lon": 121.639148,
-        "speed": 0.3,
-        "heading": 0.0
-      },
-      "vessel2": {
-        "mmsi": "416072573",
-        "name": "CTR-HL0358",
-        "type_name": "fishing",
-        "lat": 23.997135,
-        "lon": 121.639158,
-        "speed": 0.0,
-        "heading": 0.0
-      },
-      "min_distance_m": 1.0,
-      "location": {
-        "lat": 23.997135,
-        "lon": 121.639153
-      },
-      "classification": "pair_trawling",
-      "risk_score": 15,
-      "risk_factors": [
-        "stationary"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "416070407",
-        "name": "CTR-IL0019",
-        "type_name": "fishing",
-        "lat": 24.862863,
-        "lon": 121.833702,
-        "speed": 0.1,
-        "heading": 0.0
-      },
-      "vessel2": {
-        "mmsi": "416010976",
-        "name": "LIH JU NO.1",
-        "type_name": "fishing",
-        "lat": 24.862872,
-        "lon": 121.833798,
-        "speed": 0.0,
-        "heading": 0.0
-      },
-      "min_distance_m": 9.7,
-      "location": {
-        "lat": 24.8628675,
-        "lon": 121.83375000000001
-      },
-      "classification": "pair_trawling",
-      "risk_score": 15,
-      "risk_factors": [
-        "stationary"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416010976",
         "name": "LIH JU NO.1",
         "type_name": "fishing",
-        "lat": 24.862872,
-        "lon": 121.833798,
+        "lat": 24.862902,
+        "lon": 121.83381,
         "speed": 0.0,
         "heading": 0.0
       },
@@ -1398,15 +2220,15 @@
         "mmsi": "416067392",
         "name": "DA LI MA",
         "type_name": "fishing",
-        "lat": 24.862902,
-        "lon": 121.833808,
+        "lat": 24.862913,
+        "lon": 121.833792,
         "speed": 0.0,
         "heading": 214.2
       },
-      "min_distance_m": 3.5,
+      "min_distance_m": 2.2,
       "location": {
-        "lat": 24.862887,
-        "lon": 121.833803
+        "lat": 24.8629075,
+        "lon": 121.833801
       },
       "classification": "pair_trawling",
       "risk_score": 15,
@@ -1415,64 +2237,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416012672",
-        "name": "JIN FWU YU NO.6",
+        "mmsi": "416070351",
+        "name": "CTR-IL0747",
         "type_name": "fishing",
-        "lat": 24.90427,
-        "lon": 121.869183,
-        "speed": 0.1,
+        "lat": 24.903768,
+        "lon": 121.868395,
+        "speed": 0.4,
         "heading": 0.0
       },
       "vessel2": {
-        "mmsi": "416070478",
-        "name": "CTR-IL0756",
+        "mmsi": "416070435",
+        "name": "CTR-IL0797",
         "type_name": "fishing",
-        "lat": 24.904302,
-        "lon": 121.869275,
-        "speed": 0.1,
-        "heading": 0.0
-      },
-      "min_distance_m": 9.9,
-      "location": {
-        "lat": 24.904286,
-        "lon": 121.869229
-      },
-      "classification": "pair_trawling",
-      "risk_score": 15,
-      "risk_factors": [
-        "stationary"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "416019223",
-        "name": "HAE YANG CHERNG",
-        "type_name": "fishing",
-        "lat": 25.056813,
-        "lon": 121.927395,
+        "lat": 24.90378,
+        "lon": 121.868455,
         "speed": 0.0,
         "heading": 0.0
       },
-      "vessel2": {
-        "mmsi": "416018855",
-        "name": "CTS-009272",
-        "type_name": "fishing",
-        "lat": 25.056852,
-        "lon": 121.927418,
-        "speed": 0.1,
-        "heading": 0.0
-      },
-      "min_distance_m": 4.9,
+      "min_distance_m": 6.2,
       "location": {
-        "lat": 25.0568325,
-        "lon": 121.9274065
+        "lat": 24.903774,
+        "lon": 121.868425
       },
       "classification": "pair_trawling",
       "risk_score": 15,
@@ -1481,64 +2270,130 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "994145010",
-        "name": "CT2-6158-10       9V",
-        "type_name": "unknown",
-        "lat": 23.180783,
-        "lon": 121.66683,
-        "speed": 1.4,
-        "heading": 106.4
+        "mmsi": "416018855",
+        "name": "CTS-009272",
+        "type_name": "fishing",
+        "lat": 25.056812,
+        "lon": 121.927367,
+        "speed": 0.3,
+        "heading": 0.0
       },
       "vessel2": {
-        "mmsi": "994145009",
-        "name": "CT2-6158-09       9V",
-        "type_name": "unknown",
-        "lat": 23.180797,
-        "lon": 121.666835,
-        "speed": 0.8,
-        "heading": 346.2
+        "mmsi": "416019223",
+        "name": "HAE YANG CHERNG",
+        "type_name": "fishing",
+        "lat": 25.056832,
+        "lon": 121.927402,
+        "speed": 0.0,
+        "heading": 0.0
       },
-      "min_distance_m": 1.6,
+      "min_distance_m": 4.2,
       "location": {
-        "lat": 23.180790000000002,
-        "lon": 121.6668325
+        "lat": 25.056822,
+        "lon": 121.9273845
       },
-      "classification": "normal",
-      "risk_score": 10,
+      "classification": "pair_trawling",
+      "risk_score": 15,
       "risk_factors": [
-        "foreign_flag"
+        "stationary"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "994145062",
-        "name": "SHL-012           6V",
+        "mmsi": "416011470",
+        "name": "123",
+        "type_name": "fishing",
+        "lat": 25.624403,
+        "lon": 121.998263,
+        "speed": 0.1,
+        "heading": 350.9
+      },
+      "vessel2": {
+        "mmsi": "416188600",
+        "name": "SHYE CHIEN 17",
+        "type_name": "fishing",
+        "lat": 25.62445,
+        "lon": 121.998283,
+        "speed": 0.7,
+        "heading": 219.0
+      },
+      "min_distance_m": 5.6,
+      "location": {
+        "lat": 25.6244265,
+        "lon": 121.998273
+      },
+      "classification": "pair_trawling",
+      "risk_score": 15,
+      "risk_factors": [
+        "stationary"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "994145004",
+        "name": "GS3-004           5V",
         "type_name": "unknown",
-        "lat": 23.183792,
-        "lon": 121.663953,
-        "speed": 1.4,
-        "heading": 48.4
+        "lat": 23.22687,
+        "lon": 121.65838,
+        "speed": 3.3,
+        "heading": 24.2
       },
       "vessel2": {
         "mmsi": "994145063",
         "name": "SHL-013           8V",
         "type_name": "unknown",
-        "lat": 23.183807,
-        "lon": 121.66395,
-        "speed": 1.4,
-        "heading": 24.6
+        "lat": 23.226947,
+        "lon": 121.658365,
+        "speed": 3.2,
+        "heading": 16.8
+      },
+      "min_distance_m": 8.7,
+      "location": {
+        "lat": 23.2269085,
+        "lon": 121.6583725
+      },
+      "classification": "normal",
+      "risk_score": 10,
+      "risk_factors": [
+        "foreign_flag"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "994145063",
+        "name": "SHL-013           8V",
+        "type_name": "unknown",
+        "lat": 23.226947,
+        "lon": 121.658365,
+        "speed": 3.2,
+        "heading": 16.8
+      },
+      "vessel2": {
+        "mmsi": "994145064",
+        "name": "SHL-014           8V",
+        "type_name": "unknown",
+        "lat": 23.226962,
+        "lon": 121.658363,
+        "speed": 4.2,
+        "heading": 30.5
       },
       "min_distance_m": 1.7,
       "location": {
-        "lat": 23.1837995,
-        "lon": 121.6639515
+        "lat": 23.226954499999998,
+        "lon": 121.658364
       },
       "classification": "normal",
       "risk_score": 10,
@@ -1547,31 +2402,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "994888097",
-        "name": "994888097         9V",
+        "mmsi": "994524506",
+        "name": "JJ168-06          9V",
         "type_name": "unknown",
-        "lat": 23.323268,
-        "lon": 119.27636,
-        "speed": 3.1,
-        "heading": 191.7
+        "lat": 23.302748,
+        "lon": 121.503597,
+        "speed": 3.7,
+        "heading": 17.1
       },
       "vessel2": {
-        "mmsi": "994500072",
-        "name": "9V",
+        "mmsi": "994524513",
+        "name": "CT2-524513        9V",
         "type_name": "unknown",
-        "lat": 23.323338,
-        "lon": 119.2763,
-        "speed": 2.0,
-        "heading": 190.1
+        "lat": 23.3028,
+        "lon": 121.503628,
+        "speed": 4.4,
+        "heading": 16.6
       },
-      "min_distance_m": 9.9,
+      "min_distance_m": 6.6,
       "location": {
-        "lat": 23.323303,
-        "lon": 119.27633
+        "lat": 23.302774,
+        "lon": 121.5036125
       },
       "classification": "normal",
       "risk_score": 10,
@@ -1580,64 +2435,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "685",
-        "name": "685               9V",
-        "type_name": "unknown",
-        "lat": 23.35998,
-        "lon": 119.263368,
-        "speed": 1.8,
-        "heading": 196.7
-      },
-      "vessel2": {
-        "mmsi": "105105597",
-        "name": "5597",
-        "type_name": "unknown",
-        "lat": 23.360007,
-        "lon": 119.263362,
-        "speed": 2.8,
-        "heading": 167.3
-      },
-      "min_distance_m": 3.1,
-      "location": {
-        "lat": 23.3599935,
-        "lon": 119.263365
-      },
-      "classification": "normal",
-      "risk_score": 10,
-      "risk_factors": [
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "98350673",
-        "name": "NET MARK-298-30",
+        "mmsi": "98334562",
+        "name": "H098334562",
         "type_name": "fishing",
-        "lat": 23.419622,
-        "lon": 119.272852,
-        "speed": 1.4,
-        "heading": 186.9
+        "lat": 23.391103,
+        "lon": 119.274202,
+        "speed": 2.0,
+        "heading": 149.2
       },
       "vessel2": {
         "mmsi": "98350056",
         "name": "AIS NET MARK",
         "type_name": "fishing",
-        "lat": 23.41965,
-        "lon": 119.272818,
-        "speed": 2.1,
-        "heading": 184.5
+        "lat": 23.391163,
+        "lon": 119.274227,
+        "speed": 1.8,
+        "heading": 140.5
       },
-      "min_distance_m": 4.7,
+      "min_distance_m": 7.1,
       "location": {
-        "lat": 23.419636,
-        "lon": 119.272835
+        "lat": 23.391133,
+        "lon": 119.2742145
       },
       "classification": "pair_trawling",
       "risk_score": 10,
@@ -1646,31 +2468,31 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
+        "mmsi": "98350056",
+        "name": "AIS NET MARK",
+        "type_name": "fishing",
+        "lat": 23.391163,
+        "lon": 119.274227,
+        "speed": 1.8,
+        "heading": 140.5
+      },
+      "vessel2": {
         "mmsi": "416004646",
         "name": "LONG HUEI HONG",
         "type_name": "fishing",
-        "lat": 23.419843,
-        "lon": 119.2728,
-        "speed": 2.8,
-        "heading": 179.8
+        "lat": 23.391202,
+        "lon": 119.274182,
+        "speed": 3.1,
+        "heading": 147.8
       },
-      "vessel2": {
-        "mmsi": "98350678",
-        "name": "NET MARK-298-1",
-        "type_name": "fishing",
-        "lat": 23.419852,
-        "lon": 119.272805,
-        "speed": 1.0,
-        "heading": 187.2
-      },
-      "min_distance_m": 1.1,
+      "min_distance_m": 6.3,
       "location": {
-        "lat": 23.4198475,
-        "lon": 119.27280250000001
+        "lat": 23.3911825,
+        "lon": 119.2742045
       },
       "classification": "pair_trawling",
       "risk_score": 10,
@@ -1679,128 +2501,97 @@
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "15005809",
-        "name": "5809-15         11V2",
-        "type_name": "unknown",
-        "lat": 24.903422,
-        "lon": 121.868768,
-        "speed": 0.1,
-        "heading": 0.0
+        "mmsi": "416030664",
+        "name": "MMSI-416030664",
+        "type_name": "fishing",
+        "lat": 23.050858,
+        "lon": 119.251213,
+        "speed": 2.1,
+        "heading": 153.7
       },
       "vessel2": {
-        "mmsi": "11005809",
-        "name": "5809-11         11V7",
-        "type_name": "unknown",
-        "lat": 24.903442,
-        "lon": 121.86869,
-        "speed": 1.3,
-        "heading": 280.2
+        "mmsi": "416002434",
+        "name": "SHENG YI SHENG",
+        "type_name": "fishing",
+        "lat": 23.050895,
+        "lon": 119.251152,
+        "speed": 2.4,
+        "heading": 148.8
       },
-      "min_distance_m": 8.2,
+      "min_distance_m": 7.5,
       "location": {
-        "lat": 24.903432,
-        "lon": 121.868729
+        "lat": 23.0508765,
+        "lon": 119.2511825
       },
-      "classification": "normal",
-      "risk_score": 10,
+      "classification": "pair_trawling",
+      "risk_score": 0,
       "risk_factors": [
-        "foreign_flag"
+        "pair_trawling_pattern"
       ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
-      "duration_hours": 0,
-      "vessel1": {
-        "mmsi": "47524578",
-        "name": "NET FISHING     11V8",
-        "type_name": "unknown",
-        "lat": 24.903438,
-        "lon": 121.868732,
-        "speed": 0.0,
-        "heading": 250.9
-      },
-      "vessel2": {
-        "mmsi": "11005809",
-        "name": "5809-11         11V7",
-        "type_name": "unknown",
-        "lat": 24.903442,
-        "lon": 121.86869,
-        "speed": 1.3,
-        "heading": 280.2
-      },
-      "min_distance_m": 4.3,
-      "location": {
-        "lat": 24.90344,
-        "lon": 121.86871099999999
-      },
-      "classification": "normal",
-      "risk_score": 10,
-      "risk_factors": [
-        "foreign_flag"
-      ]
-    },
-    {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
         "mmsi": "416059699",
         "name": "59699",
         "type_name": "fishing",
-        "lat": 23.339573,
-        "lon": 119.258208,
-        "speed": 2.1,
-        "heading": 188.6
+        "lat": 23.307372,
+        "lon": 119.25641,
+        "speed": 3.0,
+        "heading": 178.6
       },
       "vessel2": {
         "mmsi": "416004107",
         "name": "HORNG FUH FWU",
         "type_name": "fishing",
-        "lat": 23.339652,
-        "lon": 119.258225,
-        "speed": 1.5,
-        "heading": 187.6
+        "lat": 23.307377,
+        "lon": 119.256428,
+        "speed": 3.7,
+        "heading": 182.3
       },
-      "min_distance_m": 9.0,
+      "min_distance_m": 1.9,
       "location": {
-        "lat": 23.3396125,
-        "lon": 119.2582165
+        "lat": 23.3073745,
+        "lon": 119.256419
       },
       "classification": "pair_trawling",
       "risk_score": 0,
-      "risk_factors": []
+      "risk_factors": [
+        "pair_trawling_pattern"
+      ]
     },
     {
-      "first_seen": "2026-10-12T05:28:35.425382+00:00",
-      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
       "duration_hours": 0,
       "vessel1": {
-        "mmsi": "416001115",
-        "name": "YI SHENG HONG NO.6",
+        "mmsi": "98351044",
+        "name": "AIS NET MARK",
         "type_name": "fishing",
-        "lat": 23.506197,
-        "lon": 119.483103,
-        "speed": 2.7,
-        "heading": 154.7
+        "lat": 23.414045,
+        "lon": 119.277148,
+        "speed": 2.5,
+        "heading": 164.8
       },
       "vessel2": {
-        "mmsi": "200015913",
-        "name": "MMSI-200015913",
+        "mmsi": "98338863",
+        "name": "H098338863",
         "type_name": "fishing",
-        "lat": 23.506228,
-        "lon": 119.483078,
-        "speed": 2.6,
-        "heading": 152.8
+        "lat": 23.414072,
+        "lon": 119.277158,
+        "speed": 2.5,
+        "heading": 169.7
       },
-      "min_distance_m": 4.3,
+      "min_distance_m": 3.2,
       "location": {
-        "lat": 23.5062125,
-        "lon": 119.4830905
+        "lat": 23.414058500000003,
+        "lon": 119.277153
       },
       "classification": "pair_trawling",
       "risk_score": 0,
@@ -1808,6 +2599,133 @@
         "foreign_flag",
         "pair_trawling_pattern"
       ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416001115",
+        "name": "YI SHENG HONG NO.6",
+        "type_name": "fishing",
+        "lat": 23.471108,
+        "lon": 119.500043,
+        "speed": 3.3,
+        "heading": 151.5
+      },
+      "vessel2": {
+        "mmsi": "200015913",
+        "name": "MMSI-200015913",
+        "type_name": "fishing",
+        "lat": 23.471127,
+        "lon": 119.500083,
+        "speed": 3.2,
+        "heading": 156.5
+      },
+      "min_distance_m": 4.6,
+      "location": {
+        "lat": 23.4711175,
+        "lon": 119.50006300000001
+      },
+      "classification": "pair_trawling",
+      "risk_score": 0,
+      "risk_factors": [
+        "foreign_flag",
+        "pair_trawling_pattern"
+      ]
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416000111",
+        "name": "0",
+        "type_name": "fishing",
+        "lat": 24.392773,
+        "lon": 121.94633,
+        "speed": 1.1,
+        "heading": 220.3
+      },
+      "vessel2": {
+        "mmsi": "416000487",
+        "name": "FU SHENG NO.1",
+        "type_name": "fishing",
+        "lat": 24.392795,
+        "lon": 121.946347,
+        "speed": 1.2,
+        "heading": 21.6
+      },
+      "min_distance_m": 3.0,
+      "location": {
+        "lat": 24.392784,
+        "lon": 121.9463385
+      },
+      "classification": "pair_trawling",
+      "risk_score": 0,
+      "risk_factors": []
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416070458",
+        "name": "CTR-IL0814",
+        "type_name": "fishing",
+        "lat": 24.902977,
+        "lon": 121.867838,
+        "speed": 0.1,
+        "heading": 0.0
+      },
+      "vessel2": {
+        "mmsi": "416070467",
+        "name": "CTR-IL0564",
+        "type_name": "fishing",
+        "lat": 24.90302,
+        "lon": 121.867878,
+        "speed": 3.1,
+        "heading": 0.0
+      },
+      "min_distance_m": 6.3,
+      "location": {
+        "lat": 24.902998500000002,
+        "lon": 121.86785800000001
+      },
+      "classification": "pair_trawling",
+      "risk_score": 0,
+      "risk_factors": []
+    },
+    {
+      "first_seen": "2026-10-12T06:14:19.293083+00:00",
+      "last_seen": "2026-10-12T06:14:19.293083+00:00",
+      "duration_hours": 0,
+      "vessel1": {
+        "mmsi": "416005019",
+        "name": "YOU FONG NO 668",
+        "type_name": "fishing",
+        "lat": 25.685988,
+        "lon": 121.628688,
+        "speed": 4.2,
+        "heading": 126.4
+      },
+      "vessel2": {
+        "mmsi": "416005049",
+        "name": "YEOU FENG NO.668",
+        "type_name": "fishing",
+        "lat": 25.685993,
+        "lon": 121.628645,
+        "speed": 4.0,
+        "heading": 104.9
+      },
+      "min_distance_m": 4.3,
+      "location": {
+        "lat": 25.6859905,
+        "lon": 121.62866650000001
+      },
+      "classification": "pair_trawling",
+      "risk_score": 0,
+      "risk_factors": []
     }
   ],
   "history": [
@@ -6513,6 +7431,41 @@
       ]
     },
     {
+      "first_seen": "2026-10-11T06:04:08.782887+00:00",
+      "last_seen": "2026-10-12T05:28:35.425382+00:00",
+      "duration_hours": 23.4,
+      "vessel1": {
+        "mmsi": "412506208",
+        "name": "MINXIAYU20011",
+        "type_name": "fishing",
+        "lat": 26.94244,
+        "lon": 120.23342,
+        "speed": 0.0,
+        "heading": 216.2
+      },
+      "vessel2": {
+        "mmsi": "412506207",
+        "name": "MINXIAYU20010",
+        "type_name": "fishing",
+        "lat": 26.94246,
+        "lon": 120.23351,
+        "speed": 2.3,
+        "heading": 238.7
+      },
+      "min_distance_m": 2.3,
+      "location": {
+        "lat": 26.94245,
+        "lon": 120.233465
+      },
+      "classification": "normal",
+      "risk_score": 35,
+      "risk_factors": [
+        "outside_hotspot",
+        "long_duration",
+        "foreign_flag"
+      ]
+    },
+    {
       "first_seen": "2026-10-11T17:14:30.914869+00:00",
       "last_seen": "2026-10-11T20:43:24.185694+00:00",
       "duration_hours": 3.5,
@@ -9937,11 +10890,11 @@
     }
   ],
   "summary": {
-    "active_count": 53,
-    "history_count": 234,
-    "suspicious_count": 106,
-    "pair_trawling_count": 13,
-    "unique_vessels": 252,
+    "active_count": 80,
+    "history_count": 235,
+    "suspicious_count": 118,
+    "pair_trawling_count": 18,
+    "unique_vessels": 279,
     "history_days": 14
   }
 }
