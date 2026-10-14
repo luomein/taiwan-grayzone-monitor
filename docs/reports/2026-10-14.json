@@ -1,0 +1,212 @@
+{
+  "date": "2026-10-14",
+  "generated_at": "2026-10-14T04:31:54.042330Z",
+  "data_updated_at": "2026-10-14T04:31:53.544229Z",
+  "ais_vessels": 7372,
+  "dark_vessels": 18569,
+  "dark_ratio": 45.1,
+  "suspicious_count": 986,
+  "critical_count": 353,
+  "high_count": 633,
+  "cable_near_count": 634,
+  "sts_active": 65,
+  "sts_suspicious": 121,
+  "top_suspicious": [
+    {
+      "mmsi": "413000000",
+      "name": "HUINONGYUN09977",
+      "risk_score": 29,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "eez",
+      "cable_band": "beyond_10km"
+    },
+    {
+      "mmsi": "608683405",
+      "name": "83405",
+      "risk_score": 26,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "eez",
+      "cable_band": "within_5km"
+    },
+    {
+      "mmsi": "677073600",
+      "name": "LYDIA 1",
+      "risk_score": 25,
+      "risk_level": "critical",
+      "vessel_type": "tanker",
+      "zone": "eez",
+      "cable_band": "within_1km"
+    },
+    {
+      "mmsi": "200000000",
+      "name": "ZABEEL",
+      "risk_score": 24,
+      "risk_level": "critical",
+      "vessel_type": "fishing",
+      "zone": "eez",
+      "cable_band": "beyond_10km"
+    },
+    {
+      "mmsi": "412521070",
+      "name": "FU FENG 6",
+      "risk_score": 24,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "internal_waters",
+      "cable_band": "within_1km"
+    }
+  ],
+  "sar_ais_matching": {
+    "dark_total": 18569,
+    "infrastructure_filtered": 4886,
+    "rematched_local": 880,
+    "residual_dark": 12803,
+    "in_ais_coverage": 10359,
+    "no_ais_coverage": 3324,
+    "rematch_rate_of_coverage_pct": 8.5,
+    "false_dark_removed_pct": 31.1,
+    "ais_vessels_indexed": 19492,
+    "s1_real_pass_dates": 26,
+    "ais_coverage_start": "2026-09-17T15:23:12.849902Z",
+    "ais_coverage_end": "2026-10-14T04:27:43.834058Z",
+    "updated_at": "2026-10-14T04:28:06.861059Z"
+  },
+  "darkship_forensics": {
+    "latest_run": "2026-10-14",
+    "run_count": 6,
+    "total_count": 514,
+    "verdict_counts_run": {
+      "none": 4,
+      "weak": 1,
+      "error": 1
+    },
+    "verdict_counts_total": {
+      "weak": 104,
+      "none": 349,
+      "confirmed": 59,
+      "land": 1,
+      "error": 1
+    },
+    "confirmed_rate_pct": 11.5,
+    "featured_source": "latest_run",
+    "featured": [
+      {
+        "date": "2026-10-10",
+        "lat": 25.05,
+        "lon": 122.11,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "territorial_sea",
+        "verdict": "weak",
+        "length_m": 14.1,
+        "peak_ratio": 3.1,
+        "n_pixels": 1,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215124_20261010T215153_009828_013950_85A2_COG.SAFE",
+        "png": "chips/2026-10-10_25.05_122.11.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-10-10_25.05_122.11.png",
+        "thumb": "chips/2026-10-10_25.05_122.11.jpg"
+      }
+    ],
+    "run_targets": [
+      {
+        "date": "2026-10-10",
+        "lat": 25.3,
+        "lon": 121.81,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "internal_waters",
+        "verdict": "none",
+        "length_m": null,
+        "peak_ratio": null,
+        "n_pixels": null,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215124_20261010T215153_009828_013950_85A2_COG.SAFE",
+        "png": "chips/2026-10-10_25.3_121.81.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-10-10_25.3_121.81.png",
+        "thumb": null
+      },
+      {
+        "date": "2026-10-10",
+        "lat": 22.32,
+        "lon": 121.72,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "territorial_sea",
+        "verdict": "none",
+        "length_m": null,
+        "peak_ratio": null,
+        "n_pixels": null,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215153_20261010T215218_009828_013950_29FD.SAFE",
+        "png": "chips/2026-10-10_22.32_121.72.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-10-10_22.32_121.72.png",
+        "thumb": null
+      },
+      {
+        "date": "2026-10-10",
+        "lat": 25.43,
+        "lon": 122.27,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "territorial_sea",
+        "verdict": "none",
+        "length_m": null,
+        "peak_ratio": null,
+        "n_pixels": null,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215124_20261010T215153_009828_013950_85A2_COG.SAFE",
+        "png": "chips/2026-10-10_25.43_122.27.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-10-10_25.43_122.27.png",
+        "thumb": null
+      },
+      {
+        "date": "2026-10-10",
+        "lat": 25.05,
+        "lon": 122.11,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "territorial_sea",
+        "verdict": "weak",
+        "length_m": 14.1,
+        "peak_ratio": 3.1,
+        "n_pixels": 1,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215124_20261010T215153_009828_013950_85A2_COG.SAFE",
+        "png": "chips/2026-10-10_25.05_122.11.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-10-10_25.05_122.11.png",
+        "thumb": null
+      },
+      {
+        "date": "2026-10-10",
+        "lat": 25.2,
+        "lon": 121.96,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "internal_waters",
+        "verdict": "error",
+        "length_m": null,
+        "peak_ratio": null,
+        "n_pixels": null,
+        "product": "S1C_IW_GRDH_1SDV_20261010T215124_20261010T215153_009828_013950_85A2_COG.SAFE",
+        "png": null,
+        "chip_url": null,
+        "thumb": null
+      },
+      {
+        "date": "2026-09-28",
+        "lat": 24.9,
+        "lon": 121.9,
+        "time": "21:51",
+        "zone": "east",
+        "jurisdiction": "internal_waters",
+        "verdict": "none",
+        "length_m": null,
+        "peak_ratio": null,
+        "n_pixels": null,
+        "product": "S1C_IW_GRDH_1SDV_20260928T215124_20260928T215153_009653_01336F_F47E_COG.SAFE",
+        "png": "chips/2026-09-28_24.9_121.9.png",
+        "chip_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/chips/2026-09-28_24.9_121.9.png",
+        "thumb": null
+      }
+    ],
+    "report_md_url": "https://raw.githubusercontent.com/s0914712/taiwan-grayzone-monitor/main/reports/darkship_report_2026-10-14.md"
+  }
+}
