@@ -1,16 +1,16 @@
 {
   "date": "2026-10-14",
-  "generated_at": "2026-10-14T04:31:54.042330Z",
-  "data_updated_at": "2026-10-14T04:31:53.544229Z",
-  "ais_vessels": 7372,
-  "dark_vessels": 18569,
-  "dark_ratio": 45.1,
-  "suspicious_count": 986,
-  "critical_count": 353,
-  "high_count": 633,
-  "cable_near_count": 634,
-  "sts_active": 65,
-  "sts_suspicious": 121,
+  "generated_at": "2026-10-14T16:27:18.714804Z",
+  "data_updated_at": "2026-10-14T16:27:18.033777Z",
+  "ais_vessels": 7290,
+  "dark_vessels": 18576,
+  "dark_ratio": 45.0,
+  "suspicious_count": 969,
+  "critical_count": 344,
+  "high_count": 625,
+  "cable_near_count": 637,
+  "sts_active": 79,
+  "sts_suspicious": 139,
   "top_suspicious": [
     {
       "mmsi": "413000000",
@@ -49,29 +49,29 @@
       "cable_band": "beyond_10km"
     },
     {
-      "mmsi": "412521070",
-      "name": "FU FENG 6",
+      "mmsi": "412466829",
+      "name": "66829",
       "risk_score": 24,
       "risk_level": "critical",
-      "vessel_type": "cargo",
-      "zone": "internal_waters",
-      "cable_band": "within_1km"
+      "vessel_type": "unknown",
+      "zone": "eez",
+      "cable_band": "within_5km"
     }
   ],
   "sar_ais_matching": {
-    "dark_total": 18569,
-    "infrastructure_filtered": 4886,
-    "rematched_local": 880,
-    "residual_dark": 12803,
-    "in_ais_coverage": 10359,
+    "dark_total": 18576,
+    "infrastructure_filtered": 4887,
+    "rematched_local": 853,
+    "residual_dark": 12836,
+    "in_ais_coverage": 10365,
     "no_ais_coverage": 3324,
-    "rematch_rate_of_coverage_pct": 8.5,
-    "false_dark_removed_pct": 31.1,
-    "ais_vessels_indexed": 19492,
-    "s1_real_pass_dates": 26,
+    "rematch_rate_of_coverage_pct": 8.2,
+    "false_dark_removed_pct": 30.9,
+    "ais_vessels_indexed": 19299,
+    "s1_real_pass_dates": 27,
     "ais_coverage_start": "2026-09-17T15:23:12.849902Z",
-    "ais_coverage_end": "2026-10-14T04:27:43.834058Z",
-    "updated_at": "2026-10-14T04:28:06.861059Z"
+    "ais_coverage_end": "2026-10-14T16:21:34.397381Z",
+    "updated_at": "2026-10-14T16:22:09.749957Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-14",

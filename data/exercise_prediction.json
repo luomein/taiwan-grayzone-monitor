@@ -1,136 +1,136 @@
 {
-  "updated_at": "2026-10-14T04:31:35.303375Z",
+  "updated_at": "2026-10-14T16:26:29.221036Z",
   "status": "ok",
   "data_summary": {
-    "merged_days": 39,
-    "date_range": "2026-01-30 ~ 2026-10-10",
-    "dark_mean": 796.5,
-    "dark_std": 981.2,
-    "sorties_mean": 7.9,
-    "sorties_std": 8.0,
-    "correlation_dark_sorties": -0.0105,
-    "correlation_dark_plan_vessels": -0.2
+    "merged_days": 40,
+    "date_range": "2026-01-30 ~ 2026-10-11",
+    "dark_mean": 776.7,
+    "dark_std": 976.6,
+    "sorties_mean": 8.0,
+    "sorties_std": 7.9,
+    "correlation_dark_sorties": -0.021,
+    "correlation_dark_plan_vessels": -0.1851
   },
   "lag_correlation": {
     "max_lag": 14,
     "best_lag": -14,
-    "best_correlation": 0.486186,
+    "best_correlation": 0.474233,
     "values": [
       {
         "lag": -14,
-        "correlation": 0.486186
+        "correlation": 0.474233
       },
       {
         "lag": -13,
-        "correlation": 0.171289
+        "correlation": 0.188701
       },
       {
         "lag": -12,
-        "correlation": 0.16324
+        "correlation": 0.167008
       },
       {
         "lag": -11,
-        "correlation": -0.092372
+        "correlation": -0.09272
       },
       {
         "lag": -10,
-        "correlation": -0.158668
+        "correlation": -0.170517
       },
       {
         "lag": -9,
-        "correlation": -0.048329
+        "correlation": -0.057255
       },
       {
         "lag": -8,
-        "correlation": 0.030261
+        "correlation": 0.035692
       },
       {
         "lag": -7,
-        "correlation": -0.128319
+        "correlation": -0.140768
       },
       {
         "lag": -6,
-        "correlation": -0.211906
+        "correlation": -0.219381
       },
       {
         "lag": -5,
-        "correlation": -0.032722
+        "correlation": -0.044459
       },
       {
         "lag": -4,
-        "correlation": -0.024891
+        "correlation": -0.035363
       },
       {
         "lag": -3,
-        "correlation": 0.154443
+        "correlation": 0.14362
       },
       {
         "lag": -2,
-        "correlation": 0.360261
+        "correlation": 0.371344
       },
       {
         "lag": -1,
-        "correlation": 0.084374
+        "correlation": 0.08413
       },
       {
         "lag": 0,
-        "correlation": -0.010509
+        "correlation": -0.020981
       },
       {
         "lag": 1,
-        "correlation": -0.189114
+        "correlation": -0.215547
       },
       {
         "lag": 2,
-        "correlation": -0.109245
+        "correlation": -0.091978
       },
       {
         "lag": 3,
-        "correlation": 0.246827
+        "correlation": 0.256954
       },
       {
         "lag": 4,
-        "correlation": 0.054288
+        "correlation": 0.031508
       },
       {
         "lag": 5,
-        "correlation": -0.312851
+        "correlation": -0.278102
       },
       {
         "lag": 6,
-        "correlation": -0.147362
+        "correlation": -0.115411
       },
       {
         "lag": 7,
-        "correlation": -0.296933
+        "correlation": -0.25744
       },
       {
         "lag": 8,
-        "correlation": 0.030221
+        "correlation": 0.042559
       },
       {
         "lag": 9,
-        "correlation": 0.445147
+        "correlation": 0.447551
       },
       {
         "lag": 10,
-        "correlation": 0.125809
+        "correlation": 0.059948
       },
       {
         "lag": 11,
-        "correlation": 0.206094
+        "correlation": 0.198796
       },
       {
         "lag": 12,
-        "correlation": 0.013084
+        "correlation": 0.033727
       },
       {
         "lag": 13,
-        "correlation": -0.361689
+        "correlation": -0.325853
       },
       {
         "lag": 14,
-        "correlation": 0.079802
+        "correlation": 0.093413
       }
     ]
   },
@@ -197,9 +197,9 @@
     }
   ],
   "high_sortie_analysis": {
-    "threshold": 23.8,
+    "threshold": 23.7,
     "event_count": 2,
-    "overall_dark_mean": 796.5,
+    "overall_dark_mean": 776.7,
     "pre_event": {
       "1": {
         "avg_dark_vessels": 14.0,
@@ -207,15 +207,15 @@
       },
       "2": {
         "avg_dark_vessels": 1940.0,
-        "diff_from_mean_pct": 143.6
+        "diff_from_mean_pct": 149.8
       },
       "3": {
         "avg_dark_vessels": 2189.0,
-        "diff_from_mean_pct": 174.8
+        "diff_from_mean_pct": 181.8
       },
       "4": {
         "avg_dark_vessels": 291.0,
-        "diff_from_mean_pct": -63.5
+        "diff_from_mean_pct": -62.5
       }
     }
   },
@@ -453,6 +453,12 @@
       "dark_vessels": 807,
       "sorties": 21.0,
       "vessels": 7.0
+    },
+    {
+      "date": "2026-10-11",
+      "dark_vessels": 7,
+      "sorties": 12.0,
+      "vessels": 6.0
     }
   ]
 }
