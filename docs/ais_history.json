@@ -1,36 +1,6 @@
 [
   {
     "date": "2026-06-03",
-    "period": 10,
-    "period_key": "2026-06-03_10",
-    "timestamp": "2026-06-03T10:15:10.777795+00:00",
-    "stats": {
-      "total_vessels": 6200,
-      "fishing_vessels": 1711,
-      "suspicious_count": 0,
-      "avg_speed": 3.33,
-      "by_type": {
-        "cargo": 1119,
-        "fishing": 1711,
-        "passenger": 94,
-        "unknown": 2472,
-        "tanker": 237,
-        "other": 302,
-        "special": 238,
-        "high_speed": 27
-      },
-      "in_fishing_hotspots": {
-        "taiwan_bank": 352,
-        "penghu": 295,
-        "kuroshio_east": 612,
-        "northeast": 467,
-        "southwest": 1024
-      }
-    },
-    "suspicious_vessels": []
-  },
-  {
-    "date": "2026-06-03",
     "period": 12,
     "period_key": "2026-06-03_12",
     "timestamp": "2026-06-03T13:17:36.287594+00:00",
@@ -36308,6 +36278,40 @@
         "kuroshio_east": 663,
         "northeast": 647,
         "southwest": 703
+      }
+    },
+    "suspicious_vessels": []
+  },
+  {
+    "date": "2026-10-17",
+    "period": 18,
+    "period_key": "2026-10-17_18",
+    "timestamp": "2026-10-17T18:58:02.205143+00:00",
+    "stats": {
+      "total_vessels": 7478,
+      "fishing_vessels": 2782,
+      "suspicious_count": 0,
+      "avg_speed": 2.22,
+      "by_type": {
+        "fishing": 2782,
+        "cargo": 954,
+        "tanker": 233,
+        "special": 202,
+        "unknown": 2923,
+        "passenger": 76,
+        "other": 271,
+        "msa": 8,
+        "high_speed": 20,
+        "rescue": 3,
+        "research": 2,
+        "coastguard": 4
+      },
+      "in_fishing_hotspots": {
+        "taiwan_bank": 227,
+        "penghu": 320,
+        "kuroshio_east": 657,
+        "northeast": 634,
+        "southwest": 727
       }
     },
     "suspicious_vessels": []
