@@ -1,10 +1,9 @@
 name: Network Anomaly Scan (Cloudflare Radar + IODA)
 
 on:
-  schedule:
-    # 每 2 小時一次。偏移到 :15 是為了避開 update-ais.yml（:30 / 整點）與
-    # update-data.yml（整點），減少排隊等待。
-    - cron: '15 */2 * * *'
+  # 不自己排程：由 pipeline-heartbeat.yml 每逾期 2 小時派發一次。舊的
+  # cron（'15 */2 * * *'）在 2026-10-05 → 10-19 只觸發 35%（GitHub 丟掉
+  # schedule 事件），海纜中斷的網路異常因此平均晚好幾小時才被看到。
   workflow_dispatch:
 
 # 與其他資料管線共用同一個 concurrency group：這個 job 會 commit 並 push 到
