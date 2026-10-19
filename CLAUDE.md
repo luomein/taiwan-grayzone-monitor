@@ -264,7 +264,7 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 
 ---
 
-## Trajectory Prediction（航跡預測，離線；第 0 階段已完成）
+## Trajectory Prediction（航跡預測；第 0、1 階段已完成）
 
 目標用途（依優先序）：**SAR 暗船比對**（把 AIS 推到衛星過境時刻）與**海纜接近預警**（預測未來 N 小時進入海纜緩衝區）。
 訓練一律**離線、在本機**跑，CI 只做推論；可以用 pandas / pyarrow / onnxruntime（本機與 CI 推論皆可），
@@ -274,7 +274,9 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 |---|---|
 | `src/trajectory_core.py` | `rt` 定位時刻工具 + P0 基準預測器（`hold` / `cv_reported` / `cv_track`，同一介面 `predict(history, dt_s) -> (lat, lon)`） |
 | `src/build_trajectory_dataset.py` | `ais-archive` → 逐 (mmsi, 船名) 航跡 → 切段 → `data/trajectory/points.parquet`（無 pyarrow 時 csv.gz）+ `meta.json` |
-| `src/eval_trajectory.py` | 回測：`forecast`（1/2/6/12/24h，分船種／動靜／海纜 10km 內）與 `sar`（抽點後用 `match_sar_ais.estimate_position` 推回，並檢查動態門檻涵蓋率）→ `data/trajectory/baseline_eval.json` |
+| `src/trajectory_model.py` | **P1（CI 推論，stdlib only）**：速度衰減推算 + 經驗 r90 不確定度查表 + 依 r90 收件。`match_sar_ais` 讀 `data/trajectory_params.json` 時用它 |
+| `src/fit_trajectory_params.py` | 離線在 train 切分擬合 P1 → `data/trajectory_params.json`（**提交**，16KB） |
+| `src/eval_trajectory.py` | 回測：`forecast`（1/2/6/12/24h，分船種／動靜／海纜 10km 內）、`sar`（抽點推回的誤差與門檻涵蓋率）、**`sim`（完整 SAR 比對模擬，P1 上線的決策依據）**，p0／p1 並排 → `data/trajectory/baseline_eval.json` |
 
 **`rt` 欄位**：航跡 entry 的 `timestamp` 是抓取時刻，不是定位時刻。航港局 `Record_Time` 是**台灣時間**（`YYYY/MM/DD HH:MM:SS`），
 實測落後抓取 2.5–15 分（中位數 3.7 分；超過 ~15 分的船不會出現在回應裡）。tier-1/tier-2 點在「≥1kn 且落後 ≥60s」時寫 `rt`（秒），
@@ -302,9 +304,32 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 **漁船單側推算 dt 1–2h 只有 46–52%、2–3h 只有 36–38%**——`UNC_FRAC_DEAD_RECKON=0.5` 對漁船太小，真漁船被門檻擋在外面 → 誤判為暗船。
 另外 dt > `MAX_DT_HOURS`（3h）推不出位置的佔比很高（商船 ~38k / 漁船 ~22k 個抽點），與 3h 的實際快照間隔直接相關。這兩點是第 1 階段的第一批改動目標。
 
-**後續階段**：(1) Kalman/IMM（航行／滯留／作業中漁船三模式，原生給不確定度）接進 `match_sar_ais`，以 `rematched_local` 與上表涵蓋率驗收；
-(2) 歷史行為模型（網格轉移／歷史軌跡近鄰）+ 海纜接近預警 + 軌跡異常分數（先 shadow 不計分）；(3) 深度模型（本機訓練 → ONNX → CI 推論）+ 前端預測錐形。
-Tests: `tests/test_trajectory.py`。
+### 第 1 階段：P1 運動模型（已接進 `match_sar_ais`）
+
+**為什麼不是 Kalman/IMM**：快照間隔 2–3h、每段平均約 10 點，在這種資料上濾波器的預測平均值退化成「速度衰減推算」；
+SAR 比對真正缺的是**校準過的不確定度**。所以 P1 = 兩個由資料擬合的部件（`fit_trajectory_params.py`，train 切分、排除 holdout MMSI）：
+- **位置**：位移 = v·τ(1−e^{−dt/τ})（integrated OU 的平均值）。每個 (群組, 動/靜) 在 τ × 速度來源（回報 SOG/COG 或最後兩點實際位移）網格上取
+  「各時距分箱中位誤差平均」最小者，**只看 ≤4h**（SAR 用途；海纜預警的長時距是另一組參數）。結果：商船移動中 τ=∞ + 回報值（等速），
+  漁船移動中 **τ=1h**（幾小時後趨近原地不動），公務船 τ=12h，靜止船一律 τ≈0.1h
+- **不確定度**：r90(群組, 單側/內插, 航速分箱 <1/1–5/5–10/10–15/≥15kn, 時距節點 0.25…8h) = 誤差 0.9 分位。樣本 <30 的格子退回全群組合併表，
+  沿時距單調不減，開頭空格以下一節點回填，尾端沒資料就維持空（=不收件，不外插）。`match_sar_ais` 把 r90 當 `unc_extra_km`
+- **收件**：r90 ≤ `admit_max_r90_km`（**6.5km**）才給估計，取代 `MAX_DT_HOURS`。靜止船 8h 外照樣可比，高速船 1–2h 就不收
+
+**決策依據是比對模擬，不是涵蓋率**（`eval_trajectory.py --only sim`）：拿真實快照當 SAR 偵測（+σ0.5km 雜訊），隨機 20% 船設為暗船（刪掉全部 AIS），
+其餘船從抽掉該點的航跡推算，走 `candidates_for_detection` + `solve_assignment`，量「真船配對正確／配錯船／誤判暗船」與「暗船被認領」。
+- 第一版（r90 ≤ 25km）涵蓋率漂亮（val 單側 12%→49%），模擬卻顯示**暗船被認領率 10% → 52%**：門檻放寬後，密集漁船群裡任何不確定的船都能
+  「解釋」附近的偵測。`dist/gate` 成本讓越不確定的船成本越低，但換成負對數似然成本（`d²/2σ² + ln σ²`）實測幾乎沒差 —— 認領由門檻範圍決定，不是成本排序，所以沒採用
+- 現行 P0 調 `MAX_DT_HOURS` 也是一條取捨曲線（3h→4h：正確 12%→27%，暗船被認領 11%→34%）。P1 的曲線在 val、test **都高於** P0：同樣的認領率下配對正確率高 1.5–5 個百分點
+- 選 r90 ≤ 6.5km：test（60 個快照）P0 → P1 = 配對正確 11.9% → **12.9%**、配錯船 8.1% → **6.4%**、暗船被認領 11.1% → **9.7%**、誤判暗船 80.0% → 80.7%
+- 真實資料（2026-10-19 的 SAR 窗）：`rematched_local` 176 → **186**。同一份回測的 `sar` 涵蓋率表上 P1 反而較低（收件較嚴）—— 那個指標看不到誤認領，別拿它做決策
+- **真正的瓶頸是快照間隔**（3h → 密集船群裡無法分辨誰是誰）。把 `update-ais.yml` 的實際間隔拉回 1–2h，比任何模型改良都更能提升 SAR 比對
+
+退回舊行為：刪掉 `data/trajectory_params.json`，或設 `TRAJECTORY_ESTIMATOR=p0`。`sar_ais_matches.json` 的 `params.estimator` 記錄本輪用哪一個。
+重新擬合：`python3 src/fit_trajectory_params.py --archive <ais-archive>`（~2 分鐘），再跑 `eval_trajectory.py --split test --only sim` 驗收。
+
+**後續階段**：(2) 歷史行為模型（網格轉移／歷史軌跡近鄰）+ 海纜接近預警（另擬合 6–24h 的參數；P1 的 SAR 參數在 24h 漁船上已接近 hold：9.8 vs 7.2km）+ 軌跡異常分數（先 shadow 不計分）；
+(3) 深度模型（本機訓練 → ONNX → CI 推論）+ 前端預測錐形。
+Tests: `tests/test_trajectory.py`、`tests/test_trajectory_model.py`。
 
 ---
 
@@ -355,8 +380,12 @@ Pipeline (per detection):
    ≈09:50 UTC, descending ≈21:55 UTC; both tried, best kept). Summary carries
    `s1_real_pass_dates`.
 3. **Dynamic gating radius** — gate = base error (SAR geolocation 0.5km + 4wings HIGH
-   grid quantization 0.8km + AIS 0.1km) + maneuver uncertainty (speed × Δt × method
-   factor), clamped to [1.5, 10] km. Never a fixed radius.
+   grid quantization 0.8km + AIS 0.1km) + maneuver uncertainty, clamped to [1.5, 10] km.
+   Never a fixed radius. Maneuver uncertainty comes from the **P1 motion model** when
+   `data/trajectory_params.json` is present (`trajectory_model.estimate_position`: fitted
+   velocity decay + empirical r90 table, admission r90 ≤ 6.5km instead of `MAX_DT_HOURS`;
+   see **Trajectory Prediction**), else from the original speed × Δt × method factor
+   (`estimate_position`, `MAX_DT_HOURS`=3h). `TRAJECTORY_ESTIMATOR=p0` forces the latter.
 4. **One-to-one assignment** — per (date × pass) group: Hungarian algorithm
    (`scipy.optimize.linear_sum_assignment`) when scipy is available, else globally
    cost-sorted greedy NN with gating. Prevents one vessel "absorbing" several
@@ -396,7 +425,9 @@ python3 src/fetch_cloudflare_radar.py  # 網路流量異常偵測 + 海纜旁滯
 python3 src/fetch_radar_counties.py    # Radar ADM1 分區（4 個）網速／流量指數
 python3 src/probe_radar_regions.py     # Radar 縣市粒度能力實測（哪些端點吃 geoId）
 python3 src/build_tw_counties.py       # 產生 docs/tw_counties.geojson（22 縣市界，一次性）
-python3 src/match_sar_ais.py           # Re-match GFW dark detections vs local AIS
+python3 src/match_sar_ais.py           # Re-match GFW dark detections vs local AIS（TRAJECTORY_ESTIMATOR=p0 退回舊推算）
+python3 src/fit_trajectory_params.py --archive <ais-archive>           # 離線擬合 P1 → data/trajectory_params.json
+python3 src/eval_trajectory.py --archive <ais-archive> --split test   # 回測（forecast + sar + sim 比對模擬）
 python3 src/detect_ship_transfers.py   # Detect STS rendezvous events
 python3 src/detect_gov_formation.py    # 公務船編隊偵測（≥2 艘公務/科研船 ≤10km 持續 ≥6h）
 python3 src/analyze_suspicious.py      # Run threat scoring engine

@@ -280,11 +280,13 @@ def test_run_forecast_skips_in_port_issue_points():
 def test_run_sar_interp_exact_on_straight_track():
     tr = {'mmsi': '412000001', 'name': 'A', 'type_name': 'cargo', 'gov': None}
     segs = [{'track': tr, 'group': 'commercial', 'points': straight_track(n=8)}]
-    rows, missing = ev.run_sar(segs, lambda la, lo: None, stride=1)
-    res = ev.aggregate_sar(rows, missing)
-    interp = res['interp']['commercial|interpolated|0.5-1h']  # 抽點後兩側各 1h
+    rows, totals = ev.run_sar(segs, lambda la, lo: None, stride=1)
+    res = ev.aggregate_sar(rows, totals)
+    interp = res['p0']['interp']['commercial|interpolated|0.5-1h']  # 抽點後兩側各 1h
     assert interp['median_km'] < 0.05 and interp['within_gate'] == 1.0
-    assert 'dr' in res
+    assert 'dr' in res['p0']
+    summ = res['summary']['p0']['interp']['all']
+    assert summ['total'] == 6 and summ['admitted'] == 1.0 and summ['matchable'] == 1.0
 
 
 def test_issue_in_split_holdout_goes_to_test_only():

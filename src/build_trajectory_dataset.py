@@ -51,6 +51,7 @@ from geo_utils import haversine_km
 from io_utils import atomic_write_json
 from match_sar_ais import is_nonvessel_ais, parse_ts
 from trajectory_core import point_epoch
+from trajectory_model import type_group as tm_type_group
 
 TIERS = ('track', 'commercial')
 MAX_GAP_H = 6.0             # 訊號中斷超過即切段（快照間隔 1–2h，>6h 等於失聯）
@@ -58,9 +59,6 @@ MAX_IMPLIED_KMH = 100.0     # 與 analyze_suspicious 的 teleport 門檻一致
 MIN_SEG_POINTS = 3
 SPLIT_FRACTIONS = (0.70, 0.15)   # train / val；其餘為 test
 HOLDOUT_MMSI_MOD = 10            # crc32(mmsi) % 10 == 0 → 保留船
-
-GOV_TYPES = {'coastguard', 'msa', 'rescue', 'research'}
-COMMERCIAL_TYPES = {'cargo', 'tanker', 'lng'}
 
 _LEGACY_RE = re.compile(r'^ais_(track|commercial)_(\d{4}-\d{2})\.jsonl$')
 _RUN_RE = re.compile(r'^ais_(track|commercial)_(\d{8})T\d{6}Z\.jsonl\.gz$')
@@ -200,20 +198,8 @@ def segment_track(points, max_gap_h=MAX_GAP_H, max_kmh=MAX_IMPLIED_KMH,
 
 
 def type_group(track):
-    """回測分層：gov / commercial / fishing / other。
-
-    CN 漁船的 AIS 船種常報 other/unknown/cargo（見 CLAUDE.md 測線誤報），
-    所以漁船以船名規則優先於 AIS 船種；公務船分類又優先於船名規則
-    （`^XIANG` 會誤中向陽紅）。"""
-    from fetch_ais_data import is_cn_fishing_vessel  # 延遲載入：拉 requests
-    tn = track.get('type_name')
-    if track.get('gov') or tn in GOV_TYPES:
-        return 'gov'
-    if tn == 'fishing' or is_cn_fishing_vessel(track.get('name')):
-        return 'fishing'
-    if tn in COMMERCIAL_TYPES:
-        return 'commercial'
-    return 'other'
+    """回測分層：gov / commercial / fishing / other（規則見 trajectory_model.type_group）。"""
+    return tm_type_group(track.get('type_name'), track.get('gov'), track.get('name'))
 
 
 def split_bounds(times, fractions=SPLIT_FRACTIONS):
