@@ -11,7 +11,7 @@ Real-time OSINT monitoring of Taiwan's gray zone maritime activity. Integrates A
 - `docs/` — Frontend (GitHub Pages root). HTML, CSS, JS, and JSON data files
 - `src/` — Python data pipeline scripts (fetch, analyze, generate)
 - `data/` — Working/intermediate data (not in the Pages artifact). `data/vessel_routes/{mmsi}.json` is gitignored on main; the canonical store is the **Supabase `vessel_routes` table** (one row per MMSI, `track` as jsonb — `src/supabase_store.py`), which the frontend point-queries by MMSI. 30k route files in main history bloated the repo to 200MB+ and made Pages deployments time out; the older workaround — a single-commit **`vessel-data` branch** force-pushed each run — is still the automatic fallback when `SUPABASE_SERVICE_KEY` is unset
-- **`ais-archive` branch** — permanent AIS snapshot archive for offline track-prediction training (the main tier-1/tier-2 files are append-and-trim, 14/28 days, so they drop old snapshots). `update-ais.yml` writes each run's delta as a **new gzipped file** under `archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz`. It used to append into one monthly file; `ais_commercial_2026-08.jsonl` reached 99.95 MiB and the next append blew GitHub's 100 MiB blob limit — GH001, push rejected, and every later run of the month would have hit the same wall. One file per run never approaches the limit, and the step clones with `--filter=blob:none --sparse --no-cone` (current day's directory only) so it no longer downloads ~180MB of existing archive each run. The pre-existing `archive/ais_*_2026-0{7,8}.jsonl` monthly files are left frozen in place. Reassemble locally with `cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl` (filenames sort chronologically). Not in the Pages artifact
+- **`ais-archive` branch** — permanent AIS snapshot archive for offline track-prediction training (the main tier-1/tier-2 files are append-and-trim, 14/28 days, so they drop old snapshots). `update-ais.yml` writes each run's delta as a **new gzipped file** under `archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz`. It used to append into one monthly file; `ais_commercial_2026-08.jsonl` reached 99.95 MiB and the next append blew GitHub's 100 MiB blob limit — GH001, push rejected, and every later run of the month would have hit the same wall. One file per run never approaches the limit, and the step clones with `--filter=blob:none --sparse --no-cone` (current day's directory only) so it no longer downloads ~180MB of existing archive each run. The pre-existing `archive/ais_*_2026-0{7,8}.jsonl` monthly files are left frozen in place. Reassemble locally with `cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl` (filenames sort chronologically). `src/build_trajectory_dataset.py` reads both layouts directly (see **Trajectory Prediction** below). Not in the Pages artifact
 - `.github/workflows/` — 7 CI workflows (AIS hourly daytime / 2h overnight, full pipeline every 12h incl. once-daily 00:00 UTC gov-vessel track map, **網路異常掃描 every 2h（Cloudflare Radar 國家級 + ADM1 分區級 + IODA 全台 22 縣市可達性）**, `radar-region-probe.yml` 手動觸發的 Radar 縣市粒度能力實測, darkship SAR forensics daily 22:00 UTC, Threads weekly, LINE push：日報 00:00 UTC=08:00 TW／**高風險船週報 週一 02:00 UTC=10:00 TW／月報 1 號 02:00 UTC=10:00 TW**（刻意晚兩小時 —— update-data.yml 的 00:00 cron 才剛在產週/月報檔）). All data workflows share the `data-pipeline` concurrency group — they commit to main and would otherwise race on rebase
 - `docs/tw_counties.geojson` — 22 縣市界（geoBoundaries gbOpen TWN ADM1，CC BY 4.0），由 `src/build_tw_counties.py` 精簡後**提交**的靜態資產（81KB）。縣市界幾年才變一次，不進 CI 定期執行。**不要改用 Natural Earth 的 admin-1**：它只有 21 個縣市、缺連江（馬祖），而馬祖正是本專案最關鍵的一塊
 - `chips/` + `reports/` — darkship SAR forensics outputs (chip PNGs, `chips/results.json` cumulative log, daily Markdown reports), committed by `darkship-cron.yml`; **not** in the Pages artifact but public in the repo — a deliberate trade-off chosen when the cron was set up. The public daily report page (`docs/reports/<date>.html`, `generate_report.py`) surfaces this work: SAR×AIS 比對成效 funnel + the latest run's chip images (520px thumbnails in `docs/reports/chips/`, 14-day mtime rotation, `<img onerror>` falls back to the raw.githubusercontent original) with verdict badges
@@ -261,6 +261,50 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 - **Exclusion early return**: Buoys/beacons skip all expensive analysis
 - **Cable bbox pre-filter**: Only cables whose bounding box overlaps vessel track are checked
 - Cable proximity: O(track_points × nearby_cable_segments) instead of all cables
+
+---
+
+## Trajectory Prediction（航跡預測，離線；第 0 階段已完成）
+
+目標用途（依優先序）：**SAR 暗船比對**（把 AIS 推到衛星過境時刻）與**海纜接近預警**（預測未來 N 小時進入海纜緩衝區）。
+訓練一律**離線、在本機**跑，CI 只做推論；可以用 pandas / pyarrow / onnxruntime（本機與 CI 推論皆可），
+但 `trajectory_core.py` 維持 stdlib-only（update-ais.yml 只裝 requests + pysocks，tests.yml 只裝 requests + pytest）。
+
+| 檔案 | 角色 |
+|---|---|
+| `src/trajectory_core.py` | `rt` 定位時刻工具 + P0 基準預測器（`hold` / `cv_reported` / `cv_track`，同一介面 `predict(history, dt_s) -> (lat, lon)`） |
+| `src/build_trajectory_dataset.py` | `ais-archive` → 逐 (mmsi, 船名) 航跡 → 切段 → `data/trajectory/points.parquet`（無 pyarrow 時 csv.gz）+ `meta.json` |
+| `src/eval_trajectory.py` | 回測：`forecast`（1/2/6/12/24h，分船種／動靜／海纜 10km 內）與 `sar`（抽點後用 `match_sar_ais.estimate_position` 推回，並檢查動態門檻涵蓋率）→ `data/trajectory/baseline_eval.json` |
+
+**`rt` 欄位**：航跡 entry 的 `timestamp` 是抓取時刻，不是定位時刻。航港局 `Record_Time` 是**台灣時間**（`YYYY/MM/DD HH:MM:SS`），
+實測落後抓取 2.5–15 分（中位數 3.7 分；超過 ~15 分的船不會出現在回應裡）。tier-1/tier-2 點在「≥1kn 且落後 ≥60s」時寫 `rt`（秒），
+`match_sar_ais.load_ais_tracks()` 用 `entry − rt` 還原，快照則直接用 `record_time`。舊資料沒有 `rt` 視為 0。tier-1 檔約 +3%。
+`Destination` 欄位航港局整批回空字串，所以沒有歸檔目的港。
+
+**資料現實（2026-10-19 量測，全部歸檔 07-24 → 10-19）**：
+- 實際快照間隔遠比 cron 稀疏：歸檔中位數 **2.2h**（p90 4.9h），線上 tier-1 中位數 **3.0h**（p90 5.4h）——GitHub cron 延遲／丟棄 + `data-pipeline` 併發排隊。另有 09-07 起 244h 斷檔（代理事件）。**1h 以下的預測沒有意義**，回測從 1h 起跳但 1h 樣本少
+- 切段：39,700 條 (mmsi, 船名) 航跡 → 117,955 段、113 萬點（商船 70 萬、漁船 41 萬、公務船 7.7k）；25% 的點在港內
+- 切分依「點的時間分位數」70/15/15（不是時間跨度：08 月密、09 月斷十天，按跨度切 train 會吃 84%）；`crc32(mmsi) % 10 == 0` 的船整條留給 test
+
+**P0 基準（stride 3，全部歸檔，港內發布點不計；median / p90 km）**——之後每個模型都要在同一回測贏過它：
+
+| 群組 | 2h | 6h | 12h | 24h |
+|---|---|---|---|---|
+| 商船 cv_reported | 2.1 / 12 | 10 / 60 | 27 / 156 | 68 / 376 |
+| 漁船 **hold** | 4.9 / 26 | **6.7** / 45 | **7.9** / 56 | **8.3** / 66 |
+| 漁船 cv_track | 4.4 / 20 | 18 / 61 | 35 / 122 | 62 / 247 |
+| 海纜 10km 內商船 cv_reported | 2.6 / 13 | 14 / 66 | 41 / 175 | 122 / 428 |
+
+- 漁船 6h 以上「原地不動」比等速外插好 3–7 倍：漁船在漁場繞，等速模型把它推出去。這就是第 2 階段「歷史行為模型」要吃的訊號
+- 商船回報 COG 可信（`cv_reported` 優於 `cv_track`），漁船則相反（`cv_track` 優於 `cv_reported`）
+
+**SAR 門檻涵蓋率**（`sar` 回測，`within_gate` = 誤差 ≤ `match_sar_ais.gate_km(unc)`）：商船內插 86–96%、單側推算 72–98%；
+**漁船單側推算 dt 1–2h 只有 46–52%、2–3h 只有 36–38%**——`UNC_FRAC_DEAD_RECKON=0.5` 對漁船太小，真漁船被門檻擋在外面 → 誤判為暗船。
+另外 dt > `MAX_DT_HOURS`（3h）推不出位置的佔比很高（商船 ~38k / 漁船 ~22k 個抽點），與 3h 的實際快照間隔直接相關。這兩點是第 1 階段的第一批改動目標。
+
+**後續階段**：(1) Kalman/IMM（航行／滯留／作業中漁船三模式，原生給不確定度）接進 `match_sar_ais`，以 `rematched_local` 與上表涵蓋率驗收；
+(2) 歷史行為模型（網格轉移／歷史軌跡近鄰）+ 海纜接近預警 + 軌跡異常分數（先 shadow 不計分）；(3) 深度模型（本機訓練 → ONNX → CI 推論）+ 前端預測錐形。
+Tests: `tests/test_trajectory.py`。
 
 ---
 

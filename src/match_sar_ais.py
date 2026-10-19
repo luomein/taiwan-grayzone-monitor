@@ -57,6 +57,7 @@ from pathlib import Path
 from geo_utils import haversine_km
 from io_utils import atomic_write_json, load_json
 import geofence
+from trajectory_core import destination_point, point_epoch, record_time_epoch
 
 # =============================================================================
 # 設定
@@ -161,20 +162,6 @@ def parse_ts(value):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.timestamp()
-
-
-def destination_point(lat, lon, bearing_deg, dist_km):
-    """自 (lat, lon) 沿方位角 bearing 前進 dist_km 的目的座標（球面）。"""
-    R = 6371.0
-    delta = dist_km / R
-    theta = math.radians(bearing_deg)
-    lat1 = math.radians(lat)
-    lon1 = math.radians(lon)
-    lat2 = math.asin(math.sin(lat1) * math.cos(delta) +
-                     math.cos(lat1) * math.sin(delta) * math.cos(theta))
-    lon2 = lon1 + math.atan2(math.sin(theta) * math.sin(delta) * math.cos(lat1),
-                             math.cos(delta) - math.sin(lat1) * math.sin(lat2))
-    return math.degrees(lat2), (math.degrees(lon2) + 540) % 360 - 180
 
 
 def gate_km(unc_extra_km):
@@ -339,13 +326,16 @@ def load_ais_tracks():
                 mmsi = v.get('mmsi')
                 if mmsi is None or lat is None or lon is None:
                     continue
-                add_point(str(mmsi), v.get('name'), v.get('type_name'), t,
+                # entry 時刻是抓取時刻；`rt` 還原成船的定位時刻
+                add_point(str(mmsi), v.get('name'), v.get('type_name'),
+                          point_epoch(t, v),
                           float(lat), float(lon),
                           float(v.get('speed') or 0.0), v.get('heading'))
 
     snap = load_json(SNAPSHOT_PATH, {}, expect_type=dict)
     for v in snap.get('vessels', []):
-        t = parse_ts(v.get('last_update'))
+        # 快照帶完整 Record_Time（台灣時間）；缺值才退回抓取時刻
+        t = record_time_epoch(v.get('record_time')) or parse_ts(v.get('last_update'))
         lat, lon = v.get('lat'), v.get('lon')
         mmsi = v.get('mmsi')
         if t is None or mmsi is None or lat is None or lon is None:
