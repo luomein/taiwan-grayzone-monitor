@@ -16,6 +16,7 @@ from datetime import datetime, timezone, timedelta
 from collections import defaultdict
 
 from io_utils import atomic_write_json, load_json
+from trajectory_core import compact_rt
 
 # 船隻 profile 保留天數：最近 N 天未再出現即剔除，避免檔案無限成長
 VESSEL_PROFILE_RETENTION_DAYS = 90
@@ -595,9 +596,18 @@ def trim_track_history(history, max_entries, max_days, now=None):
     return kept
 
 
+def _rt_field(v, now_epoch):
+    """航跡點的 `rt`（定位時刻落後快照幾秒）。只在移動船、落後 ≥1 分鐘時寫入，
+    其餘回傳空 dict —— tier-1 是瀏覽器下載的大檔。規則見 trajectory_core.compact_rt。"""
+    rt = compact_rt(v.get('record_time'), now_epoch, v.get('speed'))
+    return {'rt': rt} if rt is not None else {}
+
+
 def save_all(vessels, stats):
     """統一儲存入口，確保輸出檔案格式一致"""
-    now_str = datetime.now(timezone.utc).isoformat()
+    now_dt = datetime.now(timezone.utc)
+    now_str = now_dt.isoformat()
+    now_epoch = now_dt.timestamp()
     os.makedirs(DATA_DIR, exist_ok=True)
     os.makedirs(DOCS_DIR, exist_ok=True)
 
@@ -772,6 +782,8 @@ def save_all(vessels, stats):
             **({'gov': v['gov_type']} if v.get('gov_type') else {}),
             # 公務船候選（純數字船名＋中國MID）— 保留航跡以累積人工檢視證據
             **({'cand': 1} if v.get('gov_candidate') else {}),
+            # 定位時刻落後快照的秒數（航跡預測/SAR 比對用；見 trajectory_core）
+            **_rt_field(v, now_epoch),
         }
         for v in vessel_list
         if is_cn_fishing_vessel(v.get('name')) or v.get('suspicious')
@@ -831,6 +843,7 @@ def save_all(vessels, stats):
             'heading': v['heading'],
             'type_name': v['type_name'],
             **({'anc': 1} if str(v.get('nav_status', '')) in ('1', '5') else {}),
+            **_rt_field(v, now_epoch),
         }
         for v in vessel_list
         if v['mmsi'] not in tier1_mmsis

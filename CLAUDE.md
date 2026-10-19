@@ -11,8 +11,8 @@ Real-time OSINT monitoring of Taiwan's gray zone maritime activity. Integrates A
 - `docs/` — Frontend (GitHub Pages root). HTML, CSS, JS, and JSON data files
 - `src/` — Python data pipeline scripts (fetch, analyze, generate)
 - `data/` — Working/intermediate data (not in the Pages artifact). `data/vessel_routes/{mmsi}.json` is gitignored on main; the canonical store is the **Supabase `vessel_routes` table** (one row per MMSI, `track` as jsonb — `src/supabase_store.py`), which the frontend point-queries by MMSI. 30k route files in main history bloated the repo to 200MB+ and made Pages deployments time out; the older workaround — a single-commit **`vessel-data` branch** force-pushed each run — is still the automatic fallback when `SUPABASE_SERVICE_KEY` is unset
-- **`ais-archive` branch** — permanent AIS snapshot archive for offline track-prediction training (the main tier-1/tier-2 files are append-and-trim, 14/28 days, so they drop old snapshots). `update-ais.yml` writes each run's delta as a **new gzipped file** under `archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz`. It used to append into one monthly file; `ais_commercial_2026-08.jsonl` reached 99.95 MiB and the next append blew GitHub's 100 MiB blob limit — GH001, push rejected, and every later run of the month would have hit the same wall. One file per run never approaches the limit, and the step clones with `--filter=blob:none --sparse --no-cone` (current day's directory only) so it no longer downloads ~180MB of existing archive each run. The pre-existing `archive/ais_*_2026-0{7,8}.jsonl` monthly files are left frozen in place. Reassemble locally with `cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl` (filenames sort chronologically). Not in the Pages artifact
-- `.github/workflows/` — 7 CI workflows (AIS hourly daytime / 2h overnight, full pipeline every 12h incl. once-daily 00:00 UTC gov-vessel track map, **網路異常掃描 every 2h（Cloudflare Radar 國家級 + ADM1 分區級 + IODA 全台 22 縣市可達性）**, `radar-region-probe.yml` 手動觸發的 Radar 縣市粒度能力實測, darkship SAR forensics daily 22:00 UTC, Threads weekly, LINE push：日報 00:00 UTC=08:00 TW／**高風險船週報 週一 02:00 UTC=10:00 TW／月報 1 號 02:00 UTC=10:00 TW**（刻意晚兩小時 —— update-data.yml 的 00:00 cron 才剛在產週/月報檔）). All data workflows share the `data-pipeline` concurrency group — they commit to main and would otherwise race on rebase
+- **`ais-archive` branch** — permanent AIS snapshot archive for offline track-prediction training (the main tier-1/tier-2 files are append-and-trim, 14/28 days, so they drop old snapshots). `update-ais.yml` writes each run's delta as a **new gzipped file** under `archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz`. It used to append into one monthly file; `ais_commercial_2026-08.jsonl` reached 99.95 MiB and the next append blew GitHub's 100 MiB blob limit — GH001, push rejected, and every later run of the month would have hit the same wall. One file per run never approaches the limit, and the step clones with `--filter=blob:none --sparse --no-cone` (current day's directory only) so it no longer downloads ~180MB of existing archive each run. The pre-existing `archive/ais_*_2026-0{7,8}.jsonl` monthly files are left frozen in place. Reassemble locally with `cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl` (filenames sort chronologically). `src/build_trajectory_dataset.py` reads both layouts directly (see **Trajectory Prediction** below). Not in the Pages artifact
+- `.github/workflows/` — 7 CI workflows (AIS hourly daytime / 2h overnight — **triggered every 20 min (`7,27,47`) behind a cadence gate** (`src/ais_cadence_gate.py`) because GitHub silently dropped 69% of the old schedule's events, see **Trajectory Prediction**, full pipeline every 12h incl. once-daily 00:00 UTC gov-vessel track map, **網路異常掃描 every 2h（Cloudflare Radar 國家級 + ADM1 分區級 + IODA 全台 22 縣市可達性）**, `radar-region-probe.yml` 手動觸發的 Radar 縣市粒度能力實測, darkship SAR forensics daily 22:00 UTC, Threads weekly, LINE push：日報 00:00 UTC=08:00 TW／**高風險船週報 週一 02:00 UTC=10:00 TW／月報 1 號 02:00 UTC=10:00 TW**（刻意晚兩小時 —— update-data.yml 的 00:00 cron 才剛在產週/月報檔）). All data workflows share the `data-pipeline` concurrency group — they commit to main and would otherwise race on rebase
 - `docs/tw_counties.geojson` — 22 縣市界（geoBoundaries gbOpen TWN ADM1，CC BY 4.0），由 `src/build_tw_counties.py` 精簡後**提交**的靜態資產（81KB）。縣市界幾年才變一次，不進 CI 定期執行。**不要改用 Natural Earth 的 admin-1**：它只有 21 個縣市、缺連江（馬祖），而馬祖正是本專案最關鍵的一塊
 - `chips/` + `reports/` — darkship SAR forensics outputs (chip PNGs, `chips/results.json` cumulative log, daily Markdown reports), committed by `darkship-cron.yml`; **not** in the Pages artifact but public in the repo — a deliberate trade-off chosen when the cron was set up. The public daily report page (`docs/reports/<date>.html`, `generate_report.py`) surfaces this work: SAR×AIS 比對成效 funnel + the latest run's chip images (520px thumbnails in `docs/reports/chips/`, 14-day mtime rotation, `<img onerror>` falls back to the raw.githubusercontent original) with verdict badges
 
@@ -264,6 +264,87 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 
 ---
 
+## Trajectory Prediction（航跡預測；第 0、1 階段已完成）
+
+目標用途（依優先序）：**SAR 暗船比對**（把 AIS 推到衛星過境時刻）與**海纜接近預警**（預測未來 N 小時進入海纜緩衝區）。
+訓練一律**離線、在本機**跑，CI 只做推論；可以用 pandas / pyarrow / onnxruntime（本機與 CI 推論皆可），
+但 `trajectory_core.py` 維持 stdlib-only（update-ais.yml 只裝 requests + pysocks，tests.yml 只裝 requests + pytest）。
+
+| 檔案 | 角色 |
+|---|---|
+| `src/trajectory_core.py` | `rt` 定位時刻工具 + P0 基準預測器（`hold` / `cv_reported` / `cv_track`，同一介面 `predict(history, dt_s) -> (lat, lon)`） |
+| `src/build_trajectory_dataset.py` | `ais-archive` → 逐 (mmsi, 船名) 航跡 → 切段 → `data/trajectory/points.parquet`（無 pyarrow 時 csv.gz）+ `meta.json` |
+| `src/trajectory_model.py` | **P1（CI 推論，stdlib only）**：速度衰減推算 + 經驗 r90 不確定度查表 + 依 r90 收件。`match_sar_ais` 讀 `data/trajectory_params.json` 時用它 |
+| `src/fit_trajectory_params.py` | 離線在 train 切分擬合 P1 → `data/trajectory_params.json`（**提交**，16KB） |
+| `src/eval_trajectory.py` | 回測：`forecast`（1/2/6/12/24h，分船種／動靜／海纜 10km 內）、`sar`（抽點推回的誤差與門檻涵蓋率）、**`sim`（完整 SAR 比對模擬，P1 上線的決策依據）**，p0／p1 並排 → `data/trajectory/baseline_eval.json` |
+
+**`rt` 欄位**：航跡 entry 的 `timestamp` 是抓取時刻，不是定位時刻。航港局 `Record_Time` 是**台灣時間**（`YYYY/MM/DD HH:MM:SS`），
+實測落後抓取 2.5–15 分（中位數 3.7 分；超過 ~15 分的船不會出現在回應裡）。tier-1/tier-2 點在「≥1kn 且落後 ≥60s」時寫 `rt`（秒），
+`match_sar_ais.load_ais_tracks()` 用 `entry − rt` 還原，快照則直接用 `record_time`。舊資料沒有 `rt` 視為 0。tier-1 檔約 +3%。
+`Destination` 欄位航港局整批回空字串，所以沒有歸檔目的港。
+
+**資料現實（2026-10-19 量測，全部歸檔 07-24 → 10-19）**：
+- 實際快照間隔遠比 cron 稀疏：歸檔中位數 **2.2h**（p90 4.9h），線上 tier-1 中位數 **3.0h**（p90 5.4h）——GitHub cron 延遲／丟棄 + `data-pipeline` 併發排隊。另有 09-07 起 244h 斷檔（代理事件）。**1h 以下的預測沒有意義**，回測從 1h 起跳但 1h 樣本少
+- 切段：39,700 條 (mmsi, 船名) 航跡 → 117,955 段、113 萬點（商船 70 萬、漁船 41 萬、公務船 7.7k）；25% 的點在港內
+- 切分依「點的時間分位數」70/15/15（不是時間跨度：08 月密、09 月斷十天，按跨度切 train 會吃 84%）；`crc32(mmsi) % 10 == 0` 的船整條留給 test
+
+**P0 基準（stride 3，全部歸檔，港內發布點不計；median / p90 km）**——之後每個模型都要在同一回測贏過它：
+
+| 群組 | 2h | 6h | 12h | 24h |
+|---|---|---|---|---|
+| 商船 cv_reported | 2.1 / 12 | 10 / 60 | 27 / 156 | 68 / 376 |
+| 漁船 **hold** | 4.9 / 26 | **6.7** / 45 | **7.9** / 56 | **8.3** / 66 |
+| 漁船 cv_track | 4.4 / 20 | 18 / 61 | 35 / 122 | 62 / 247 |
+| 海纜 10km 內商船 cv_reported | 2.6 / 13 | 14 / 66 | 41 / 175 | 122 / 428 |
+
+- 漁船 6h 以上「原地不動」比等速外插好 3–7 倍：漁船在漁場繞，等速模型把它推出去。這就是第 2 階段「歷史行為模型」要吃的訊號
+- 商船回報 COG 可信（`cv_reported` 優於 `cv_track`），漁船則相反（`cv_track` 優於 `cv_reported`）
+
+**SAR 門檻涵蓋率**（`sar` 回測，`within_gate` = 誤差 ≤ `match_sar_ais.gate_km(unc)`）：商船內插 86–96%、單側推算 72–98%；
+**漁船單側推算 dt 1–2h 只有 46–52%、2–3h 只有 36–38%**——`UNC_FRAC_DEAD_RECKON=0.5` 對漁船太小，真漁船被門檻擋在外面 → 誤判為暗船。
+另外 dt > `MAX_DT_HOURS`（3h）推不出位置的佔比很高（商船 ~38k / 漁船 ~22k 個抽點），與 3h 的實際快照間隔直接相關。這兩點是第 1 階段的第一批改動目標。
+
+### 第 1 階段：P1 運動模型（已接進 `match_sar_ais`）
+
+**為什麼不是 Kalman/IMM**：快照間隔 2–3h、每段平均約 10 點，在這種資料上濾波器的預測平均值退化成「速度衰減推算」；
+SAR 比對真正缺的是**校準過的不確定度**。所以 P1 = 兩個由資料擬合的部件（`fit_trajectory_params.py`，train 切分、排除 holdout MMSI）：
+- **位置**：位移 = v·τ(1−e^{−dt/τ})（integrated OU 的平均值）。每個 (群組, 動/靜) 在 τ × 速度來源（回報 SOG/COG 或最後兩點實際位移）網格上取
+  「各時距分箱中位誤差平均」最小者，**只看 ≤4h**（SAR 用途；海纜預警的長時距是另一組參數）。結果：商船移動中 τ=∞ + 回報值（等速），
+  漁船移動中 **τ=1h**（幾小時後趨近原地不動），公務船 τ=12h，靜止船一律 τ≈0.1h
+- **不確定度**：r90(群組, 單側/內插, 航速分箱 <1/1–5/5–10/10–15/≥15kn, 時距節點 0.25…8h) = 誤差 0.9 分位。樣本 <30 的格子退回全群組合併表，
+  沿時距單調不減，開頭空格以下一節點回填，尾端沒資料就維持空（=不收件，不外插）。`match_sar_ais` 把 r90 當 `unc_extra_km`
+- **收件**：r90 ≤ `admit_max_r90_km`（**6.5km**）才給估計，取代 `MAX_DT_HOURS`。靜止船 8h 外照樣可比，高速船 1–2h 就不收
+
+**決策依據是比對模擬，不是涵蓋率**（`eval_trajectory.py --only sim`）：拿真實快照當 SAR 偵測（+σ0.5km 雜訊），隨機 20% 船設為暗船（刪掉全部 AIS），
+其餘船從抽掉該點的航跡推算，走 `candidates_for_detection` + `solve_assignment`，量「真船配對正確／配錯船／誤判暗船」與「暗船被認領」。
+- 第一版（r90 ≤ 25km）涵蓋率漂亮（val 單側 12%→49%），模擬卻顯示**暗船被認領率 10% → 52%**：門檻放寬後，密集漁船群裡任何不確定的船都能
+  「解釋」附近的偵測。`dist/gate` 成本讓越不確定的船成本越低，但換成負對數似然成本（`d²/2σ² + ln σ²`）實測幾乎沒差 —— 認領由門檻範圍決定，不是成本排序，所以沒採用
+- 現行 P0 調 `MAX_DT_HOURS` 也是一條取捨曲線（3h→4h：正確 12%→27%，暗船被認領 11%→34%）。P1 的曲線在 val、test **都高於** P0：同樣的認領率下配對正確率高 1.5–5 個百分點
+- 選 r90 ≤ 6.5km：test（60 個快照）P0 → P1 = 配對正確 11.9% → **12.9%**、配錯船 8.1% → **6.4%**、暗船被認領 11.1% → **9.7%**、誤判暗船 80.0% → 80.7%
+- 真實資料（2026-10-19 的 SAR 窗）：`rematched_local` 176 → **186**。同一份回測的 `sar` 涵蓋率表上 P1 反而較低（收件較嚴）—— 那個指標看不到誤認領，別拿它做決策
+- **真正的瓶頸是快照間隔**（3h → 密集船群裡無法分辨誰是誰）。把 `update-ais.yml` 的實際間隔拉回 1–2h，比任何模型改良都更能提升 SAR 比對
+
+### 快照間隔的根因與修正（2026-10-19）
+Actions 執行紀錄（10-05 → 10-19）：`update-ais.yml` 舊排程 243 個 cron 時段只觸發 **76 次（31%）**，全部成功、**沒有任何取消／失敗紀錄**，
+排隊等待中位數 **0 分**、執行 6 分鐘 —— 不是 `data-pipeline` 併發卡住，是 **GitHub 直接丟掉 schedule 事件**（官方文件：高負載時可能延遲或丟棄，
+整點／半點最嚴重；舊排程全在 :00／:30）。觸發的那 31% 也延遲中位數 39 分（p90 95 分）。03:30／07:30／08:30 UTC 十四天一次都沒跑；
+`cloudflare-radar.yml` 同病（168 → 59，35%）；`update-data.yml` 沒被丟（29/28）但延遲 3–8h。
+修正：cron 改 `7,27,47 * * * *` + **節奏閘門** `gate` job（`ais_cadence_gate.py`：快照 `updated_at` 白天 <50 分／夜間 <110 分就結束 run，
+不抓、不碰代理、不 commit）。GitHub 正常時有效節奏仍是原設計（白天每小時、夜間每 2h，~17 次/天，repo 不會被多餘 commit 撐大）；
+以實測各時段觸發率模擬，預期 **~13 次/天、間隔中位數 1.75h（p90 ~3.5h）**，舊排程是 5.4 次/天、4.4h（p90 7.1h）。
+`data-pipeline` 併發移到 `update-ais` job 層：群組只保留一個等待中的 run 且會跨 workflow 擠掉舊的，閘門若在群組內，每 20 分鐘一次的觸發可能把排隊中的
+`update-data.yml` 擠掉。已知代價：兩次觸發被延遲擠進同一個 run 期間時會重複跑一次（多一份快照，無害）。代理斷線時快照不會更新，閘門每次都放行 = 每次觸發都重試，這是刻意的。
+上線一兩週後應重量 `ais-archive` 的實際間隔，再重新擬合 P1（r90 表與收件門檻都是在 3h 間隔的資料上調的）。
+
+退回舊行為：刪掉 `data/trajectory_params.json`，或設 `TRAJECTORY_ESTIMATOR=p0`。`sar_ais_matches.json` 的 `params.estimator` 記錄本輪用哪一個。
+重新擬合：`python3 src/fit_trajectory_params.py --archive <ais-archive>`（~2 分鐘），再跑 `eval_trajectory.py --split test --only sim` 驗收。
+
+**後續階段**：(2) 歷史行為模型（網格轉移／歷史軌跡近鄰）+ 海纜接近預警（另擬合 6–24h 的參數；P1 的 SAR 參數在 24h 漁船上已接近 hold：9.8 vs 7.2km）+ 軌跡異常分數（先 shadow 不計分）；
+(3) 深度模型（本機訓練 → ONNX → CI 推論）+ 前端預測錐形。
+Tests: `tests/test_trajectory.py`、`tests/test_trajectory_model.py`。
+
+---
+
 ## match_sar_ais.py — SAR × Local-AIS Re-matching (dark-vessel de-noising)
 
 GFW's matched/unmatched flag uses GFW's own AIS feed; the Port Bureau AIS feed is
@@ -311,8 +392,12 @@ Pipeline (per detection):
    ≈09:50 UTC, descending ≈21:55 UTC; both tried, best kept). Summary carries
    `s1_real_pass_dates`.
 3. **Dynamic gating radius** — gate = base error (SAR geolocation 0.5km + 4wings HIGH
-   grid quantization 0.8km + AIS 0.1km) + maneuver uncertainty (speed × Δt × method
-   factor), clamped to [1.5, 10] km. Never a fixed radius.
+   grid quantization 0.8km + AIS 0.1km) + maneuver uncertainty, clamped to [1.5, 10] km.
+   Never a fixed radius. Maneuver uncertainty comes from the **P1 motion model** when
+   `data/trajectory_params.json` is present (`trajectory_model.estimate_position`: fitted
+   velocity decay + empirical r90 table, admission r90 ≤ 6.5km instead of `MAX_DT_HOURS`;
+   see **Trajectory Prediction**), else from the original speed × Δt × method factor
+   (`estimate_position`, `MAX_DT_HOURS`=3h). `TRAJECTORY_ESTIMATOR=p0` forces the latter.
 4. **One-to-one assignment** — per (date × pass) group: Hungarian algorithm
    (`scipy.optimize.linear_sum_assignment`) when scipy is available, else globally
    cost-sorted greedy NN with gating. Prevents one vessel "absorbing" several
@@ -352,7 +437,9 @@ python3 src/fetch_cloudflare_radar.py  # 網路流量異常偵測 + 海纜旁滯
 python3 src/fetch_radar_counties.py    # Radar ADM1 分區（4 個）網速／流量指數
 python3 src/probe_radar_regions.py     # Radar 縣市粒度能力實測（哪些端點吃 geoId）
 python3 src/build_tw_counties.py       # 產生 docs/tw_counties.geojson（22 縣市界，一次性）
-python3 src/match_sar_ais.py           # Re-match GFW dark detections vs local AIS
+python3 src/match_sar_ais.py           # Re-match GFW dark detections vs local AIS（TRAJECTORY_ESTIMATOR=p0 退回舊推算）
+python3 src/fit_trajectory_params.py --archive <ais-archive>           # 離線擬合 P1 → data/trajectory_params.json
+python3 src/eval_trajectory.py --archive <ais-archive> --split test   # 回測（forecast + sar + sim 比對模擬）
 python3 src/detect_ship_transfers.py   # Detect STS rendezvous events
 python3 src/detect_gov_formation.py    # 公務船編隊偵測（≥2 艘公務/科研船 ≤10km 持續 ≥6h）
 python3 src/analyze_suspicious.py      # Run threat scoring engine

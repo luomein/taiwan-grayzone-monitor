@@ -47,6 +47,7 @@ GFW 的 matched/unmatched 標記是用他們自己的 AIS 來源做的；航港�
 """
 
 import math
+import os
 import re
 import sys
 from bisect import bisect_left
@@ -57,6 +58,8 @@ from pathlib import Path
 from geo_utils import haversine_km
 from io_utils import atomic_write_json, load_json
 import geofence
+from trajectory_core import destination_point, point_epoch, record_time_epoch
+import trajectory_model
 
 # =============================================================================
 # 設定
@@ -161,20 +164,6 @@ def parse_ts(value):
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=timezone.utc)
     return dt.timestamp()
-
-
-def destination_point(lat, lon, bearing_deg, dist_km):
-    """自 (lat, lon) 沿方位角 bearing 前進 dist_km 的目的座標（球面）。"""
-    R = 6371.0
-    delta = dist_km / R
-    theta = math.radians(bearing_deg)
-    lat1 = math.radians(lat)
-    lon1 = math.radians(lon)
-    lat2 = math.asin(math.sin(lat1) * math.cos(delta) +
-                     math.cos(lat1) * math.sin(delta) * math.cos(theta))
-    lon2 = lon1 + math.atan2(math.sin(theta) * math.sin(delta) * math.cos(lat1),
-                             math.cos(delta) - math.sin(lat1) * math.sin(lat2))
-    return math.degrees(lat2), (math.degrees(lon2) + 540) % 360 - 180
 
 
 def gate_km(unc_extra_km):
@@ -305,19 +294,21 @@ def load_ais_tracks():
     """
     tracks = {}
 
-    def add_point(mmsi, name, type_name, t, lat, lon, speed, heading):
+    def add_point(mmsi, name, type_name, t, lat, lon, speed, heading, gov=None):
         if is_nonvessel_ais(mmsi, name):
             return
         tr = tracks.get(mmsi)
         if tr is None:
             tr = {'name': name or '', 'type_name': type_name or 'unknown',
-                  'points': []}
+                  'gov': None, 'points': []}
             tracks[mmsi] = tr
         else:
             if name:
                 tr['name'] = name
             if type_name:
                 tr['type_name'] = type_name
+        if gov:
+            tr['gov'] = gov
         tr['points'].append((t, lat, lon, speed, heading))
 
     tier_paths = [TIER1_PATH]
@@ -339,20 +330,25 @@ def load_ais_tracks():
                 mmsi = v.get('mmsi')
                 if mmsi is None or lat is None or lon is None:
                     continue
-                add_point(str(mmsi), v.get('name'), v.get('type_name'), t,
+                # entry 時刻是抓取時刻；`rt` 還原成船的定位時刻
+                add_point(str(mmsi), v.get('name'), v.get('type_name'),
+                          point_epoch(t, v),
                           float(lat), float(lon),
-                          float(v.get('speed') or 0.0), v.get('heading'))
+                          float(v.get('speed') or 0.0), v.get('heading'),
+                          v.get('gov'))
 
     snap = load_json(SNAPSHOT_PATH, {}, expect_type=dict)
     for v in snap.get('vessels', []):
-        t = parse_ts(v.get('last_update'))
+        # 快照帶完整 Record_Time（台灣時間）；缺值才退回抓取時刻
+        t = record_time_epoch(v.get('record_time')) or parse_ts(v.get('last_update'))
         lat, lon = v.get('lat'), v.get('lon')
         mmsi = v.get('mmsi')
         if t is None or mmsi is None or lat is None or lon is None:
             continue
         add_point(str(mmsi), v.get('name'), v.get('type_name'), t,
                   float(lat), float(lon),
-                  float(v.get('speed') or 0.0), v.get('heading'))
+                  float(v.get('speed') or 0.0), v.get('heading'),
+                  v.get('gov_type'))
 
     # 排序 + 去除同時刻重複點
     for tr in tracks.values():
@@ -549,12 +545,33 @@ def _cand_cell(lat, lon):
             int(math.floor(lon / CANDIDATE_CELL_DEG)))
 
 
-def estimates_for_time(tracks, t_epoch):
-    """全船隊推算到 t_epoch，回傳 (est: mmsi->estimate, grid 空間索引)。"""
+def track_group(tr):
+    """trajectory_model 的船種群組（快取在 track dict 上）。"""
+    g = tr.get('group')
+    if g is None:
+        g = trajectory_model.type_group(tr.get('type_name'), tr.get('gov'), tr.get('name'))
+        tr['group'] = g
+    return g
+
+
+def estimate_track(tr, t_epoch, motion_params=None):
+    """單船推算：有 motion_params 用 trajectory_model，否則用 estimate_position。"""
+    if motion_params is not None:
+        return trajectory_model.estimate_position(tr['points'], t_epoch,
+                                                  track_group(tr), motion_params)
+    return estimate_position(tr['points'], t_epoch)
+
+
+def estimates_for_time(tracks, t_epoch, motion_params=None):
+    """全船隊推算到 t_epoch，回傳 (est: mmsi->estimate, grid 空間索引)。
+
+    motion_params（data/trajectory_params.json）存在時改用
+    trajectory_model.estimate_position：擬合的速度衰減 + 經驗 r90 門檻 +
+    依 r90 收件（取代 MAX_DT_HOURS）。缺檔時維持原本的 estimate_position。"""
     est = {}
     grid = defaultdict(list)
     for mmsi, tr in tracks.items():
-        e = estimate_position(tr['points'], t_epoch)
+        e = estimate_track(tr, t_epoch, motion_params)
         if e is None:
             continue
         est[mmsi] = e
@@ -750,12 +767,13 @@ def build_zone_series(all_dark, screened):
 # =============================================================================
 
 def run_matching(dark_records, tracks, static_mask=(), profiles=None,
-                 pass_table=None, recurring_cells=None):
+                 pass_table=None, recurring_cells=None, motion_params=None):
     """核心比對流程（純函式，便於測試）。回傳輸出 dict（不含 updated_at）。
 
     pass_table: {date: [(label, t_epoch)]} 實際過境時刻（CMR），
     None/缺日期時退回固定過境窗。
     recurring_cells: {(ci,cj): dates} 跨執行歷史重現格；None 時退回單窗判準。
+    motion_params: trajectory_model.load_params() 的結果；None 時用原本的推算。
     """
     profiles = profiles or {}
 
@@ -792,7 +810,7 @@ def run_matching(dark_records, tracks, static_mask=(), profiles=None,
     proposals = []   # (cost, det_idx, mmsi, dist, gate, pass_label, t_epoch)
     for (date, label, t), det_ids in sorted(groups.items()):
         if t not in est_cache:
-            est_cache = {t: estimates_for_time(tracks, t)}  # 只留當前時刻
+            est_cache = {t: estimates_for_time(tracks, t, motion_params)}  # 只留當前時刻
         est, grid = est_cache[t]
         cand_lists = {i: candidates_for_detection(work_recs[i], est, grid)
                       for i in det_ids}
@@ -832,8 +850,8 @@ def run_matching(dark_records, tracks, static_mask=(), profiles=None,
     for idx, r in enumerate(work_recs):
         if idx in matched:
             cost, mmsi, dist, g, label, t = matched[idx]
-            tr = tracks.get(mmsi, {})
-            e = estimate_position(tr.get('points', []), t) or {}
+            tr = tracks.get(mmsi) or {'points': []}
+            e = estimate_track(tr, t, motion_params) or {}
             rematched.append({
                 'lat': r['lat'], 'lon': r['lon'], 'date': r['date'],
                 'pass': label,
@@ -909,6 +927,11 @@ def run_matching(dark_records, tracks, static_mask=(), profiles=None,
             'min_gate_km': MIN_GATE_KM,
             'max_gate_km': MAX_GATE_KM,
             'max_dt_hours': MAX_DT_HOURS,
+            # p1 = trajectory_model（擬合參數 + r90 收件）；p0 = 原本的固定係數推算
+            'estimator': 'p1' if motion_params else 'p0',
+            **({'admit_max_r90_km': motion_params.get('admit_max_r90_km'),
+                'motion_params_generated_at': motion_params.get('generated_at')}
+               if motion_params else {}),
             'infra_min_dates': INFRA_MIN_DATES,
             's1_pass_times_utc': [f"{h:02d}:{m:02d}" for _, h, m in
                                   S1_PASS_TIMES_UTC],
@@ -963,8 +986,18 @@ def main():
     print(f"🗂️ 偵測歷史: {len(history.get('cells', {}))} 格、{n_days} 格·日"
           f"（保留 {HISTORY_RETENTION_DAYS} 天）→ 重現設施格 {len(recurring_cells)}")
 
+    # P1 運動模型（data/trajectory_params.json，離線擬合後提交）；
+    # 缺檔或 TRAJECTORY_ESTIMATOR=p0 時退回原本的固定係數推算
+    motion_params = None
+    if os.environ.get('TRAJECTORY_ESTIMATOR', 'p1') != 'p0':
+        motion_params = trajectory_model.load_params()
+    print(f"🧭 推算模型: {'p1（trajectory_params.json, r90 收件 ≤ '
+                         + str(motion_params.get('admit_max_r90_km')) + 'km）'
+                         if motion_params else 'p0（固定係數）'}")
+
     result = run_matching(dark_records, tracks, static_mask,
-                          pass_table=pass_table, recurring_cells=recurring_cells)
+                          pass_table=pass_table, recurring_cells=recurring_cells,
+                          motion_params=motion_params)
     result['updated_at'] = datetime.now(timezone.utc).isoformat() \
         .replace('+00:00', 'Z')
     result['source'] = source

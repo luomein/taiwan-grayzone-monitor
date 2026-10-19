@@ -2,19 +2,46 @@ name: Update AIS & Identity Tracking (High-Freq)
 
 on:
   schedule:
-    # 白天高頻：台灣 08:00-17:00 (UTC 00:00-09:00) 每 30 分鐘
-    # 避開 UTC 00:00 和 12:00 整點，與 update-data.yml 錯開
-    - cron: '30 0-8 * * *'
-    # 夜間低頻：台灣 17:00-08:00 (UTC 09:00-00:00) 每 2 小時
-    - cron: '0 9,11,13,15,17,19,21,23 * * *'
-  workflow_dispatch:  # 允許手動觸發
-
-concurrency:
-  group: data-pipeline
-  cancel-in-progress: false
+    # 每 20 分鐘觸發一次，由 gate job 決定要不要真的跑（src/ais_cadence_gate.py）：
+    # 有效節奏仍是白天（台灣 08:00-17:00 = UTC 00-09）每小時、夜間每 2 小時。
+    #
+    # 為什麼不直接排「白天每小時、夜間每 2 小時」：GitHub 在高負載時會延遲甚至
+    # 直接丟棄 schedule 事件，整點／半點最嚴重。2026-10-05 → 10-19 實測舊排程
+    # （'30 0-8' + '0 9,11,…,23'）243 個時段只觸發 76 次（31%），沒有任何取消或
+    # 失敗紀錄、排隊時間 0 —— 是排程根本沒觸發；實際間隔中位數 4.4h。03:30／07:30／
+    # 08:30 UTC 十四天一次都沒跑。密集觸發 + 閘門 = 3 倍的機會補上被丟掉的時段，
+    # 而 GitHub 正常時閘門會擋掉多餘的觸發（不抓、不碰代理、不 commit）。
+    # 分鐘避開 :00／:30（GitHub 建議）與 cloudflare-radar.yml 的 :15。
+    - cron: '7,27,47 * * * *'
+  workflow_dispatch:  # 允許手動觸發（閘門一律放行）
 
 jobs:
+  # 節奏閘門：上一份成功快照還夠新就結束整個 run。刻意不在 data-pipeline
+  # 併發群組裡 —— 群組最多只保留一個等待中的 run，新的會把舊的擠掉（跨 workflow），
+  # 每 20 分鐘一次的閘門若在群組內，可能把排在後面的 update-data.yml 擠掉。
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      run: ${{ steps.gate.outputs.run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            data/ais_snapshot.json
+            src/ais_cadence_gate.py
+          sparse-checkout-cone-mode: false
+      - id: gate
+        run: python3 src/ais_cadence_gate.py --event "${{ github.event_name }}" >> "$GITHUB_OUTPUT"
+
   update-ais:
+    needs: gate
+    if: needs.gate.outputs.run == 'true'
+    # 併發群組放在 job 層：只有真的要抓資料時才進群組排隊。
+    # 已知代價：兩次觸發被 GitHub 延遲擠到同一個 run 期間（~8 分鐘）時，第二次的
+    # 閘門讀到的仍是舊快照，會再跑一次 —— 多一份快照、多一個 commit，無害。
+    concurrency:
+      group: data-pipeline
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: write
