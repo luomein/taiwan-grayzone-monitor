@@ -1,0 +1,44 @@
+name: Pipeline Heartbeat (dispatch AIS / Network scan when due)
+
+# update-ais.yml 與 cloudflare-radar.yml 不再自己排程，由這支心跳在「逾期」時
+# 用 workflow_dispatch 派發（規則與量測見 src/pipeline_heartbeat.py 與 root
+# CLAUDE.md「快照間隔的根因與修正」）。
+#
+# 為什麼：GitHub 高負載時會延遲甚至直接丟棄 schedule 事件，整點／半點最嚴重。
+# 2026-10-05 → 10-19 實測 update-ais.yml 只觸發 31%、cloudflare-radar.yml 35%，
+# 沒有任何取消／失敗紀錄 —— 是排程根本沒觸發。dispatch 不會被丟。
+#
+# 負荷：每 20 分鐘一次、一條心跳照顧兩條 workflow；每個 job 只 sparse checkout
+# 一個檔、跑幾秒（實際觸發約 23 次/天，因為心跳本身也會被丟）。不需要 Python
+# 套件、不碰代理、不 commit。真正的資料 run 只在逾期時才派發，GitHub 正常時
+# 等於原排程（AIS 白天每小時、夜間每 2h；網路掃描每 2h）。
+on:
+  schedule:
+    # 避開 :00／:30（GitHub 建議）與 update-data.yml 的整點
+    - cron: '7,27,47 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write     # gh run list（讀）+ gh workflow run（派發）
+  contents: read
+
+# 心跳彼此重疊時只留最新的一個；刻意不進 data-pipeline 群組 ——
+# 那個群組只保留一個等待中的 run，心跳若在裡面會把排隊中的 update-data.yml 擠掉。
+concurrency:
+  group: pipeline-heartbeat
+  cancel-in-progress: true
+
+jobs:
+  beat:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: src/pipeline_heartbeat.py
+          sparse-checkout-cone-mode: false
+      - name: Dispatch overdue pipelines
+        run: python3 src/pipeline_heartbeat.py --ref "${{ github.event.repository.default_branch }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}

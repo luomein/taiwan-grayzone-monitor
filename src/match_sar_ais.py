@@ -991,9 +991,12 @@ def main():
     motion_params = None
     if os.environ.get('TRAJECTORY_ESTIMATOR', 'p1') != 'p0':
         motion_params = trajectory_model.load_params()
-    print(f"🧭 推算模型: {'p1（trajectory_params.json, r90 收件 ≤ '
-                         + str(motion_params.get('admit_max_r90_km')) + 'km）'
-                         if motion_params else 'p0（固定係數）'}")
+    if motion_params:
+        estimator_label = (f"p1（trajectory_params.json, r90 收件 ≤ "
+                           f"{motion_params.get('admit_max_r90_km')}km）")
+    else:
+        estimator_label = 'p0（固定係數）'
+    print(f"🧭 推算模型: {estimator_label}")
 
     result = run_matching(dark_records, tracks, static_mask,
                           pass_table=pass_table, recurring_cells=recurring_cells,
