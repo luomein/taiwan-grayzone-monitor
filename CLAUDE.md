@@ -12,7 +12,7 @@ Real-time OSINT monitoring of Taiwan's gray zone maritime activity. Integrates A
 - `src/` — Python data pipeline scripts (fetch, analyze, generate)
 - `data/` — Working/intermediate data (not in the Pages artifact). `data/vessel_routes/{mmsi}.json` is gitignored on main; the canonical store is the **Supabase `vessel_routes` table** (one row per MMSI, `track` as jsonb — `src/supabase_store.py`), which the frontend point-queries by MMSI. 30k route files in main history bloated the repo to 200MB+ and made Pages deployments time out; the older workaround — a single-commit **`vessel-data` branch** force-pushed each run — is still the automatic fallback when `SUPABASE_SERVICE_KEY` is unset
 - **`ais-archive` branch** — permanent AIS snapshot archive for offline track-prediction training (the main tier-1/tier-2 files are append-and-trim, 14/28 days, so they drop old snapshots). `update-ais.yml` writes each run's delta as a **new gzipped file** under `archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz`. It used to append into one monthly file; `ais_commercial_2026-08.jsonl` reached 99.95 MiB and the next append blew GitHub's 100 MiB blob limit — GH001, push rejected, and every later run of the month would have hit the same wall. One file per run never approaches the limit, and the step clones with `--filter=blob:none --sparse --no-cone` (current day's directory only) so it no longer downloads ~180MB of existing archive each run. The pre-existing `archive/ais_*_2026-0{7,8}.jsonl` monthly files are left frozen in place. Reassemble locally with `cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl` (filenames sort chronologically). `src/build_trajectory_dataset.py` reads both layouts directly (see **Trajectory Prediction** below). Not in the Pages artifact
-- `.github/workflows/` — 7 CI workflows (AIS hourly daytime / 2h overnight, full pipeline every 12h incl. once-daily 00:00 UTC gov-vessel track map, **網路異常掃描 every 2h（Cloudflare Radar 國家級 + ADM1 分區級 + IODA 全台 22 縣市可達性）**, `radar-region-probe.yml` 手動觸發的 Radar 縣市粒度能力實測, darkship SAR forensics daily 22:00 UTC, Threads weekly, LINE push：日報 00:00 UTC=08:00 TW／**高風險船週報 週一 02:00 UTC=10:00 TW／月報 1 號 02:00 UTC=10:00 TW**（刻意晚兩小時 —— update-data.yml 的 00:00 cron 才剛在產週/月報檔）). All data workflows share the `data-pipeline` concurrency group — they commit to main and would otherwise race on rebase
+- `.github/workflows/` — 7 CI workflows (AIS hourly daytime / 2h overnight — **triggered every 20 min (`7,27,47`) behind a cadence gate** (`src/ais_cadence_gate.py`) because GitHub silently dropped 69% of the old schedule's events, see **Trajectory Prediction**, full pipeline every 12h incl. once-daily 00:00 UTC gov-vessel track map, **網路異常掃描 every 2h（Cloudflare Radar 國家級 + ADM1 分區級 + IODA 全台 22 縣市可達性）**, `radar-region-probe.yml` 手動觸發的 Radar 縣市粒度能力實測, darkship SAR forensics daily 22:00 UTC, Threads weekly, LINE push：日報 00:00 UTC=08:00 TW／**高風險船週報 週一 02:00 UTC=10:00 TW／月報 1 號 02:00 UTC=10:00 TW**（刻意晚兩小時 —— update-data.yml 的 00:00 cron 才剛在產週/月報檔）). All data workflows share the `data-pipeline` concurrency group — they commit to main and would otherwise race on rebase
 - `docs/tw_counties.geojson` — 22 縣市界（geoBoundaries gbOpen TWN ADM1，CC BY 4.0），由 `src/build_tw_counties.py` 精簡後**提交**的靜態資產（81KB）。縣市界幾年才變一次，不進 CI 定期執行。**不要改用 Natural Earth 的 admin-1**：它只有 21 個縣市、缺連江（馬祖），而馬祖正是本專案最關鍵的一塊
 - `chips/` + `reports/` — darkship SAR forensics outputs (chip PNGs, `chips/results.json` cumulative log, daily Markdown reports), committed by `darkship-cron.yml`; **not** in the Pages artifact but public in the repo — a deliberate trade-off chosen when the cron was set up. The public daily report page (`docs/reports/<date>.html`, `generate_report.py`) surfaces this work: SAR×AIS 比對成效 funnel + the latest run's chip images (520px thumbnails in `docs/reports/chips/`, 14-day mtime rotation, `<img onerror>` falls back to the raw.githubusercontent original) with verdict badges
 
@@ -323,6 +323,18 @@ SAR 比對真正缺的是**校準過的不確定度**。所以 P1 = 兩個由資
 - 選 r90 ≤ 6.5km：test（60 個快照）P0 → P1 = 配對正確 11.9% → **12.9%**、配錯船 8.1% → **6.4%**、暗船被認領 11.1% → **9.7%**、誤判暗船 80.0% → 80.7%
 - 真實資料（2026-10-19 的 SAR 窗）：`rematched_local` 176 → **186**。同一份回測的 `sar` 涵蓋率表上 P1 反而較低（收件較嚴）—— 那個指標看不到誤認領，別拿它做決策
 - **真正的瓶頸是快照間隔**（3h → 密集船群裡無法分辨誰是誰）。把 `update-ais.yml` 的實際間隔拉回 1–2h，比任何模型改良都更能提升 SAR 比對
+
+### 快照間隔的根因與修正（2026-10-19）
+Actions 執行紀錄（10-05 → 10-19）：`update-ais.yml` 舊排程 243 個 cron 時段只觸發 **76 次（31%）**，全部成功、**沒有任何取消／失敗紀錄**，
+排隊等待中位數 **0 分**、執行 6 分鐘 —— 不是 `data-pipeline` 併發卡住，是 **GitHub 直接丟掉 schedule 事件**（官方文件：高負載時可能延遲或丟棄，
+整點／半點最嚴重；舊排程全在 :00／:30）。觸發的那 31% 也延遲中位數 39 分（p90 95 分）。03:30／07:30／08:30 UTC 十四天一次都沒跑；
+`cloudflare-radar.yml` 同病（168 → 59，35%）；`update-data.yml` 沒被丟（29/28）但延遲 3–8h。
+修正：cron 改 `7,27,47 * * * *` + **節奏閘門** `gate` job（`ais_cadence_gate.py`：快照 `updated_at` 白天 <50 分／夜間 <110 分就結束 run，
+不抓、不碰代理、不 commit）。GitHub 正常時有效節奏仍是原設計（白天每小時、夜間每 2h，~17 次/天，repo 不會被多餘 commit 撐大）；
+以實測各時段觸發率模擬，預期 **~13 次/天、間隔中位數 1.75h（p90 ~3.5h）**，舊排程是 5.4 次/天、4.4h（p90 7.1h）。
+`data-pipeline` 併發移到 `update-ais` job 層：群組只保留一個等待中的 run 且會跨 workflow 擠掉舊的，閘門若在群組內，每 20 分鐘一次的觸發可能把排隊中的
+`update-data.yml` 擠掉。已知代價：兩次觸發被延遲擠進同一個 run 期間時會重複跑一次（多一份快照，無害）。代理斷線時快照不會更新，閘門每次都放行 = 每次觸發都重試，這是刻意的。
+上線一兩週後應重量 `ais-archive` 的實際間隔，再重新擬合 P1（r90 表與收件門檻都是在 3h 間隔的資料上調的）。
 
 退回舊行為：刪掉 `data/trajectory_params.json`，或設 `TRAJECTORY_ESTIMATOR=p0`。`sar_ais_matches.json` 的 `params.estimator` 記錄本輪用哪一個。
 重新擬合：`python3 src/fit_trajectory_params.py --archive <ais-archive>`（~2 分鐘），再跑 `eval_trajectory.py --split test --only sim` 驗收。
