@@ -1,25 +1,43 @@
 {
   "date": "2026-10-20",
-  "generated_at": "2026-10-20T04:28:58.069158Z",
-  "data_updated_at": "2026-10-20T04:28:57.577867Z",
-  "ais_vessels": 8181,
-  "dark_vessels": 16660,
-  "dark_ratio": 43.4,
-  "suspicious_count": 1061,
-  "critical_count": 331,
-  "high_count": 730,
-  "cable_near_count": 621,
-  "sts_active": 69,
-  "sts_suspicious": 152,
+  "generated_at": "2026-10-20T16:18:50.459289Z",
+  "data_updated_at": "2026-10-20T16:18:49.778660Z",
+  "ais_vessels": 7037,
+  "dark_vessels": 16786,
+  "dark_ratio": 42.8,
+  "suspicious_count": 1057,
+  "critical_count": 319,
+  "high_count": 738,
+  "cable_near_count": 633,
+  "sts_active": 98,
+  "sts_suspicious": 176,
   "top_suspicious": [
     {
-      "mmsi": "200000000",
-      "name": "JTSAI YANG DIAN ZI",
-      "risk_score": 33,
+      "mmsi": "412466829",
+      "name": "66829",
+      "risk_score": 25,
+      "risk_level": "critical",
+      "vessel_type": "unknown",
+      "zone": "eez",
+      "cable_band": "within_1km"
+    },
+    {
+      "mmsi": "413000000",
+      "name": "88",
+      "risk_score": 25,
       "risk_level": "critical",
       "vessel_type": "cargo",
-      "zone": "internal_waters",
-      "cable_band": "within_1km"
+      "zone": "eez",
+      "cable_band": "beyond_10km"
+    },
+    {
+      "mmsi": "413313110",
+      "name": "HAISHENGJIA877",
+      "risk_score": 24,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "eez",
+      "cable_band": "beyond_10km"
     },
     {
       "mmsi": "667001298",
@@ -27,7 +45,7 @@
       "risk_score": 23,
       "risk_level": "critical",
       "vessel_type": "tanker",
-      "zone": "internal_waters",
+      "zone": "eez",
       "cable_band": "beyond_10km"
     },
     {
@@ -38,40 +56,22 @@
       "vessel_type": "cargo",
       "zone": "eez",
       "cable_band": "beyond_10km"
-    },
-    {
-      "mmsi": "412452932",
-      "name": "MINLIANYU62266",
-      "risk_score": 22,
-      "risk_level": "critical",
-      "vessel_type": "cargo",
-      "zone": "eez",
-      "cable_band": "within_10km"
-    },
-    {
-      "mmsi": "608683405",
-      "name": "83405",
-      "risk_score": 22,
-      "risk_level": "critical",
-      "vessel_type": "cargo",
-      "zone": "eez",
-      "cable_band": "within_10km"
     }
   ],
   "sar_ais_matching": {
-    "dark_total": 16660,
-    "infrastructure_filtered": 5088,
-    "rematched_local": 594,
-    "residual_dark": 10978,
-    "in_ais_coverage": 9901,
-    "no_ais_coverage": 1671,
-    "rematch_rate_of_coverage_pct": 6.0,
-    "false_dark_removed_pct": 34.1,
-    "ais_vessels_indexed": 20602,
-    "s1_real_pass_dates": 26,
-    "ais_coverage_start": "2026-09-22T05:12:21.147253Z",
-    "ais_coverage_end": "2026-10-20T04:24:45.650245Z",
-    "updated_at": "2026-10-20T04:25:07.600835Z"
+    "dark_total": 16786,
+    "infrastructure_filtered": 5150,
+    "rematched_local": 587,
+    "residual_dark": 11049,
+    "in_ais_coverage": 10009,
+    "no_ais_coverage": 1627,
+    "rematch_rate_of_coverage_pct": 5.9,
+    "false_dark_removed_pct": 34.2,
+    "ais_vessels_indexed": 20050,
+    "s1_real_pass_dates": 27,
+    "ais_coverage_start": "2026-09-22T18:25:51.524130Z",
+    "ais_coverage_end": "2026-10-20T16:12:40.696179Z",
+    "updated_at": "2026-10-20T16:13:24.539161Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-20",
