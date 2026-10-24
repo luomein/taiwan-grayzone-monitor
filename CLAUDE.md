@@ -30,6 +30,7 @@ GitHub Actions → src/fetch_ais_data.py (AIS via SOCKS5 proxy)
               → src/detect_ship_transfers.py (STS rendezvous detection)
               → src/detect_gov_formation.py (公務船編隊／護航科考偵測)
               → src/analyze_suspicious.py (threat scoring)
+              → src/cable_warning.py (海纜接近預警 6/12/24h + 意外入區；shadow，update-ais.yml)
               → src/aggregate_highrisk.py (高風險船累積 → 週/月報 CSV+JSON)
               → src/exercise_prediction.py (PLA sortie correlation)
               → src/extract_all_routes.py (per-vessel route JSONs → Supabase vessel_routes)
@@ -264,7 +265,7 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 
 ---
 
-## Trajectory Prediction（航跡預測；第 0、1 階段已完成）
+## Trajectory Prediction（航跡預測；第 0、1、2 階段已完成）
 
 目標用途（依優先序）：**SAR 暗船比對**（把 AIS 推到衛星過境時刻）與**海纜接近預警**（預測未來 N 小時進入海纜緩衝區）。
 訓練一律**離線、在本機**跑，CI 只做推論；可以用 pandas / pyarrow / onnxruntime（本機與 CI 推論皆可），
@@ -276,6 +277,8 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 | `src/build_trajectory_dataset.py` | `ais-archive` → 逐 (mmsi, 船名) 航跡 → 切段 → `data/trajectory/points.parquet`（無 pyarrow 時 csv.gz）+ `meta.json` |
 | `src/trajectory_model.py` | **P1（CI 推論，stdlib only）**：速度衰減推算 + 經驗 r90 不確定度查表 + 依 r90 收件。`match_sar_ais` 讀 `data/trajectory_params.json` 時用它 |
 | `src/fit_trajectory_params.py` | 離線在 train 切分擬合 P1 → `data/trajectory_params.json`（**提交**，16KB） |
+| `src/cable_warning.py` | **第 2 階段：海纜接近預警（CI，stdlib only，shadow）**——歷史行為表預測 6/12/24h 內低速進入海纜 5km 的船 + 「意外入區」異常分數 → `docs/cable_warnings.json`。`update-ais.yml` 在威脅評分後執行 |
+| `src/fit_cable_warning.py` | 離線擬合預警表 → `data/cable_warning_model.json`（**提交**，~0.8MB）；預測／表鍵／事件定義全部 import 自 `cable_warning.py`，回測量的就是 CI 跑的 |
 | `src/eval_trajectory.py` | 回測：`forecast`（1/2/6/12/24h，分船種／動靜／海纜 10km 內）、`sar`（抽點推回的誤差與門檻涵蓋率）、**`sim`（完整 SAR 比對模擬，P1 上線的決策依據）**，p0／p1 並排 → `data/trajectory/baseline_eval.json` |
 
 **`rt` 欄位**：航跡 entry 的 `timestamp` 是抓取時刻，不是定位時刻。航港局 `Record_Time` 是**台灣時間**（`YYYY/MM/DD HH:MM:SS`），
@@ -342,9 +345,45 @@ Actions 執行紀錄（10-05 → 10-19）：`update-ais.yml` 舊排程 243 個 c
 退回舊行為：刪掉 `data/trajectory_params.json`，或設 `TRAJECTORY_ESTIMATOR=p0`。`sar_ais_matches.json` 的 `params.estimator` 記錄本輪用哪一個。
 重新擬合：`python3 src/fit_trajectory_params.py --archive <ais-archive>`（~2 分鐘），再跑 `eval_trajectory.py --split test --only sim` 驗收。
 
-**後續階段**：(2) 歷史行為模型（網格轉移／歷史軌跡近鄰）+ 海纜接近預警（另擬合 6–24h 的參數；P1 的 SAR 參數在 24h 漁船上已接近 hold：9.8 vs 7.2km）+ 軌跡異常分數（先 shadow 不計分）；
+### 第 2 階段：海纜接近預警（shadow，`cable_warning.py`）
+
+**問題定義**：在海上、海纜 5km 外、不在港內的船，未來 H（6/12/24）小時內會不會出現「海纜 5km 內、<5kn、不在港內」的點 ——
+與威脅評分的海纜鄰近（`CABLE_PROXIMITY_KM`=5）與低速（`CABLE_LOITER_MAX_KNOTS`=5）同一組門檻（`is_entry_event`）。事件發生後評分才看得到，預警要提前。
+基準率（全部歸檔）：商船 6h 0.7%／12h 1.3%／24h 2.0%，漁船 4.8／6.8／7.8%。商船入區前的距離中位數 16km、p90 78km（從遠處來）。
+
+**模型 = 歷史行為表**（pattern of life）：P(入區 | 群組, 0.1° 格, 航速分箱 <1/1–5/5–12/≥12kn, 航向 8 扇區, 距海纜分帶 5–10/10–20/20–40/≥40km)，
+階層收縮 群組 → 群組×距離帶×航速 → ×格 → ×格×航速 → ×格×航速×航向，每層 `p = (k + 10·p_上層)/(n + 10)`（資料少的格自動退回上層，1/1 不會變 100%）。
+格層樣本 <5 不存。表格與威脅評分用同一套排除規則（`analyze_suspicious.check_exclusion_rules`）—— 只用 `is_nonvessel_ais` 時 `321 12V2`、`7V7`、
+`NETFISHING 7V7` 這類漁網信標（MID 106/200、MMSI 長度錯）佔滿 'other' 群組的預警。台灣船（MID 416）比照 `flag_taiwan` 不列入預警。
+
+**選模（test 切分，12h）**——運動學外插反而不行：船在海纜旁是減速、轉向進港或錨泊，直線外插抓不到：
+
+| 商船 | AUC | 前 1% 警示精確度／召回 |
+|---|---|---|
+| B0 只看現在距離 | 0.74 | 2.8% / 3.1% |
+| B1 P1 外插路徑最近距離 | 0.71 | 2.5% / 2.7% |
+| **M1 歷史行為表** | **0.84** | **22.8% / 24.7%**（基準率 0.92%） |
+
+正式模型（排除信標後）test：非漁船 12h AUC 0.84、前 1% 精確度 23.5%；6h AUC 0.89；24h 0.81。漁船 AUC 0.91 但基準率高、量大。
+警示門檻 `alert_p` 在 val 上取「非漁船精確度 ≥20% 的最低門檻」= **p12 ≥ 0.12**，test 實測精確度 18.4%、召回 33.9%（約 19 倍基準率）。
+漁船只有已被評為 high/critical 才列入預警（否則一輪上百艘）。2026-10-24 現況資料試跑：評估 1,092 艘 → 預警 17 艘，集中在澎湖外待命的權宜船籍油輪、
+金門／馬祖外低速貨船 —— 正是 2023 台馬、2025 澎湖斷纜的海域。
+
+**高分區不是雜訊**：商船低速入區最密的格是淡水／台北港外（2,445 次）、布袋外、馬祖福澳（1,337）、澎湖馬公（990）、金門料羅灣、基隆外海 50km ——
+全是海纜登陸點旁的候泊水域。所以預警本身會含大量例行候泊船；用 `risk_score`／`risk_level`（併自 `suspicious_vessels.json` 的 `all_classifications`）
+與下面的異常分數區分。
+
+**意外入區（異常分數，shadow）** `unexpected_entries`：已在區內低速、且 3–12h 前還在區外（不在港內）的船，回看當時的入區機率 `prior_p` ——
+越低 = 越不是常態候泊的接近。test 期間 171 件非漁船新入區，prior_p 中位數 0.105、p10 ≈ 0；最低的幾件是 5–6h 前還在 20–130km 外高速、
+突然在金門／廈門間海纜 5km 內減速的陸籍貨船，以及**在馬祖海纜 4.8km 內減速的 CHINACOASTGUARD14516**。一直待在區內的船不算「剛進來」。
+
+**輸出**：只提交 `docs/cable_warnings.json`（每輪 AIS 更新重寫，比照 `cf_radar.json` 不放 `data/` 雙份）；`alerts` 上限 100、`unexpected_entries` 50；
+最新定位比快照舊 >3h 的船不評。CI 成本：讀 tier-1/2 + 快照 ~數秒、海纜距離以 0.01° 快取。**尚未進評分、前端尚未顯示**。
+重新擬合：`python3 src/fit_cable_warning.py --archive <ais-archive>`（~80s，同時印出 test 指標並寫進模型檔的 `metrics`）。
+
+**後續階段**：前端顯示預警與意外入區（或併入日報／LINE）；觀察 shadow 結果一段時間後再決定是否進評分；
 (3) 深度模型（本機訓練 → ONNX → CI 推論）+ 前端預測錐形。
-Tests: `tests/test_trajectory.py`、`tests/test_trajectory_model.py`。
+Tests: `tests/test_trajectory.py`、`tests/test_trajectory_model.py`、`tests/test_cable_warning.py`。
 
 ---
 
@@ -443,6 +482,8 @@ python3 src/build_tw_counties.py       # 產生 docs/tw_counties.geojson（22 �
 python3 src/match_sar_ais.py           # Re-match GFW dark detections vs local AIS（TRAJECTORY_ESTIMATOR=p0 退回舊推算）
 python3 src/fit_trajectory_params.py --archive <ais-archive>           # 離線擬合 P1 → data/trajectory_params.json
 python3 src/eval_trajectory.py --archive <ais-archive> --split test   # 回測（forecast + sar + sim 比對模擬）
+python3 src/cable_warning.py           # 海纜接近預警（shadow）→ docs/cable_warnings.json
+python3 src/fit_cable_warning.py --archive <ais-archive>               # 離線擬合預警表 → data/cable_warning_model.json
 python3 src/detect_ship_transfers.py   # Detect STS rendezvous events
 python3 src/detect_gov_formation.py    # 公務船編隊偵測（≥2 艘公務/科研船 ≤10km 持續 ≥6h）
 python3 src/analyze_suspicious.py      # Run threat scoring engine

@@ -49,6 +49,12 @@ jobs:
         run: python src/analyze_suspicious.py
         continue-on-error: true
 
+      # 海纜接近預警（shadow，不進評分）：歷史行為表預測 6/12/24h 內低速進入海纜
+      # 5km 的船，併入上一步的風險分數 → docs/cable_warnings.json。見 src/cable_warning.py
+      - name: Cable approach early warning
+        run: python src/cable_warning.py
+        continue-on-error: true
+
       - name: Extract all vessel routes
         run: python src/extract_all_routes.py
         env:
