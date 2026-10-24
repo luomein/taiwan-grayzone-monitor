@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>海纜接近預警：用歷史航跡預測哪艘船會在海纜旁減速 | Taiwan Gray Zone Monitor</title>
+    <meta name="description" content="本站以三個月 AIS 歸檔建立「歷史行為表」，預測未來 6／12／24 小時內會在海纜 5 公里內低速出現的船，並以「意外入區」異常分數找出不像例行候泊的接近。說明問題定義、選模比較、測試成績、熱區與限制。">
+    <meta name="keywords" content="海纜預警,海底電纜,海纜接近,AIS 預測,航跡預測,pattern of life,意外入區,馬祖海纜,金門海纜,台灣灰色地帶">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="zh-TW" href="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="en" href="https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="x-default" href="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="海纜接近預警：預測哪艘船會在海纜旁減速">
+    <meta property="og:description" content="事件發生後評分才看得到；預警要提前。三個月 AIS 歸檔建出的歷史行為表，在測試期把前 1% 警示的精確度拉到基準率的 25 倍。">
+    <meta property="og:url" content="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <meta property="og:image" content="https://s0914712.github.io/taiwan-grayzone-monitor/og-banner.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Taiwan Gray Zone &amp; Submarine Cable Monitor 台灣灰色地帶與海底電纜監測">
+    <meta property="og:site_name" content="Taiwan Gray Zone &amp; Submarine Cable Monitor">
+    <meta property="og:locale" content="zh_TW">
+    <meta property="og:locale:alternate" content="en_US">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://s0914712.github.io/taiwan-grayzone-monitor/og-banner.png">
+    <meta name="twitter:title" content="海纜接近預警：預測哪艘船會在海纜旁減速">
+    <meta name="twitter:description" content="歷史行為表預測 6／12／24 小時內在海纜旁低速出現的船，加上「意外入區」異常分數。">
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M82X8QBL');</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap"></noscript>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/reading.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+    .story-hook{border-left:4px solid var(--accent-cyan);padding:16px 20px;margin:16px 0;background:rgba(0,245,255,.06);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;font-style:italic;color:var(--text-primary)}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
+    .stat-callout{text-align:center;padding:16px 12px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:8px}
+    .stat-number{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent-cyan);display:block;line-height:1.2}
+    .stat-label{font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.5}
+    .fact-box{background:var(--bg-secondary);border:1px solid rgba(0,245,255,.15);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:12px;line-height:1.8;color:var(--text-secondary)}
+    .fact-box strong{color:var(--accent-cyan)}
+    .fact-title{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent-cyan);font-weight:600;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+    .series-nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+    .series-chip{padding:5px 10px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:4px;font-size:10px;color:var(--text-secondary);text-decoration:none;font-family:'JetBrains Mono',monospace;transition:all .2s}
+    .series-chip:hover,.series-chip.active{border-color:var(--accent-cyan);color:var(--accent-cyan);background:rgba(0,245,255,.08)}
+    .cw-table-wrap{overflow-x:auto;margin:14px 0}
+    .cw-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.7;color:var(--text-secondary)}
+    .cw-table th,.cw-table td{border:1px solid var(--border-glow);padding:8px 10px;text-align:left;vertical-align:top}
+    .cw-table th{color:var(--text-primary);background:var(--bg-secondary);font-weight:600}
+    .cw-table td.num{font-family:'JetBrains Mono',monospace;white-space:nowrap}
+    .cw-table tr.best td{color:var(--accent-cyan)}
+    .dark-reason{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:6px;margin:8px 0;font-size:12px}
+    .dark-reason-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+    .dark-reason-text{color:var(--text-secondary);line-height:1.7}
+    .dark-reason-text strong{color:var(--text-primary);display:block;margin-bottom:2px}
+    .alert-box{background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:12px;line-height:1.8;color:var(--text-secondary)}
+    .alert-box strong{color:#ff6b6b}
+    .faq-section{margin:16px 0}
+    .faq-item{border:1px solid var(--border-glow);border-radius:8px;margin-bottom:10px;overflow:hidden;background:var(--bg-card)}
+    .faq-item summary{cursor:pointer;padding:14px 18px;font-size:13px;font-weight:600;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-item summary::-webkit-details-marker{display:none}
+    .faq-item summary::after{content:'+';font-family:'JetBrains Mono',monospace;color:var(--accent-cyan);font-size:18px;flex-shrink:0;transition:transform .2s}
+    .faq-item[open] summary::after{transform:rotate(45deg)}
+    .faq-item summary:hover{color:var(--accent-cyan)}
+    .faq-answer{padding:0 18px 14px;font-size:12px;line-height:1.9;color:var(--text-secondary)}
+    body.lang-en .lang-zh-only{display:none!important}body:not(.lang-en) .lang-en-only{display:none!important}
+    </style>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":["Article","TechArticle"],"headline":"海纜接近預警：用歷史航跡預測哪艘船會在海纜旁減速 — Cable Approach Early Warning","description":"本站以三個月 AIS 歸檔建立歷史行為表，預測未來 6／12／24 小時內會在海纜 5 公里內低速出現的船，並以「意外入區」異常分數找出不像例行候泊的接近。A historical pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score.","url":"https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html","datePublished":"2026-10-24","dateModified":"2026-10-24","inLanguage":["zh-TW","en"],"author":{"@type":"Organization","name":"Taiwan Gray Zone & Submarine Cable Monitor","url":"https://s0914712.github.io/taiwan-grayzone-monitor/"},"publisher":{"@id":"https://s0914712.github.io/taiwan-grayzone-monitor/#org"},"isPartOf":{"@id":"https://s0914712.github.io/taiwan-grayzone-monitor/#website"},"isBasedOn":{"@type":"Dataset","@id":"https://s0914712.github.io/taiwan-grayzone-monitor/cable_warnings.json","name":"Taiwan Cable Approach Early-Warning Output","url":"https://s0914712.github.io/taiwan-grayzone-monitor/cable_warnings.json"},"about":[{"@type":"Thing","name":"Submarine Cable Protection"},{"@type":"Thing","name":"Vessel Trajectory Prediction"},{"@type":"Thing","name":"Pattern of Life Analysis"},{"@type":"Thing","name":"Automatic Identification System (AIS)"}],"mainEntityOfPage":{"@type":"WebPage","@id":"https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html"},"speakable":{"@type":"SpeakableSpecification","cssSelector":[".ai-summary"]},"citation":[{"@type":"CreativeWork","name":"International Cable Protection Committee (ICPC)","url":"https://www.iscpc.org/"},{"@type":"CreativeWork","name":"TeleGeography Submarine Cable Map","url":"https://www.submarinecablemap.com/"},{"@type":"CreativeWork","name":"IMO — Automatic Identification Systems (AIS)","url":"https://www.imo.org/en/OurWork/Safety/Pages/AIS.aspx"}]}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://s0914712.github.io/taiwan-grayzone-monitor/"},{"@type":"ListItem","position":2,"name":"深度文章","item":"https://s0914712.github.io/taiwan-grayzone-monitor/blog.html"},{"@type":"ListItem","position":3,"name":"海纜接近預警","item":"https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html"}]}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"海纜接近預警在預測什麼？","acceptedAnswer":{"@type":"Answer","text":"預測一艘目前在海纜 5 公里外的船，未來 6、12、24 小時內會不會出現在海纜 5 公里內、航速低於 5 節、且不在港內。這與本站威脅評分的海纜鄰近與低速門檻完全相同，差別在於評分要等事件發生才看得到，預警則提前。"}},{"@type":"Question","name":"為什麼不用直線外插航跡？","acceptedAnswer":{"@type":"Answer","text":"船在海纜旁通常是減速、轉向進港或下錨，直線外插抓不到這種行為。測試期 12 小時預測中，用外插路徑最近距離排序的 AUC 是 0.71，比只看現在距離的 0.74 還差；歷史行為表則是 0.84。"}},{"@type":"Question","name":"被列入預警就代表那艘船可疑嗎？","acceptedAnswer":{"@type":"Answer","text":"不代表。預警的高分區集中在淡水／台北港外、馬祖福澳、澎湖馬公、金門料羅灣等海纜登陸點旁的候泊水域，大量是例行等待進港的船。預警只回答「會不會靠近」，是否可疑要搭配威脅評分與意外入區分數判讀。"}},{"@type":"Question","name":"什麼是「意外入區」？","acceptedAnswer":{"@type":"Answer","text":"已經在海纜 5 公里內低速、而 3 到 12 小時前還在區外的船，回看當時模型給它的入區機率。機率越低，代表那次接近越不像常態候泊。測試期最不尋常的案例包括數小時前還在 20–130 公里外高速航行、突然在金門與廈門間海纜旁減速的船，以及在馬祖海纜 4.8 公里內減速的中國海警船。"}},{"@type":"Question","name":"這套預警準不準？","acceptedAnswer":{"@type":"Answer","text":"以非漁船 12 小時預警為例，測試期的基準率約 0.96%，警示門檻下精確度 18.4%、召回 33.9%，約為基準率的 19 倍；前 1% 高分的精確度為 23.5%。也就是說每 5 則警示約有 1 則真的在 12 小時內低速入區，仍需人工研判。"}}]}
+    </script>
+</head>
+<body class="theme-reading">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M82X8QBL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header" style="position:sticky;top:0;z-index:100">
+        <h1 data-i18n="title.index">🛰️ 台灣灰色地帶與海底電纜監測</h1>
+        <div class="header-info">
+            <a href="index.html" style="font-size:13px;color:var(--text-secondary);text-decoration:none;padding:3px 8px;border:1px solid var(--border-glow);border-radius:4px" data-i18n="nav.grayzone">灰色地帶監測</a>
+            <a href="dark-vessels.html" style="font-size:13px;color:var(--text-secondary);text-decoration:none;padding:3px 8px;border:1px solid var(--border-glow);border-radius:4px" data-i18n="nav.dark_vessels">暗船偵測</a>
+            <a href="blog.html" style="font-size:13px;color:var(--accent-cyan);text-decoration:none;padding:3px 8px;border:1px solid var(--accent-cyan);border-radius:4px;background:rgba(0,245,255,0.1)" data-i18n="nav.blog">深度文章</a>
+            <button id="langToggle" onclick="i18n.toggle()" style="font-size:13px;color:var(--accent-cyan);background:var(--bg-card);border:1px solid var(--accent-cyan);border-radius:4px;padding:3px 8px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-weight:600">EN</button>
+        </div>
+    </header>
+
+    <div class="intro-hero">
+        <h1 class="lang-zh-only">海纜接近預警</h1>
+        <h1 class="lang-en-only">Cable Approach Early Warning</h1>
+        <p class="subtitle lang-zh-only">航跡預測 &#x2022; 歷史行為表 &#x2022; 意外入區 &#x2022; 台灣海纜</p>
+        <p class="subtitle lang-en-only">Trajectory Prediction &#x2022; Pattern of Life &#x2022; Unexpected Entries &#x2022; Taiwan's Cables</p>
+    </div>
+
+    <!-- AI / GEO summary — visible, quotable abstract for answer engines -->
+    <section class="ai-summary" aria-label="頁面摘要 Page summary">
+        <h2 class="lang-zh-only">本頁重點</h2>
+        <h2 class="lang-en-only">In short</h2>
+        <p class="lang-zh-only">
+            本站的威脅評分只有在船「已經」停在海纜旁之後才看得到。海纜接近預警要提前：用 2026 年 7–10 月的 AIS 歸檔，
+            統計每個海域、航速、航向、與海纜距離下，船在 6／12／24 小時內低速進入海纜 5 公里範圍的歷史比例（歷史行為表）。
+            測試期非漁船 12 小時預警的 AUC 為 0.84，前 1% 警示的精確度 23.5%，約為基準率的 25 倍。
+            另以「意外入區」異常分數，挑出入區前看起來最不像會來的接近。目前為 shadow 模式，尚未計入評分。
+        </p>
+        <p class="lang-en-only">
+            The site's threat scoring only sees a ship once it is already sitting next to a cable. The cable approach
+            early warning aims to see it coming: from AIS archived July–October 2026, it tabulates how often ships in a
+            given area, speed, heading and distance band went on to appear slow within 5 km of a submarine cable within
+            6, 12 or 24 hours (a pattern-of-life table). On the held-out test period, non-fishing 12-hour warnings reach an
+            AUC of 0.84 and 23.5% precision in the top 1% — about 25× the base rate. An "unexpected entry" anomaly score
+            highlights approaches that looked least likely beforehand. It currently runs in shadow mode and does not feed the score.
+        </p>
+        <ul>
+            <li class="lang-zh-only">事件定義：海纜 5 公里內、航速 &lt;5 節、不在港內——與威脅評分同一組門檻。</li>
+            <li class="lang-en-only">Event: within 5 km of a cable, below 5 knots, not in port — the same thresholds as the threat score.</li>
+            <li class="lang-zh-only">歷史行為表勝過「只看距離」與「直線外插」：船在海纜旁是減速、進港、下錨，不是直線前進。</li>
+            <li class="lang-en-only">The pattern-of-life table beats both "distance only" and "straight-line extrapolation": near cables ships slow, turn into port or anchor.</li>
+            <li class="lang-zh-only">預警與異常分數是待研判的線索，不是違法認定。</li>
+            <li class="lang-en-only">Warnings and anomaly scores are leads to investigate, not findings of wrongdoing.</li>
+        </ul>
+    </section>
+
+    <section class="intro-section">
+        <div class="series-nav">
+            <span style="font-size:10px;color:rgba(0,245,255,.4);font-family:'JetBrains Mono',monospace;align-self:center">延伸閱讀 RELATED →</span>
+            <a href="blog-cable-threats.html" class="series-chip">海纜威脅</a>
+            <a href="blog-methodology.html" class="series-chip">評分方法論</a>
+            <a href="blog-what-is-ais.html" class="series-chip">AIS 是什麼</a>
+            <a href="blog-what-is-dark-vessel.html" class="series-chip">暗船是什麼</a>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <div class="story-hook">
+                2023 年 2 月，馬祖兩條海纜在一週內先後斷線，1.4 萬居民斷網約 50 天。2025 年初，基隆外海與台澎海纜也接連出事。<br><br>
+                每一次，AIS 紀錄都是事後才被翻出來：那艘船在纜線上方減速、徘徊、拖行。問題是——能不能在它抵達之前就注意到？
+            </div>
+            <h2>為什麼要「預警」？</h2>
+            <p>本站的<a href="blog-methodology.html" style="color:var(--accent-cyan)">威脅評分</a>會檢查船是否曾在海纜 5 公里內出現、是否以低於 5 節的速度徘徊超過 3 小時。這些都是<strong>事後指標</strong>：要等船真的在海纜旁停下來，評分才會反應。</p>
+            <p>海纜接近預警把同一個事件往前推：<strong>現在還在海纜 5 公里外、在海上、不在港內的船，未來 6、12、24 小時內會不會出現「海纜 5 公里內、航速 &lt;5 節、不在港內」的定位？</strong>事件定義刻意與評分完全一致，預警說會來的，就是評分之後會看到的。</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">0.7%</span><div class="stat-label">商船 6 小時內低速入區的基準率</div></div>
+                <div class="stat-callout"><span class="stat-number">2.0%</span><div class="stat-label">商船 24 小時基準率</div></div>
+                <div class="stat-callout"><span class="stat-number">16 km</span><div class="stat-label">商船入區前距離中位數（p90 78 km）</div></div>
+                <div class="stat-callout"><span class="stat-number">7.8%</span><div class="stat-label">漁船 24 小時基準率</div></div>
+            </div>
+            <p>基準率很低：任選一個商船定位，24 小時內低速進到海纜旁的機會只有 2%。而且入區的商船多半是從遠處來的，入區前的距離中位數 16 公里、有一成超過 78 公里——「現在離海纜多近」本身並不足以判斷。</p>
+        </div>
+        <div class="lang-en-only">
+            <div class="story-hook">
+                In February 2023 both of Matsu's submarine cables were cut within a week, leaving 14,000 residents offline for about 50 days. In early 2025 cables off Keelung and between Taiwan and Penghu followed.<br><br>
+                Each time, the AIS record was pulled up afterwards: the ship slowed over the cable, loitered, dragged. The question is — could we notice it before it arrives?
+            </div>
+            <h2>Why an Early Warning?</h2>
+            <p>The site's <a href="blog-methodology.html" style="color:var(--accent-cyan)">threat scoring</a> checks whether a ship has been within 5 km of a cable and whether it loitered there below 5 knots for more than 3 hours. These are <strong>after-the-fact indicators</strong>: the score only reacts once the ship has actually stopped next to the cable.</p>
+            <p>The cable approach warning moves the same event forward in time: <strong>for a ship that is currently at sea, more than 5 km from any cable and not in port, will it report a position "within 5 km of a cable, below 5 knots, not in port" in the next 6, 12 or 24 hours?</strong> The event definition is deliberately identical to the scoring, so what the warning says is coming is exactly what the score will later see.</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">0.7%</span><div class="stat-label">Merchant base rate, slow entry within 6 h</div></div>
+                <div class="stat-callout"><span class="stat-number">2.0%</span><div class="stat-label">Merchant base rate within 24 h</div></div>
+                <div class="stat-callout"><span class="stat-number">16 km</span><div class="stat-label">Median merchant distance before entry (p90 78 km)</div></div>
+                <div class="stat-callout"><span class="stat-number">7.8%</span><div class="stat-label">Fishing base rate within 24 h</div></div>
+            </div>
+            <p>The base rate is low: pick any merchant-ship position and the chance it appears slow beside a cable within 24 hours is just 2%. And merchant ships that do enter mostly come from far away — a median 16 km before entry, one in ten more than 78 km — so "how close is it right now" is not enough on its own.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>模型：歷史行為表（pattern of life）</h2>
+            <p>直覺的做法是把船的航跡直線外插，看它會不會穿過海纜。實測這反而<strong>比只看現在距離還差</strong>——船在海纜旁做的事是減速、轉向進港、下錨候泊，不是直線前進。真正有用的訊號是「這片海、這種速度、這個方向的船，過去通常會不會來」。</p>
+            <p>於是模型是一張由歸檔資料計數出來的機率表：</p>
+            <div class="fact-box">
+                <span class="fact-title">表格的鍵</span>
+                <strong>P(入區 | 船種群組, 0.1° 網格, 航速分箱, 航向扇區, 距海纜分帶)</strong><br>
+                航速分箱：&lt;1／1–5／5–12／≥12 節；航向：8 個 45° 扇區；距海纜：5–10／10–20／20–40／≥40 公里。<br>
+                資料少的格子不可信，所以採<strong>階層收縮</strong>：群組 → 群組×距離帶×航速 → ×網格 → ×網格×航速 → ×網格×航速×航向，每一層都向上一層借力：
+                p = (k + 10·p<sub>上層</sub>) / (n + 10)。一格只看過 1 次、1 次入區，不會變成 100%。
+            </div>
+            <p>訓練、選門檻、測試按時間切開（前 70% 擬表、接下來 15% 選警示門檻、最後 15% 報成績），另有一成船隻整條留給測試，避免「記住同一艘船」。</p>
+            <h3 style="font-size:14px;margin-top:20px">選模比較（商船，測試期，12 小時）</h3>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>方法</th><th>AUC</th><th>前 1% 警示精確度</th><th>前 1% 召回</th></tr></thead>
+                    <tbody>
+                        <tr><td>B0 只看現在與海纜的距離</td><td class="num">0.74</td><td class="num">2.8%</td><td class="num">3.1%</td></tr>
+                        <tr><td>B1 運動模型外插路徑的最近距離</td><td class="num">0.71</td><td class="num">2.5%</td><td class="num">2.7%</td></tr>
+                        <tr class="best"><td>M1 歷史行為表</td><td class="num">0.84</td><td class="num">22.8%</td><td class="num">24.7%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary)">同期商船 12 小時基準率 0.92%。前 1% 警示精確度 22.8% ≈ 基準率的 25 倍。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>The Model: a Pattern-of-Life Table</h2>
+            <p>The intuitive approach is to extrapolate each ship's track in a straight line and see whether it crosses a cable. In testing this did <strong>worse than looking at the current distance alone</strong> — what ships do near cables is slow down, turn into port and wait at anchor, not sail straight on. The useful signal is "do ships in this patch of sea, at this speed, on this heading, usually end up here?"</p>
+            <p>So the model is a probability table counted from the archive:</p>
+            <div class="fact-box">
+                <span class="fact-title">Table keys</span>
+                <strong>P(entry | vessel group, 0.1° cell, speed bin, heading sector, cable-distance band)</strong><br>
+                Speed bins: &lt;1 / 1–5 / 5–12 / ≥12 kn; heading: eight 45° sectors; distance: 5–10 / 10–20 / 20–40 / ≥40 km.<br>
+                Sparse cells cannot be trusted, so the table uses <strong>hierarchical shrinkage</strong>: group → group×distance×speed → ×cell → ×cell×speed → ×cell×speed×heading, each level borrowing strength from the one above:
+                p = (k + 10·p<sub>parent</sub>) / (n + 10). A cell seen once with one entry does not become 100%.
+            </div>
+            <p>Fitting, threshold selection and testing are split in time (first 70% fits the table, next 15% picks the alert threshold, last 15% is reported), and one in ten vessels is held out entirely for testing so the model cannot simply memorise a ship.</p>
+            <h3 style="font-size:14px;margin-top:20px">Model comparison (merchant ships, test period, 12 h)</h3>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>Method</th><th>AUC</th><th>Top-1% precision</th><th>Top-1% recall</th></tr></thead>
+                    <tbody>
+                        <tr><td>B0 current distance to cable only</td><td class="num">0.74</td><td class="num">2.8%</td><td class="num">3.1%</td></tr>
+                        <tr><td>B1 closest approach of the extrapolated path</td><td class="num">0.71</td><td class="num">2.5%</td><td class="num">2.7%</td></tr>
+                        <tr class="best"><td>M1 pattern-of-life table</td><td class="num">0.84</td><td class="num">22.8%</td><td class="num">24.7%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary)">Merchant 12-hour base rate in the same period: 0.92%. Top-1% precision of 22.8% ≈ 25× the base rate.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>測試成績</h2>
+            <p>正式模型先套用與威脅評分相同的排除規則（漁網信標、無效 MMSI、台灣船籍不列入），再在測試期評估：</p>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>非漁船</th><th>基準率</th><th>AUC</th><th>前 1% 精確度／召回</th></tr></thead>
+                    <tbody>
+                        <tr><td>6 小時</td><td class="num">0.52%</td><td class="num">0.89</td><td class="num">18.1% / 34.6%</td></tr>
+                        <tr><td>12 小時</td><td class="num">0.96%</td><td class="num">0.84</td><td class="num">23.5% / 24.4%</td></tr>
+                        <tr><td>24 小時</td><td class="num">1.43%</td><td class="num">0.81</td><td class="num">26.6% / 18.6%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>實際上線的警示門檻是在驗證期選的「非漁船精確度 ≥20% 的最低門檻」，即 <strong>12 小時入區機率 ≥ 0.12</strong>。測試期在這個門檻下：精確度 18.4%、召回 33.9%——每 5 則警示約 1 則真的在 12 小時內低速入區，並抓到三分之一的入區事件。</p>
+            <p>漁船的 AUC 更高（約 0.91），但基準率高、數量大，若全部列出每輪會有上百艘。因此漁船只有在威脅評分已達 high／critical 時才進入預警清單。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>Test Results</h2>
+            <p>The production model first applies the same exclusion rules as the threat score (fishing-net beacons, invalid MMSIs and Taiwan-flagged vessels are left out), then is evaluated on the test period:</p>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>Non-fishing</th><th>Base rate</th><th>AUC</th><th>Top-1% precision / recall</th></tr></thead>
+                    <tbody>
+                        <tr><td>6 hours</td><td class="num">0.52%</td><td class="num">0.89</td><td class="num">18.1% / 34.6%</td></tr>
+                        <tr><td>12 hours</td><td class="num">0.96%</td><td class="num">0.84</td><td class="num">23.5% / 24.4%</td></tr>
+                        <tr><td>24 hours</td><td class="num">1.43%</td><td class="num">0.81</td><td class="num">26.6% / 18.6%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>The alert threshold actually in use was chosen on the validation period as "the lowest threshold with non-fishing precision ≥ 20%": a <strong>12-hour entry probability ≥ 0.12</strong>. On the test period at that threshold, precision is 18.4% and recall 33.9% — roughly one alert in five really does enter slow within 12 hours, and a third of all entries are caught.</p>
+            <p>Fishing vessels score an even higher AUC (about 0.91), but their base rate is high and their numbers large; listing them all would produce hundreds per run. Fishing vessels therefore join the warning list only when the threat score already rates them high or critical.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>高分區不是雜訊：海纜登陸點旁的候泊水域</h2>
+            <p>把歷史上商船低速入區最密集的網格列出來，幾乎全是海纜登陸點旁、船舶等候進港的水域：</p>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>淡水／台北港外</strong>歷史入區最密的一格（2,445 次）。</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>馬祖福澳</strong>1,337 次；2023 年雙纜斷線的海域。</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>澎湖馬公</strong>990 次；台澎海纜的登陸端。</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>布袋外海、金門料羅灣、基隆外海 50 公里</strong>其餘的主要熱區。</div></div>
+            <p>這代表預警清單本身<strong>一定會含大量例行候泊船</strong>：船在等泊位，剛好就在海纜旁。預警只回答「會不會靠近」，不回答「靠近是否可疑」。因此每則預警都附上該船的威脅評分與風險等級，並另外計算下一節的「意外入區」分數，把例行與不尋常的接近分開。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>The Hotspots Are Not Noise: Waiting Areas Beside Cable Landings</h2>
+            <p>List the grid cells where merchant ships most often entered slow in the archive, and nearly all are waters beside cable landings where ships wait to enter port:</p>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Off Tamsui / Taipei Port</strong>The densest cell in the archive (2,445 entries).</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Fuao, Matsu</strong>1,337 entries; the waters of the 2023 double cable cut.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Magong, Penghu</strong>990 entries; the landing end of the Taiwan–Penghu cables.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Off Budai, Liaoluo Bay (Kinmen), 50 km off Keelung</strong>The remaining major hotspots.</div></div>
+            <p>This means the warning list <strong>will always contain many routine waiting ships</strong>: ships waiting for a berth happen to wait next to cables. The warning only answers "will it come close", not "is the approach suspicious". Every warning therefore carries the ship's threat score and risk level, and the "unexpected entry" score in the next section separates routine approaches from unusual ones.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>意外入區：不像會來的接近</h2>
+            <p>「意外入區」看的是已經發生的接近：<strong>目前已在海纜 5 公里內低速、而 3 到 12 小時前還在區外（且不在港內）的船</strong>。回到它還在區外的那一刻，查模型當時給它的入區機率（prior_p）。機率越低，代表以這片海、這種速度與航向的歷史來看，那次接近越不像例行候泊。</p>
+            <p>一直待在區內的船不算「剛進來」，所以長期錨泊不會反覆觸發。</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">171</span><div class="stat-label">測試期非漁船新入區件數</div></div>
+                <div class="stat-callout"><span class="stat-number">0.105</span><div class="stat-label">入區前機率中位數</div></div>
+                <div class="stat-callout"><span class="stat-number">≈0</span><div class="stat-label">最低 10% 的入區前機率</div></div>
+            </div>
+            <p>測試期 prior_p 最低的案例有兩類：</p>
+            <div class="dark-reason"><div class="dark-reason-icon">🚢</div><div class="dark-reason-text"><strong>金門–廈門之間的海纜旁</strong>數艘中國籍貨船在 5–6 小時前還在 20–130 公里外高速航行，隨後突然在海纜 5 公里內減速。歷史上那個方向、那種速度的船幾乎不會在這裡停下。</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🛡️</div><div class="dark-reason-text"><strong>馬祖海纜旁的中國海警船</strong>CHINACOASTGUARD14516 在 3.3 小時前還在海纜 12.9 公里外，之後在馬祖海纜 4.8 公里內減速（約 26.09°N、119.76°E）。</div></div>
+            <div class="alert-box">
+                <strong>如何解讀：</strong>低 prior_p 只代表「以歷史行為看，這次接近不尋常」。它可能有完全正當的理由（避風、臨時改港、接受指示），也可能值得進一步看航跡。這是排序工具，不是判定。
+            </div>
+        </div>
+        <div class="lang-en-only">
+            <h2>Unexpected Entries: Approaches That Didn't Look Likely</h2>
+            <p>The "unexpected entry" score looks at approaches that have already happened: <strong>ships that are now slow within 5 km of a cable but were outside the zone (and not in port) 3 to 12 hours earlier</strong>. Going back to the moment the ship was still outside, it looks up the entry probability the model gave it then (prior_p). The lower the probability, the less the approach resembles routine waiting, judged by the history of that patch of sea, that speed and that heading.</p>
+            <p>A ship that has stayed inside the zone throughout is not a "fresh entry", so long-term anchoring does not trigger repeatedly.</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">171</span><div class="stat-label">Non-fishing fresh entries in the test period</div></div>
+                <div class="stat-callout"><span class="stat-number">0.105</span><div class="stat-label">Median prior entry probability</div></div>
+                <div class="stat-callout"><span class="stat-number">≈0</span><div class="stat-label">Prior probability at the 10th percentile</div></div>
+            </div>
+            <p>The lowest prior_p cases in the test period fall into two groups:</p>
+            <div class="dark-reason"><div class="dark-reason-icon">🚢</div><div class="dark-reason-text"><strong>Beside the cables between Kinmen and Xiamen</strong>Several Chinese merchant ships were 20–130 km away at speed 5–6 hours earlier, then suddenly slowed within 5 km of a cable. Historically, ships on that heading at that speed almost never stop there.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🛡️</div><div class="dark-reason-text"><strong>A China Coast Guard ship beside a Matsu cable</strong>CHINACOASTGUARD14516 was 12.9 km from the cable 3.3 hours earlier, then slowed within 4.8 km of a Matsu cable (about 26.09°N, 119.76°E).</div></div>
+            <div class="alert-box">
+                <strong>How to read it:</strong> a low prior_p only means "judged by historical behaviour, this approach is unusual". There may be entirely legitimate reasons (sheltering from weather, a change of port, instructions from shore), or it may merit a closer look at the track. It is a ranking tool, not a determination.
+            </div>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>上線試跑</h2>
+            <p>預警每次 AIS 更新後重新計算，輸出到 <a href="cable_warnings.json" style="color:var(--accent-cyan)">cable_warnings.json</a>（最多 100 則預警、50 則意外入區）。最新定位比快照舊超過 3 小時的船不評。</p>
+            <p>2026-10-24 的試跑：評估 1,092 艘船，發出 17 則預警。集中在<strong>澎湖外待命的權宜船籍油輪</strong>，以及<strong>金門、馬祖外的低速貨船</strong>——正是 2023 年台馬海纜、2025 年台澎海纜斷線的海域。其中有船隻同時被威脅評分列為 critical，也有大量只是例行候泊；這正是預警必須和評分、意外入區分數一起看的原因。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>Live Trial</h2>
+            <p>The warning is recomputed after every AIS update and written to <a href="cable_warnings.json" style="color:var(--accent-cyan)">cable_warnings.json</a> (at most 100 warnings and 50 unexpected entries). Ships whose latest position is more than 3 hours older than the snapshot are not scored.</p>
+            <p>Trial run on 2026-10-24: 1,092 ships evaluated, 17 warnings issued. They cluster around <strong>flag-of-convenience tankers waiting off Penghu</strong> and <strong>slow cargo ships off Kinmen and Matsu</strong> — the very waters of the 2023 Taiwan–Matsu and 2025 Taiwan–Penghu cable breaks. Some of those ships are also rated critical by the threat score; many are simply waiting for a berth. That is exactly why the warning has to be read together with the score and the unexpected-entry score.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>資料限制與免責聲明</h2>
+            <div class="alert-box">
+                <ul style="margin:0;padding-left:18px;line-height:2">
+                    <li>預警與意外入區分數是<strong>待研判的線索</strong>，不是事實或法律認定，也不指控任何具名船隻。</li>
+                    <li>目前為 <strong>shadow 模式</strong>：結果只寫入資料檔，尚未計入威脅評分，前端也尚未顯示。</li>
+                    <li>高分區包含大量海纜登陸點旁的<strong>例行候泊</strong>，預警清單不等於可疑清單。</li>
+                    <li>測試期警示精確度 18.4%：大約 5 則中 4 則在 12 小時內並未低速入區。</li>
+                    <li>AIS 快照的實際間隔約數小時，一艘船可能在兩次快照之間進出海纜區而不被看見；航段在斷訊超過 6 小時處切開，斷訊後才入區的不計入，正例會被低估。</li>
+                    <li>模型由 2026 年 7–10 月的資料擬合；季節、航線或港口作業改變後需要重新擬合。</li>
+                </ul>
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary)">本頁為研究與教育用途，彙整公開資料，依 MIT 授權釋出。引用時請註明出處並一併說明上述限制。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>Data Limitations &amp; Disclaimer</h2>
+            <div class="alert-box">
+                <ul style="margin:0;padding-left:18px;line-height:2">
+                    <li>Warnings and unexpected-entry scores are <strong>leads to investigate</strong>, not factual or legal findings, and not an accusation against any named vessel.</li>
+                    <li>The system runs in <strong>shadow mode</strong>: results are written to a data file only, do not feed the threat score, and are not yet shown on the map.</li>
+                    <li>The high-scoring areas include a great deal of <strong>routine waiting</strong> beside cable landings; the warning list is not a suspect list.</li>
+                    <li>Test-period alert precision is 18.4%: roughly four alerts in five do not enter slow within 12 hours.</li>
+                    <li>The actual AIS snapshot interval is several hours, so a ship can enter and leave a cable zone between snapshots unseen; tracks are split at gaps over 6 hours and entries after such a gap are not counted, so positives are under-counted.</li>
+                    <li>The model was fitted on July–October 2026 data and needs refitting when seasons, routes or port operations change.</li>
+                </ul>
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary)">This page is for research and education, aggregating public data under the MIT License. When citing, please attribute the source and note the limitations above.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+        <div class="lang-zh-only">
+            <h2>常見問題 FAQ</h2>
+            <div class="faq-section">
+                <details class="faq-item"><summary>海纜接近預警在預測什麼？</summary><div class="faq-answer">預測一艘目前在海纜 5 公里外的船，未來 6、12、24 小時內會不會出現在海纜 5 公里內、航速低於 5 節、且不在港內。這與本站威脅評分的海纜鄰近與低速門檻完全相同，差別在於評分要等事件發生才看得到，預警則提前。</div></details>
+                <details class="faq-item"><summary>為什麼不用直線外插航跡？</summary><div class="faq-answer">船在海纜旁通常是減速、轉向進港或下錨，直線外插抓不到這種行為。測試期 12 小時預測中，用外插路徑最近距離排序的 AUC 是 0.71，比只看現在距離的 0.74 還差；歷史行為表則是 0.84。</div></details>
+                <details class="faq-item"><summary>被列入預警就代表那艘船可疑嗎？</summary><div class="faq-answer">不代表。預警的高分區集中在淡水／台北港外、馬祖福澳、澎湖馬公、金門料羅灣等海纜登陸點旁的候泊水域，大量是例行等待進港的船。預警只回答「會不會靠近」，是否可疑要搭配威脅評分與意外入區分數判讀。</div></details>
+                <details class="faq-item"><summary>什麼是「意外入區」？</summary><div class="faq-answer">已經在海纜 5 公里內低速、而 3 到 12 小時前還在區外的船，回看當時模型給它的入區機率。機率越低，代表那次接近越不像常態候泊。測試期最不尋常的案例包括數小時前還在 20–130 公里外高速航行、突然在金門與廈門間海纜旁減速的船，以及在馬祖海纜 4.8 公里內減速的中國海警船。</div></details>
+                <details class="faq-item"><summary>這套預警準不準？</summary><div class="faq-answer">以非漁船 12 小時預警為例，測試期的基準率約 0.96%，警示門檻下精確度 18.4%、召回 33.9%，約為基準率的 19 倍；前 1% 高分的精確度為 23.5%。也就是說每 5 則警示約有 1 則真的在 12 小時內低速入區，仍需人工研判。</div></details>
+            </div>
+        </div>
+        <div class="lang-en-only">
+            <h2>FAQ</h2>
+            <div class="faq-section">
+                <details class="faq-item"><summary>What does the cable approach warning predict?</summary><div class="faq-answer">Whether a ship currently more than 5 km from any cable will, within the next 6, 12 or 24 hours, report a position within 5 km of a cable, below 5 knots and not in port. These are exactly the cable-proximity and low-speed thresholds of the site's threat score; the difference is that the score only sees the event after it happens, while the warning looks ahead.</div></details>
+                <details class="faq-item"><summary>Why not extrapolate the track in a straight line?</summary><div class="faq-answer">Near cables, ships usually slow down, turn into port or drop anchor, which a straight-line extrapolation cannot capture. For 12-hour predictions on the test period, ranking by the closest approach of the extrapolated path gave an AUC of 0.71 — worse than the 0.74 from current distance alone — while the pattern-of-life table reached 0.84.</div></details>
+                <details class="faq-item"><summary>Does a warning mean the ship is suspicious?</summary><div class="faq-answer">No. The high-scoring areas are waiting waters beside cable landings — off Tamsui/Taipei Port, Fuao in Matsu, Magong in Penghu, Liaoluo Bay in Kinmen — and many warned ships are simply waiting to enter port. The warning only answers "will it come close"; whether that is suspicious has to be judged with the threat score and the unexpected-entry score.</div></details>
+                <details class="faq-item"><summary>What is an "unexpected entry"?</summary><div class="faq-answer">A ship that is now slow within 5 km of a cable but was outside the zone 3 to 12 hours earlier, scored by the entry probability the model gave it at that earlier moment. The lower the probability, the less the approach resembles routine waiting. The most unusual test-period cases include ships that were 20–130 km away at speed hours earlier and then slowed beside the cables between Kinmen and Xiamen, and a China Coast Guard ship slowing within 4.8 km of a Matsu cable.</div></details>
+                <details class="faq-item"><summary>How accurate is the warning?</summary><div class="faq-answer">For non-fishing 12-hour warnings on the test period, the base rate was about 0.96%; at the alert threshold precision was 18.4% and recall 33.9%, about 19× the base rate, and precision in the top 1% was 23.5%. In other words roughly one warning in five really enters slow within 12 hours, so human review is still needed.</div></details>
+            </div>
+        </div>
+    </section>
+
+    <div class="intro-cta" style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+        <a href="blog-methodology.html" class="lang-zh-only">查看威脅評分方法論 →</a>
+        <a href="blog-methodology.html" class="lang-en-only">Read the scoring methodology →</a>
+        <a href="blog.html" class="lang-zh-only" style="background:transparent;border:1px solid var(--border-glow);color:var(--text-secondary)">← 返回深度文章</a>
+        <a href="blog.html" class="lang-en-only" style="background:transparent;border:1px solid var(--border-glow);color:var(--text-secondary)">← Back to articles</a>
+    </div>
+
+    <section class="intro-section" id="sources">
+        <div class="lang-zh-only">
+            <h2>參考資料 Sources</h2>
+            <p>本頁的背景與資料可對照以下公開來源核實：</p>
+            <ul class="src-list">
+                <li><a href="https://www.iscpc.org/" target="_blank" rel="noopener noreferrer">國際海纜保護委員會 ICPC（海纜損壞成因與保護） →</a></li>
+                <li><a href="https://www.submarinecablemap.com/" target="_blank" rel="noopener noreferrer">TeleGeography Submarine Cable Map（海纜路線與登陸點） →</a></li>
+                <li><a href="https://www.imo.org/en/OurWork/Safety/Pages/AIS.aspx" target="_blank" rel="noopener noreferrer">國際海事組織 IMO（AIS 規範） →</a></li>
+                <li><a href="cable_warnings.json">本站預警輸出 cable_warnings.json →</a></li>
+            </ul>
+            <p style="font-size:11px;color:var(--text-secondary)">本頁為研究與教育用途；預警訊號為待查線索，非法律或事實認定。詳見 <a href="blog-methodology.html" style="color:var(--accent-cyan)">方法論</a>。</p>
+        </div>
+        <div class="lang-en-only">
+            <h2>Sources</h2>
+            <p>The background and data on this page can be checked against these public sources:</p>
+            <ul class="src-list">
+                <li><a href="https://www.iscpc.org/" target="_blank" rel="noopener noreferrer">International Cable Protection Committee (causes of cable damage, protection) →</a></li>
+                <li><a href="https://www.submarinecablemap.com/" target="_blank" rel="noopener noreferrer">TeleGeography Submarine Cable Map (routes and landings) →</a></li>
+                <li><a href="https://www.imo.org/en/OurWork/Safety/Pages/AIS.aspx" target="_blank" rel="noopener noreferrer">International Maritime Organization (AIS requirements) →</a></li>
+                <li><a href="cable_warnings.json">This site's warning output, cable_warnings.json →</a></li>
+            </ul>
+            <p style="font-size:11px;color:var(--text-secondary)">This page is for research and education; warning signals are leads to investigate, not legal or factual findings. See the <a href="blog-methodology.html" style="color:var(--accent-cyan)">methodology</a>.</p>
+        </div>
+    </section>
+
+    <!-- topic-cluster -->
+    <section class="topic-cluster" aria-label="Related gray-zone topics">
+        <h2 class="lang-zh-only">相關灰色地帶主題</h2>
+        <h2 class="lang-en-only">Related gray-zone topics</h2>
+        <ul>
+            <li><a href="blog-cable-threats.html"><span class="lang-zh-only">海纜威脅</span><span class="lang-en-only">Cable threats</span></a></li>
+            <li><a href="blog-taiwan-cable-infrastructure.html"><span class="lang-zh-only">台灣海纜基礎設施</span><span class="lang-en-only">Taiwan's cable infrastructure</span></a></li>
+            <li><a href="blog-what-is-maritime-gray-zone.html"><span class="lang-zh-only">海上灰色地帶總覽</span><span class="lang-en-only">Maritime gray-zone overview</span></a></li>
+            <li><a href="blog-what-is-dark-vessel.html"><span class="lang-zh-only">暗船</span><span class="lang-en-only">Dark vessels</span></a></li>
+            <li><a href="blog-what-is-shadow-fleet.html"><span class="lang-zh-only">影子船隊</span><span class="lang-en-only">Shadow fleets</span></a></li>
+            <li><a href="blog-gray-zone-glossary.html"><span class="lang-zh-only">詞彙表</span><span class="lang-en-only">Glossary</span></a></li>
+            <li><a href="blog-methodology.html"><span class="lang-zh-only">評分方法論</span><span class="lang-en-only">Methodology</span></a></li>
+        </ul>
+    </section>
+
+    <footer class="site-footer">
+        <p>Contact: <a href="mailto:s0914712@gmail.com">s0914712@gmail.com</a></p>
+    </footer>
+    <script defer src="js/i18n.js"></script>
+    <script defer src="js/mobile-nav.js"></script>
+</body>
+</html>

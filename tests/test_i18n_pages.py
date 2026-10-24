@@ -228,6 +228,7 @@ EVERGREEN_PAGES = [
     "blog-ocean-law-enforcement-jurisdiction.html",
     "blog-taiwan-cable-infrastructure.html",
     "blog-global-cable-industry.html",
+    "blog-cable-approach-warning.html",
 ]
 
 
