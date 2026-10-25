@@ -320,11 +320,23 @@
             <h2>上線試跑</h2>
             <p>預警每次 AIS 更新後重新計算，輸出到 <a href="cable_warnings.json" style="color:var(--accent-cyan)">cable_warnings.json</a>（最多 100 則預警、50 則意外入區）。最新定位比快照舊超過 3 小時的船不評。</p>
             <p>2026-10-24 的試跑：評估 1,092 艘船，發出 17 則預警。集中在<strong>澎湖外待命的權宜船籍油輪</strong>，以及<strong>金門、馬祖外的低速貨船</strong>——正是 2023 年台馬海纜、2025 年台澎海纜斷線的海域。其中有船隻同時被威脅評分列為 critical，也有大量只是例行候泊；這正是預警必須和評分、意外入區分數一起看的原因。</p>
+            <p>正式上線後的一輪（2026-10-24 23:47 UTC）：評分 1,600 艘、發出 21 則預警、53 艘已在海纜旁低速、3 件意外入區。觀察到三件事：</p>
+            <ul style="font-size:13px;line-height:2;color:var(--text-secondary);padding-left:20px">
+                <li><strong>熱區預期成真</strong>：前 10 則預警有 6 則是台北港外海的商船——就是歷史上入區最密的候泊水域，而且這 6 艘都沒有任何威脅評分旗標。</li>
+                <li><strong>兩種訊號互相印證</strong>：3 件意外入區之一是一艘中國籍貨船，5 小時前還在 8.5 公里外，之後在金門段台澎金馬海纜 4.9 公里內停下。這艘船在獨立計算的威脅評分中已是 critical（15 分）：海纜旁低速徘徊 9.9 小時、16 次大幅轉向、使用過兩個船名、還有重複測線式的航行。預警模型沒有看過這些行為特徵，兩邊卻指向同一艘船。</li>
+                <li><strong>低機率不等於可疑</strong>：另外兩件是兩艘貨船在同一時段、從 36–44 公里外一起在台中外海海纜旁減速。兩艘船同時做同一件事，較可能是共同原因（港口排隊、東北季風避風），而不是兩件獨立的異常——這正是意外入區需要人工判讀的例子。</li>
+            </ul>
         </div>
         <div class="lang-en-only">
             <h2>Live Trial</h2>
             <p>The warning is recomputed after every AIS update and written to <a href="cable_warnings.json" style="color:var(--accent-cyan)">cable_warnings.json</a> (at most 100 warnings and 50 unexpected entries). Ships whose latest position is more than 3 hours older than the snapshot are not scored.</p>
             <p>Trial run on 2026-10-24: 1,092 ships evaluated, 17 warnings issued. They cluster around <strong>flag-of-convenience tankers waiting off Penghu</strong> and <strong>slow cargo ships off Kinmen and Matsu</strong> — the very waters of the 2023 Taiwan–Matsu and 2025 Taiwan–Penghu cable breaks. Some of those ships are also rated critical by the threat score; many are simply waiting for a berth. That is exactly why the warning has to be read together with the score and the unexpected-entry score.</p>
+            <p>One production run after going live (2026-10-24 23:47 UTC): 1,600 ships scored, 21 warnings, 53 ships already slow beside a cable, 3 unexpected entries. Three observations:</p>
+            <ul style="font-size:13px;line-height:2;color:var(--text-secondary);padding-left:20px">
+                <li><strong>The hotspots behaved as expected</strong>: 6 of the top 10 warnings were merchant ships off Taipei Port — the densest historical waiting area — and none of the six carried any threat-score flag.</li>
+                <li><strong>Two signals agreed</strong>: one of the 3 unexpected entries was a Chinese cargo ship that was 8.5 km away 5 hours earlier and then stopped within 4.9 km of the Kinmen leg of the Taiwan–Penghu–Kinmen–Matsu cables. The independently computed threat score already rated it critical (15 points): 9.9 hours loitering slow beside the cable, 16 sharp turns, two different ship names, and repeated survey-like lines. The warning model never sees those behavioural features, yet both pointed at the same ship.</li>
+                <li><strong>Low probability is not the same as suspicious</strong>: the other two were cargo ships that slowed beside a cable off Taichung at the same time, both having come from 36–44 km away. Two ships doing the same thing at once more likely share a cause (a port queue, shelter from the northeast monsoon) than represent two independent anomalies — exactly the kind of case that needs a human to read it.</li>
+            </ul>
         </div>
     </section>
 
