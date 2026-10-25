@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-25T04:13:05.205796+00:00",
+  "updated_at": "2026-10-25T15:25:46.341577+00:00",
   "methodology": "Gov Vessel Formation Detection",
   "criteria": {
     "formation_radius_km": 10.0,
@@ -43,9 +43,9 @@
     {
       "id": "GF-20261024T1514-413225690-413238290",
       "first_seen": "2026-10-24T15:14:37.128239+00:00",
-      "last_seen": "2026-10-25T04:12:09.557225+00:00",
-      "duration_hours": 13.0,
-      "observations": 6,
+      "last_seen": "2026-10-25T07:33:26.931125+00:00",
+      "duration_hours": 16.3,
+      "observations": 7,
       "vessel_count": 3,
       "max_vessels": 3,
       "members": [
@@ -53,17 +53,17 @@
           "mmsi": "413238290",
           "name": "HAI XUN 08606",
           "category": "msa",
-          "observations": 6,
-          "last_lat": 24.52278,
-          "last_lon": 118.56399
+          "observations": 7,
+          "last_lat": 24.5228,
+          "last_lon": 118.564
         },
         {
           "mmsi": "413292950",
           "name": "HAI XUN08616",
           "category": "msa",
-          "observations": 6,
-          "last_lat": 24.52276,
-          "last_lon": 118.56391
+          "observations": 7,
+          "last_lat": 24.52277,
+          "last_lon": 118.56395
         },
         {
           "mmsi": "413225690",
@@ -78,7 +78,7 @@
         "msa": 3
       },
       "escorted_research": false,
-      "mean_radius_km": 1.41,
+      "mean_radius_km": 1.21,
       "max_radius_km": 8.46,
       "centroid_displacement_km": 2.82,
       "median_speed_kn": 0,
@@ -118,10 +118,16 @@
           "lat": 24.52001,
           "lon": 118.53625,
           "n": 3
+        },
+        {
+          "t": "2026-10-25T07:33:26.931125+00:00",
+          "lat": 24.52278,
+          "lon": 118.56397,
+          "n": 2
         }
       ],
-      "last_lat": 24.52001,
-      "last_lon": 118.53625,
+      "last_lat": 24.52278,
+      "last_lon": 118.56397,
       "severity": "low",
       "active": true
     },
@@ -328,7 +334,7 @@
     },
     "413225690": {
       "count": 1,
-      "max_duration_hours": 13.0,
+      "max_duration_hours": 16.3,
       "escorted_research": false,
       "severity": "low",
       "formation_ids": [
