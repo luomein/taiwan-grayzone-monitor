@@ -57,6 +57,7 @@ STATIC_PAGES = [
     "blog-ocean-law-enforcement-jurisdiction.html",
     "blog-taiwan-cable-infrastructure.html",
     "blog-global-cable-industry.html",
+    "blog-cable-approach-warning.html",
 ]
 EN_SET = set(STATIC_PAGES)
 
@@ -197,6 +198,12 @@ EN_META = {
         "social": "The Global Submarine Cable Industry",
         "desc": "An overview of the global submarine cable industry: 400+ cables and over 1.1 million km, consortium vs private cables, the OTT investment shift (Google, Meta, Microsoft, Amazon), fault causes (over 70% human — fishing and anchors), repair challenges, AIS protection, and cable geopolitics.",
         "kw": "submarine cable industry, global cables, cable map, OTT cables, Google cable, cable faults, fishing, anchor, cable ship, AIS, undersea great wall, Belt and Road",
+    },
+    "blog-cable-approach-warning.html": {
+        "title": f"Cable Approach Early Warning: Predicting Which Ships Will Slow Near Taiwan's Cables | {SITE}",
+        "social": "Cable Approach Early Warning",
+        "desc": "A pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score. Problem definition, model comparison, test results, hotspots and limitations.",
+        "kw": "submarine cable early warning, cable approach, AIS prediction, trajectory prediction, pattern of life, unexpected entry, Matsu cable, Kinmen cable, Taiwan gray zone",
     },
 }
 
@@ -418,6 +425,18 @@ EN_FAQ = {
         ("How long does it take to repair a broken cable?",
          "Usually 1 to 1.5 months, sometimes longer. One reason is that only about 60 specialized cable-repair ships exist worldwide and are often queued; plus the break must be located precisely, then grappled up, spliced, and tested — deep water is especially slow. Long repair times are exactly why outer islands served by only a few cables fear a break most."),
     ],
+    "blog-cable-approach-warning.html": [
+        ("What does the cable approach warning predict?",
+         "Whether a ship currently more than 5 km from any cable will, within the next 6, 12 or 24 hours, report a position within 5 km of a cable, below 5 knots and not in port. These are exactly the cable-proximity and low-speed thresholds of the site's threat score; the difference is that the score only sees the event after it happens, while the warning looks ahead."),
+        ("Why not extrapolate the track in a straight line?",
+         "Near cables, ships usually slow down, turn into port or drop anchor, which a straight-line extrapolation cannot capture. For 12-hour predictions on the test period, ranking by the closest approach of the extrapolated path gave an AUC of 0.71 — worse than the 0.74 from current distance alone — while the pattern-of-life table reached 0.84."),
+        ("Does a warning mean the ship is suspicious?",
+         "No. The high-scoring areas are waiting waters beside cable landings — off Tamsui/Taipei Port, Fuao in Matsu, Magong in Penghu, Liaoluo Bay in Kinmen — and many warned ships are simply waiting to enter port. The warning only answers \"will it come close\"; whether that is suspicious has to be judged with the threat score and the unexpected-entry score."),
+        ("What is an \"unexpected entry\"?",
+         "A ship that is now slow within 5 km of a cable but was outside the zone 3 to 12 hours earlier, scored by the entry probability the model gave it at that earlier moment. The lower the probability, the less the approach resembles routine waiting. The most unusual test-period cases include ships that were 20–130 km away at speed hours earlier and then slowed beside the cables between Kinmen and Xiamen, and a China Coast Guard ship slowing within 4.8 km of a Matsu cable."),
+        ("How accurate is the warning?",
+         "For non-fishing 12-hour warnings on the test period, the base rate was about 0.96%; at the alert threshold precision was 18.4% and recall 33.9%, about 19× the base rate, and precision in the top 1% was 23.5%. In other words roughly one warning in five really enters slow within 12 hours, so human review is still needed."),
+    ],
 }
 
 # English breadcrumb names. Intermediate ancestor names are translated by the
@@ -450,6 +469,7 @@ EN_BREADCRUMB_LAST = {
     "blog-ocean-law-enforcement-jurisdiction.html": "Who Can Board and Enforce?",
     "blog-taiwan-cable-infrastructure.html": "Taiwan's Cable Infrastructure",
     "blog-global-cable-industry.html": "The Global Cable Industry",
+    "blog-cable-approach-warning.html": "Cable Approach Early Warning",
     "intro.html": "About",
     "research-submarine-cable-legal.html": "Research",
 }

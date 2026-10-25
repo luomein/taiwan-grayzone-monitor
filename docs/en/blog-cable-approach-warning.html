@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<!-- AUTO-GENERATED English mirror of /blog-cable-approach-warning.html by src/generate_i18n_pages.py — do not edit by hand. -->
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Cable Approach Early Warning: Predicting Which Ships Will Slow Near Taiwan's Cables | Taiwan Gray Zone Monitor</title>
+    <meta name="description" content="A pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score. Problem definition, model comparison, test results, hotspots and limitations.">
+    <meta name="keywords" content="submarine cable early warning, cable approach, AIS prediction, trajectory prediction, pattern of life, unexpected entry, Matsu cable, Kinmen cable, Taiwan gray zone">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="zh-TW" href="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="en" href="https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html">
+    <link rel="alternate" hreflang="x-default" href="https://s0914712.github.io/taiwan-grayzone-monitor/blog-cable-approach-warning.html">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Cable Approach Early Warning">
+    <meta property="og:description" content="A pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score. Problem definition, model comparison, test results, hotspots and limitations.">
+    <meta property="og:url" content="https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html">
+    <meta property="og:image" content="https://s0914712.github.io/taiwan-grayzone-monitor/og-banner.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Taiwan Gray Zone &amp; Submarine Cable Monitor 台灣灰色地帶與海底電纜監測">
+    <meta property="og:site_name" content="Taiwan Gray Zone &amp; Submarine Cable Monitor">
+    <meta property="og:locale" content="en_US">
+    <meta property="og:locale:alternate" content="zh_TW">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://s0914712.github.io/taiwan-grayzone-monitor/og-banner.png">
+    <meta name="twitter:title" content="Cable Approach Early Warning">
+    <meta name="twitter:description" content="A pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score. Problem definition, model comparison, test results, hotspots and limitations.">
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-M82X8QBL');</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap"></noscript>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/reading.css">
+    <link rel="manifest" href="../manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <style>
+    .story-hook{border-left:4px solid var(--accent-cyan);padding:16px 20px;margin:16px 0;background:rgba(0,245,255,.06);border-radius:0 8px 8px 0;font-size:14px;line-height:1.9;font-style:italic;color:var(--text-primary)}
+    .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin:16px 0}
+    .stat-callout{text-align:center;padding:16px 12px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:8px}
+    .stat-number{font-size:28px;font-weight:700;font-family:'JetBrains Mono',monospace;color:var(--accent-cyan);display:block;line-height:1.2}
+    .stat-label{font-size:11px;color:var(--text-secondary);margin-top:6px;line-height:1.5}
+    .fact-box{background:var(--bg-secondary);border:1px solid rgba(0,245,255,.15);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:12px;line-height:1.8;color:var(--text-secondary)}
+    .fact-box strong{color:var(--accent-cyan)}
+    .fact-title{display:block;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent-cyan);font-weight:600;letter-spacing:1px;margin-bottom:8px;text-transform:uppercase}
+    .series-nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+    .series-chip{padding:5px 10px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:4px;font-size:10px;color:var(--text-secondary);text-decoration:none;font-family:'JetBrains Mono',monospace;transition:all .2s}
+    .series-chip:hover,.series-chip.active{border-color:var(--accent-cyan);color:var(--accent-cyan);background:rgba(0,245,255,.08)}
+    .cw-table-wrap{overflow-x:auto;margin:14px 0}
+    .cw-table{width:100%;border-collapse:collapse;font-size:12px;line-height:1.7;color:var(--text-secondary)}
+    .cw-table th,.cw-table td{border:1px solid var(--border-glow);padding:8px 10px;text-align:left;vertical-align:top}
+    .cw-table th{color:var(--text-primary);background:var(--bg-secondary);font-weight:600}
+    .cw-table td.num{font-family:'JetBrains Mono',monospace;white-space:nowrap}
+    .cw-table tr.best td{color:var(--accent-cyan)}
+    .dark-reason{display:flex;align-items:flex-start;gap:12px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border-glow);border-radius:6px;margin:8px 0;font-size:12px}
+    .dark-reason-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+    .dark-reason-text{color:var(--text-secondary);line-height:1.7}
+    .dark-reason-text strong{color:var(--text-primary);display:block;margin-bottom:2px}
+    .alert-box{background:rgba(255,77,77,.06);border:1px solid rgba(255,77,77,.2);border-radius:6px;padding:14px 18px;margin:12px 0;font-size:12px;line-height:1.8;color:var(--text-secondary)}
+    .alert-box strong{color:#ff6b6b}
+    .faq-section{margin:16px 0}
+    .faq-item{border:1px solid var(--border-glow);border-radius:8px;margin-bottom:10px;overflow:hidden;background:var(--bg-card)}
+    .faq-item summary{cursor:pointer;padding:14px 18px;font-size:13px;font-weight:600;color:var(--text-primary);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-item summary::-webkit-details-marker{display:none}
+    .faq-item summary::after{content:'+';font-family:'JetBrains Mono',monospace;color:var(--accent-cyan);font-size:18px;flex-shrink:0;transition:transform .2s}
+    .faq-item[open] summary::after{transform:rotate(45deg)}
+    .faq-item summary:hover{color:var(--accent-cyan)}
+    .faq-answer{padding:0 18px 14px;font-size:12px;line-height:1.9;color:var(--text-secondary)}
+    .lang-zh-only{display:none!important}
+    </style>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":["Article","TechArticle"],"headline":"Cable Approach Early Warning","description":"A pattern-of-life table built from three months of archived AIS predicts which ships will appear slow within 5 km of a submarine cable in the next 6/12/24 hours, plus an unexpected-entry anomaly score. Problem definition, model comparison, test results, hotspots and limitations.","url":"https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html","datePublished":"2026-10-24","dateModified":"2026-10-24","inLanguage":"en","author":{"@type":"Organization","name":"Taiwan Gray Zone & Submarine Cable Monitor","url":"https://s0914712.github.io/taiwan-grayzone-monitor/"},"publisher":{"@id":"https://s0914712.github.io/taiwan-grayzone-monitor/#org"},"isPartOf":{"@id":"https://s0914712.github.io/taiwan-grayzone-monitor/#website"},"isBasedOn":{"@type":"Dataset","@id":"https://s0914712.github.io/taiwan-grayzone-monitor/cable_warnings.json","name":"Taiwan Cable Approach Early-Warning Output","url":"https://s0914712.github.io/taiwan-grayzone-monitor/cable_warnings.json"},"about":[{"@type":"Thing","name":"Submarine Cable Protection"},{"@type":"Thing","name":"Vessel Trajectory Prediction"},{"@type":"Thing","name":"Pattern of Life Analysis"},{"@type":"Thing","name":"Automatic Identification System (AIS)"}],"mainEntityOfPage":{"@type":"WebPage","@id":"https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html"},"speakable":{"@type":"SpeakableSpecification","cssSelector":[".ai-summary"]},"citation":[{"@type":"CreativeWork","name":"International Cable Protection Committee (ICPC)","url":"https://www.iscpc.org/"},{"@type":"CreativeWork","name":"TeleGeography Submarine Cable Map","url":"https://www.submarinecablemap.com/"},{"@type":"CreativeWork","name":"IMO — Automatic Identification Systems (AIS)","url":"https://www.imo.org/en/OurWork/Safety/Pages/AIS.aspx"}]}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://s0914712.github.io/taiwan-grayzone-monitor/"},{"@type":"ListItem","position":2,"name":"In-Depth Articles","item":"https://s0914712.github.io/taiwan-grayzone-monitor/en/blog.html"},{"@type":"ListItem","position":3,"name":"Cable Approach Early Warning","item":"https://s0914712.github.io/taiwan-grayzone-monitor/en/blog-cable-approach-warning.html"}]}
+    </script>
+    <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the cable approach warning predict?","acceptedAnswer":{"@type":"Answer","text":"Whether a ship currently more than 5 km from any cable will, within the next 6, 12 or 24 hours, report a position within 5 km of a cable, below 5 knots and not in port. These are exactly the cable-proximity and low-speed thresholds of the site's threat score; the difference is that the score only sees the event after it happens, while the warning looks ahead."}},{"@type":"Question","name":"Why not extrapolate the track in a straight line?","acceptedAnswer":{"@type":"Answer","text":"Near cables, ships usually slow down, turn into port or drop anchor, which a straight-line extrapolation cannot capture. For 12-hour predictions on the test period, ranking by the closest approach of the extrapolated path gave an AUC of 0.71 — worse than the 0.74 from current distance alone — while the pattern-of-life table reached 0.84."}},{"@type":"Question","name":"Does a warning mean the ship is suspicious?","acceptedAnswer":{"@type":"Answer","text":"No. The high-scoring areas are waiting waters beside cable landings — off Tamsui/Taipei Port, Fuao in Matsu, Magong in Penghu, Liaoluo Bay in Kinmen — and many warned ships are simply waiting to enter port. The warning only answers \"will it come close\"; whether that is suspicious has to be judged with the threat score and the unexpected-entry score."}},{"@type":"Question","name":"What is an \"unexpected entry\"?","acceptedAnswer":{"@type":"Answer","text":"A ship that is now slow within 5 km of a cable but was outside the zone 3 to 12 hours earlier, scored by the entry probability the model gave it at that earlier moment. The lower the probability, the less the approach resembles routine waiting. The most unusual test-period cases include ships that were 20–130 km away at speed hours earlier and then slowed beside the cables between Kinmen and Xiamen, and a China Coast Guard ship slowing within 4.8 km of a Matsu cable."}},{"@type":"Question","name":"How accurate is the warning?","acceptedAnswer":{"@type":"Answer","text":"For non-fishing 12-hour warnings on the test period, the base rate was about 0.96%; at the alert threshold precision was 18.4% and recall 33.9%, about 19× the base rate, and precision in the top 1% was 23.5%. In other words roughly one warning in five really enters slow within 12 hours, so human review is still needed."}}]}
+    </script>
+</head>
+<body class="theme-reading lang-en">
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-M82X8QBL" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <header class="header" style="position:sticky;top:0;z-index:100">
+        <h1 data-i18n="title.index">🛰️ Taiwan Gray Zone &amp; Submarine Cable Monitor</h1>
+        <div class="header-info">
+            <a href="../index.html" style="font-size:13px;color:var(--text-secondary);text-decoration:none;padding:3px 8px;border:1px solid var(--border-glow);border-radius:4px" data-i18n="nav.grayzone">Gray Zone Monitor</a>
+            <a href="../dark-vessels.html" style="font-size:13px;color:var(--text-secondary);text-decoration:none;padding:3px 8px;border:1px solid var(--border-glow);border-radius:4px" data-i18n="nav.dark_vessels">Dark Vessels</a>
+            <a href="blog.html" style="font-size:13px;color:var(--accent-cyan);text-decoration:none;padding:3px 8px;border:1px solid var(--accent-cyan);border-radius:4px;background:rgba(0,245,255,0.1)" data-i18n="nav.blog">Articles</a>
+            <a id="langToggle" href="../blog-cable-approach-warning.html" style="font-size:13px;color:var(--accent-cyan);background:var(--bg-card);border:1px solid var(--accent-cyan);border-radius:4px;padding:3px 8px;cursor:pointer;font-family:'JetBrains Mono',monospace;font-weight:600;text-decoration:none;display:inline-block" title="切換為中文 / Read in Chinese">中</a>
+        </div>
+    </header>
+
+    <div class="intro-hero">
+                <h1 class="lang-en-only">Cable Approach Early Warning</h1>
+                <p class="subtitle lang-en-only">Trajectory Prediction &#x2022; Pattern of Life &#x2022; Unexpected Entries &#x2022; Taiwan's Cables</p>
+    </div>
+
+    <!-- AI / GEO summary — visible, quotable abstract for answer engines -->
+    <section class="ai-summary" aria-label="頁面摘要 Page summary">
+                <h2 class="lang-en-only">In short</h2>
+                <p class="lang-en-only">
+            The site's threat scoring only sees a ship once it is already sitting next to a cable. The cable approach
+            early warning aims to see it coming: from AIS archived July–October 2026, it tabulates how often ships in a
+            given area, speed, heading and distance band went on to appear slow within 5 km of a submarine cable within
+            6, 12 or 24 hours (a pattern-of-life table). On the held-out test period, non-fishing 12-hour warnings reach an
+            AUC of 0.84 and 23.5% precision in the top 1% — about 25× the base rate. An "unexpected entry" anomaly score
+            highlights approaches that looked least likely beforehand. It currently runs in shadow mode and does not feed the score.
+        </p>
+        <ul>
+                        <li class="lang-en-only">Event: within 5 km of a cable, below 5 knots, not in port — the same thresholds as the threat score.</li>
+                        <li class="lang-en-only">The pattern-of-life table beats both "distance only" and "straight-line extrapolation": near cables ships slow, turn into port or anchor.</li>
+                        <li class="lang-en-only">Warnings and anomaly scores are leads to investigate, not findings of wrongdoing.</li>
+        </ul>
+    </section>
+
+    <section class="intro-section">
+        <div class="series-nav">
+            <span style="font-size:10px;color:rgba(0,245,255,.4);font-family:'JetBrains Mono',monospace;align-self:center">RELATED →</span>
+            <a href="blog-cable-threats.html" class="series-chip">Cable Threats</a>
+            <a href="blog-methodology.html" class="series-chip">Methodology</a>
+            <a href="blog-what-is-ais.html" class="series-chip">What Is AIS</a>
+            <a href="blog-what-is-dark-vessel.html" class="series-chip">What Is a Dark Vessel</a>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <div class="story-hook">
+                In February 2023 both of Matsu's submarine cables were cut within a week, leaving 14,000 residents offline for about 50 days. In early 2025 cables off Keelung and between Taiwan and Penghu followed.<br><br>
+                Each time, the AIS record was pulled up afterwards: the ship slowed over the cable, loitered, dragged. The question is — could we notice it before it arrives?
+            </div>
+            <h2>Why an Early Warning?</h2>
+            <p>The site's <a href="blog-methodology.html" style="color:var(--accent-cyan)">threat scoring</a> checks whether a ship has been within 5 km of a cable and whether it loitered there below 5 knots for more than 3 hours. These are <strong>after-the-fact indicators</strong>: the score only reacts once the ship has actually stopped next to the cable.</p>
+            <p>The cable approach warning moves the same event forward in time: <strong>for a ship that is currently at sea, more than 5 km from any cable and not in port, will it report a position "within 5 km of a cable, below 5 knots, not in port" in the next 6, 12 or 24 hours?</strong> The event definition is deliberately identical to the scoring, so what the warning says is coming is exactly what the score will later see.</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">0.7%</span><div class="stat-label">Merchant base rate, slow entry within 6 h</div></div>
+                <div class="stat-callout"><span class="stat-number">2.0%</span><div class="stat-label">Merchant base rate within 24 h</div></div>
+                <div class="stat-callout"><span class="stat-number">16 km</span><div class="stat-label">Median merchant distance before entry (p90 78 km)</div></div>
+                <div class="stat-callout"><span class="stat-number">7.8%</span><div class="stat-label">Fishing base rate within 24 h</div></div>
+            </div>
+            <p>The base rate is low: pick any merchant-ship position and the chance it appears slow beside a cable within 24 hours is just 2%. And merchant ships that do enter mostly come from far away — a median 16 km before entry, one in ten more than 78 km — so "how close is it right now" is not enough on its own.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>The Model: a Pattern-of-Life Table</h2>
+            <p>The intuitive approach is to extrapolate each ship's track in a straight line and see whether it crosses a cable. In testing this did <strong>worse than looking at the current distance alone</strong> — what ships do near cables is slow down, turn into port and wait at anchor, not sail straight on. The useful signal is "do ships in this patch of sea, at this speed, on this heading, usually end up here?"</p>
+            <p>So the model is a probability table counted from the archive:</p>
+            <div class="fact-box">
+                <span class="fact-title">Table keys</span>
+                <strong>P(entry | vessel group, 0.1° cell, speed bin, heading sector, cable-distance band)</strong><br>
+                Speed bins: &lt;1 / 1–5 / 5–12 / ≥12 kn; heading: eight 45° sectors; distance: 5–10 / 10–20 / 20–40 / ≥40 km.<br>
+                Sparse cells cannot be trusted, so the table uses <strong>hierarchical shrinkage</strong>: group → group×distance×speed → ×cell → ×cell×speed → ×cell×speed×heading, each level borrowing strength from the one above:
+                p = (k + 10·p<sub>parent</sub>) / (n + 10). A cell seen once with one entry does not become 100%.
+            </div>
+            <p>Fitting, threshold selection and testing are split in time (first 70% fits the table, next 15% picks the alert threshold, last 15% is reported), and one in ten vessels is held out entirely for testing so the model cannot simply memorise a ship.</p>
+            <h3 style="font-size:14px;margin-top:20px">Model comparison (merchant ships, test period, 12 h)</h3>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>Method</th><th>AUC</th><th>Top-1% precision</th><th>Top-1% recall</th></tr></thead>
+                    <tbody>
+                        <tr><td>B0 current distance to cable only</td><td class="num">0.74</td><td class="num">2.8%</td><td class="num">3.1%</td></tr>
+                        <tr><td>B1 closest approach of the extrapolated path</td><td class="num">0.71</td><td class="num">2.5%</td><td class="num">2.7%</td></tr>
+                        <tr class="best"><td>M1 pattern-of-life table</td><td class="num">0.84</td><td class="num">22.8%</td><td class="num">24.7%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p style="font-size:12px;color:var(--text-secondary)">Merchant 12-hour base rate in the same period: 0.92%. Top-1% precision of 22.8% ≈ 25× the base rate.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>Test Results</h2>
+            <p>The production model first applies the same exclusion rules as the threat score (fishing-net beacons, invalid MMSIs and Taiwan-flagged vessels are left out), then is evaluated on the test period:</p>
+            <div class="cw-table-wrap">
+                <table class="cw-table">
+                    <thead><tr><th>Non-fishing</th><th>Base rate</th><th>AUC</th><th>Top-1% precision / recall</th></tr></thead>
+                    <tbody>
+                        <tr><td>6 hours</td><td class="num">0.52%</td><td class="num">0.89</td><td class="num">18.1% / 34.6%</td></tr>
+                        <tr><td>12 hours</td><td class="num">0.96%</td><td class="num">0.84</td><td class="num">23.5% / 24.4%</td></tr>
+                        <tr><td>24 hours</td><td class="num">1.43%</td><td class="num">0.81</td><td class="num">26.6% / 18.6%</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <p>The alert threshold actually in use was chosen on the validation period as "the lowest threshold with non-fishing precision ≥ 20%": a <strong>12-hour entry probability ≥ 0.12</strong>. On the test period at that threshold, precision is 18.4% and recall 33.9% — roughly one alert in five really does enter slow within 12 hours, and a third of all entries are caught.</p>
+            <p>Fishing vessels score an even higher AUC (about 0.91), but their base rate is high and their numbers large; listing them all would produce hundreds per run. Fishing vessels therefore join the warning list only when the threat score already rates them high or critical.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>The Hotspots Are Not Noise: Waiting Areas Beside Cable Landings</h2>
+            <p>List the grid cells where merchant ships most often entered slow in the archive, and nearly all are waters beside cable landings where ships wait to enter port:</p>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Off Tamsui / Taipei Port</strong>The densest cell in the archive (2,445 entries).</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Fuao, Matsu</strong>1,337 entries; the waters of the 2023 double cable cut.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Magong, Penghu</strong>990 entries; the landing end of the Taiwan–Penghu cables.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">📍</div><div class="dark-reason-text"><strong>Off Budai, Liaoluo Bay (Kinmen), 50 km off Keelung</strong>The remaining major hotspots.</div></div>
+            <p>This means the warning list <strong>will always contain many routine waiting ships</strong>: ships waiting for a berth happen to wait next to cables. The warning only answers "will it come close", not "is the approach suspicious". Every warning therefore carries the ship's threat score and risk level, and the "unexpected entry" score in the next section separates routine approaches from unusual ones.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>Unexpected Entries: Approaches That Didn't Look Likely</h2>
+            <p>The "unexpected entry" score looks at approaches that have already happened: <strong>ships that are now slow within 5 km of a cable but were outside the zone (and not in port) 3 to 12 hours earlier</strong>. Going back to the moment the ship was still outside, it looks up the entry probability the model gave it then (prior_p). The lower the probability, the less the approach resembles routine waiting, judged by the history of that patch of sea, that speed and that heading.</p>
+            <p>A ship that has stayed inside the zone throughout is not a "fresh entry", so long-term anchoring does not trigger repeatedly.</p>
+            <div class="stat-grid">
+                <div class="stat-callout"><span class="stat-number">171</span><div class="stat-label">Non-fishing fresh entries in the test period</div></div>
+                <div class="stat-callout"><span class="stat-number">0.105</span><div class="stat-label">Median prior entry probability</div></div>
+                <div class="stat-callout"><span class="stat-number">≈0</span><div class="stat-label">Prior probability at the 10th percentile</div></div>
+            </div>
+            <p>The lowest prior_p cases in the test period fall into two groups:</p>
+            <div class="dark-reason"><div class="dark-reason-icon">🚢</div><div class="dark-reason-text"><strong>Beside the cables between Kinmen and Xiamen</strong>Several Chinese merchant ships were 20–130 km away at speed 5–6 hours earlier, then suddenly slowed within 5 km of a cable. Historically, ships on that heading at that speed almost never stop there.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🛡️</div><div class="dark-reason-text"><strong>A China Coast Guard ship beside a Matsu cable</strong>CHINACOASTGUARD14516 was 12.9 km from the cable 3.3 hours earlier, then slowed within 4.8 km of a Matsu cable (about 26.09°N, 119.76°E).</div></div>
+            <div class="alert-box">
+                <strong>How to read it:</strong> a low prior_p only means "judged by historical behaviour, this approach is unusual". There may be entirely legitimate reasons (sheltering from weather, a change of port, instructions from shore), or it may merit a closer look at the track. It is a ranking tool, not a determination.
+            </div>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>Live Trial</h2>
+            <p>The warning is recomputed after every AIS update and written to <a href="../cable_warnings.json" style="color:var(--accent-cyan)">cable_warnings.json</a> (at most 100 warnings and 50 unexpected entries). Ships whose latest position is more than 3 hours older than the snapshot are not scored.</p>
+            <p>Trial run on 2026-10-24: 1,092 ships evaluated, 17 warnings issued. They cluster around <strong>flag-of-convenience tankers waiting off Penghu</strong> and <strong>slow cargo ships off Kinmen and Matsu</strong> — the very waters of the 2023 Taiwan–Matsu and 2025 Taiwan–Penghu cable breaks. Some of those ships are also rated critical by the threat score; many are simply waiting for a berth. That is exactly why the warning has to be read together with the score and the unexpected-entry score.</p>
+            <p>One production run after going live (2026-10-24 23:47 UTC): 1,600 ships scored, 21 warnings, 53 ships already slow beside a cable, 3 unexpected entries. Three observations:</p>
+            <ul style="font-size:13px;line-height:2;color:var(--text-secondary);padding-left:20px">
+                <li><strong>The hotspots behaved as expected</strong>: 6 of the top 10 warnings were merchant ships off Taipei Port — the densest historical waiting area — and none of the six carried any threat-score flag.</li>
+                <li><strong>Two signals agreed</strong>: one of the 3 unexpected entries was a Chinese cargo ship that was 8.5 km away 5 hours earlier and then stopped within 4.9 km of the Kinmen leg of the Taiwan–Penghu–Kinmen–Matsu cables. The independently computed threat score already rated it critical (15 points): 9.9 hours loitering slow beside the cable, 16 sharp turns, two different ship names, and repeated survey-like lines. The warning model never sees those behavioural features, yet both pointed at the same ship.</li>
+                <li><strong>Low probability is not the same as suspicious</strong>: the other two were cargo ships that slowed beside a cable off Taichung at the same time, both having come from 36–44 km away. Two ships doing the same thing at once more likely share a cause (a port queue, shelter from the northeast monsoon) than represent two independent anomalies — exactly the kind of case that needs a human to read it.</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>Other Findings Along the Way</h2>
+            <p>The cable warning is phase 2 of the site's trajectory-prediction work. The earlier phases (baseline models and a motion model for SAR dark-vessel matching) produced several findings worth recording:</p>
+            <div class="dark-reason"><div class="dark-reason-icon">🎣</div><div class="dark-reason-text"><strong>For fishing boats, "stays put" beats constant velocity 3–7×</strong>At horizons of 6 hours or more, assuming a fishing boat stays where it is gives a median error of 6.7 km (8.3 km at 24 h); extrapolating its current velocity gives 18 km (62 km at 24 h). Fishing boats circle within a fishing ground, and a constant-velocity model pushes them out of it. The motion model therefore decays a moving fishing boat's velocity within about an hour, while merchant ships keep constant velocity.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🧭</div><div class="dark-reason-text"><strong>Merchant ships' reported course is reliable; fishing boats' is not</strong>For merchant ships, extrapolating the AIS-reported speed and course beats using the displacement between the last two positions; for fishing boats it is the reverse. The same field varies widely in quality by vessel type.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">⏱️</div><div class="dark-reason-text"><strong>The AIS "time" is not the fix time</strong>The Port Bureau feed's Record_Time is in Taiwan local time and lags the fetch time by 2.5–15 minutes (median 3.7). Treating fetch time as fix time misplaces a 12-knot ship by about 1.4 km on average — not negligible against kilometre-scale SAR matching gates.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🛰️</div><div class="dark-reason-text"><strong>A looser matching gate makes dark vessels "disappear"</strong>Loosening the dead-reckoning gate for SAR matching makes more ships matchable on paper, but a full simulation (randomly turning 20% of ships dark) showed the share of dark vessels "claimed" by some other nearby ship rising from 10% to 52% — in a dense fishing fleet, any uncertain ship can explain a nearby detection. The stricter gate was adopted: wrong-ship matches 8.1% → 6.4%, dark vessels claimed 11.1% → 9.7%. Judging by "coverage" alone would have picked the wrong model.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">⏳</div><div class="dark-reason-text"><strong>The real bottleneck is snapshot spacing, and GitHub sets it</strong>This site fetches AIS on GitHub Actions schedules. Two weeks of run history showed only 76 of 243 scheduled slots actually firing (31%), with no failures recorded — the platform simply dropped the schedule events. The archive's real snapshot interval has a median of 2.2 hours (p90 4.9 h); after switching to a heartbeat that dispatches runs, the heartbeat's own schedule was dropped just as heavily. At 2–3 hour spacing it is hard to tell ships apart in a dense fleet, which limits SAR matching and warning timeliness more than any model improvement.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🪤</div><div class="dark-reason-text"><strong>Fishing-net beacons swamp the warnings</strong>In the first version, the warning's "other" vessel group was almost entirely fishing-net beacons such as <code>321 12V2</code> and <code>NETFISHING 7V7</code> (invalid MMSIs, voltage in the name). The warning and the threat score must share one set of exclusion rules, or the two disagree on what counts as a ship.</div></div>
+            <div class="dark-reason"><div class="dark-reason-icon">🔀</div><div class="dark-reason-text"><strong>One MMSI is not one ship</strong>Many Chinese fishing boats share an MMSI, so positions under one number "teleport" between places. Tracks are therefore keyed by (MMSI, ship name) and split at gaps over 6 hours or implied speeds over 100 km/h; about 25% of archived positions are in port and are excluded from prediction error.</div></div>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>Data Limitations &amp; Disclaimer</h2>
+            <div class="alert-box">
+                <ul style="margin:0;padding-left:18px;line-height:2">
+                    <li>Warnings and unexpected-entry scores are <strong>leads to investigate</strong>, not factual or legal findings, and not an accusation against any named vessel.</li>
+                    <li>The system runs in <strong>shadow mode</strong>: results are written to a data file only, do not feed the threat score, and are not yet shown on the map.</li>
+                    <li>The high-scoring areas include a great deal of <strong>routine waiting</strong> beside cable landings; the warning list is not a suspect list.</li>
+                    <li>Test-period alert precision is 18.4%: roughly four alerts in five do not enter slow within 12 hours.</li>
+                    <li>The actual AIS snapshot interval is several hours, so a ship can enter and leave a cable zone between snapshots unseen; tracks are split at gaps over 6 hours and entries after such a gap are not counted, so positives are under-counted.</li>
+                    <li>The model was fitted on July–October 2026 data and needs refitting when seasons, routes or port operations change.</li>
+                </ul>
+            </div>
+            <p style="font-size:11px;color:var(--text-secondary)">This page is for research and education, aggregating public data under the MIT License. When citing, please attribute the source and note the limitations above.</p>
+        </div>
+    </section>
+
+    <section class="intro-section">
+                <div class="lang-en-only">
+            <h2>FAQ</h2>
+            <div class="faq-section">
+                <details class="faq-item"><summary>What does the cable approach warning predict?</summary><div class="faq-answer">Whether a ship currently more than 5 km from any cable will, within the next 6, 12 or 24 hours, report a position within 5 km of a cable, below 5 knots and not in port. These are exactly the cable-proximity and low-speed thresholds of the site's threat score; the difference is that the score only sees the event after it happens, while the warning looks ahead.</div></details>
+                <details class="faq-item"><summary>Why not extrapolate the track in a straight line?</summary><div class="faq-answer">Near cables, ships usually slow down, turn into port or drop anchor, which a straight-line extrapolation cannot capture. For 12-hour predictions on the test period, ranking by the closest approach of the extrapolated path gave an AUC of 0.71 — worse than the 0.74 from current distance alone — while the pattern-of-life table reached 0.84.</div></details>
+                <details class="faq-item"><summary>Does a warning mean the ship is suspicious?</summary><div class="faq-answer">No. The high-scoring areas are waiting waters beside cable landings — off Tamsui/Taipei Port, Fuao in Matsu, Magong in Penghu, Liaoluo Bay in Kinmen — and many warned ships are simply waiting to enter port. The warning only answers "will it come close"; whether that is suspicious has to be judged with the threat score and the unexpected-entry score.</div></details>
+                <details class="faq-item"><summary>What is an "unexpected entry"?</summary><div class="faq-answer">A ship that is now slow within 5 km of a cable but was outside the zone 3 to 12 hours earlier, scored by the entry probability the model gave it at that earlier moment. The lower the probability, the less the approach resembles routine waiting. The most unusual test-period cases include ships that were 20–130 km away at speed hours earlier and then slowed beside the cables between Kinmen and Xiamen, and a China Coast Guard ship slowing within 4.8 km of a Matsu cable.</div></details>
+                <details class="faq-item"><summary>How accurate is the warning?</summary><div class="faq-answer">For non-fishing 12-hour warnings on the test period, the base rate was about 0.96%; at the alert threshold precision was 18.4% and recall 33.9%, about 19× the base rate, and precision in the top 1% was 23.5%. In other words roughly one warning in five really enters slow within 12 hours, so human review is still needed.</div></details>
+            </div>
+        </div>
+    </section>
+
+    <div class="intro-cta" style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+                <a href="blog-methodology.html" class="lang-en-only">Read the scoring methodology →</a>
+                <a href="blog.html" class="lang-en-only" style="background:transparent;border:1px solid var(--border-glow);color:var(--text-secondary)">← Back to articles</a>
+    </div>
+
+    <section class="intro-section" id="sources">
+                <div class="lang-en-only">
+            <h2>Sources</h2>
+            <p>The background and data on this page can be checked against these public sources:</p>
+            <ul class="src-list">
+                <li><a href="https://www.iscpc.org/" target="_blank" rel="noopener noreferrer">International Cable Protection Committee (causes of cable damage, protection) →</a></li>
+                <li><a href="https://www.submarinecablemap.com/" target="_blank" rel="noopener noreferrer">TeleGeography Submarine Cable Map (routes and landings) →</a></li>
+                <li><a href="https://www.imo.org/en/OurWork/Safety/Pages/AIS.aspx" target="_blank" rel="noopener noreferrer">International Maritime Organization (AIS requirements) →</a></li>
+                <li><a href="../cable_warnings.json">This site's warning output, cable_warnings.json →</a></li>
+            </ul>
+            <p style="font-size:11px;color:var(--text-secondary)">This page is for research and education; warning signals are leads to investigate, not legal or factual findings. See the <a href="blog-methodology.html" style="color:var(--accent-cyan)">methodology</a>.</p>
+        </div>
+    </section>
+
+    <!-- topic-cluster -->
+    <section class="topic-cluster" aria-label="Related gray-zone topics">
+                <h2 class="lang-en-only">Related gray-zone topics</h2>
+        <ul>
+            <li><a href="blog-cable-threats.html"><span class="lang-en-only">Cable threats</span></a></li>
+            <li><a href="blog-taiwan-cable-infrastructure.html"><span class="lang-en-only">Taiwan's cable infrastructure</span></a></li>
+            <li><a href="blog-what-is-maritime-gray-zone.html"><span class="lang-en-only">Maritime gray-zone overview</span></a></li>
+            <li><a href="blog-what-is-dark-vessel.html"><span class="lang-en-only">Dark vessels</span></a></li>
+            <li><a href="blog-what-is-shadow-fleet.html"><span class="lang-en-only">Shadow fleets</span></a></li>
+            <li><a href="blog-gray-zone-glossary.html"><span class="lang-en-only">Glossary</span></a></li>
+            <li><a href="blog-methodology.html"><span class="lang-en-only">Methodology</span></a></li>
+        </ul>
+    </section>
+
+    <footer class="site-footer">
+        <p>Contact: <a href="mailto:s0914712@gmail.com">s0914712@gmail.com</a></p>
+    </footer>
+    <script defer src="../js/i18n.js"></script>
+    <script defer src="../js/mobile-nav.js"></script>
+</body>
+</html>
