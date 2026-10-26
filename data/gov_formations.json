@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-25T15:25:46.341577+00:00",
+  "updated_at": "2026-10-26T04:16:50.090512+00:00",
   "methodology": "Gov Vessel Formation Detection",
   "criteria": {
     "formation_radius_km": 10.0,
@@ -27,7 +27,7 @@
   },
   "summary": {
     "total_formations": 3,
-    "active_formations": 2,
+    "active_formations": 1,
     "escorted_research": 0,
     "vessels_involved": 7,
     "severity_distribution": {
@@ -130,7 +130,9 @@
       "last_lon": 118.56397,
       "severity": "low",
       "active": true
-    },
+    }
+  ],
+  "history": [
     {
       "id": "GF-20261024T1514-413875035-413875036",
       "first_seen": "2026-10-24T15:14:37.128239+00:00",
@@ -202,10 +204,8 @@
       "last_lat": 24.6951,
       "last_lon": 122.41585,
       "severity": "low",
-      "active": true
-    }
-  ],
-  "history": [
+      "active": false
+    },
     {
       "id": "GF-20261014T0427-413238290-413292950",
       "first_seen": "2026-10-14T04:27:43.841494+00:00",
