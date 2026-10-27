@@ -1,16 +1,16 @@
 {
   "date": "2026-10-27",
-  "generated_at": "2026-10-27T04:41:16.961792Z",
-  "data_updated_at": "2026-10-27T04:41:16.309380Z",
-  "ais_vessels": 5694,
-  "dark_vessels": 14663,
-  "dark_ratio": 40.3,
-  "suspicious_count": 903,
-  "critical_count": 243,
-  "high_count": 660,
-  "cable_near_count": 564,
-  "sts_active": 62,
-  "sts_suspicious": 232,
+  "generated_at": "2026-10-27T17:22:02.892166Z",
+  "data_updated_at": "2026-10-27T17:22:02.262809Z",
+  "ais_vessels": 4801,
+  "dark_vessels": 14960,
+  "dark_ratio": 39.8,
+  "suspicious_count": 889,
+  "critical_count": 237,
+  "high_count": 652,
+  "cable_near_count": 570,
+  "sts_active": 42,
+  "sts_suspicious": 217,
   "top_suspicious": [
     {
       "mmsi": "413000000",
@@ -24,7 +24,7 @@
     {
       "mmsi": "412000000",
       "name": "TAISHA2086",
-      "risk_score": 26,
+      "risk_score": 24,
       "risk_level": "critical",
       "vessel_type": "cargo",
       "zone": "internal_waters",
@@ -37,7 +37,7 @@
       "risk_level": "critical",
       "vessel_type": "fishing",
       "zone": "eez",
-      "cable_band": "within_10km"
+      "cable_band": "within_5km"
     },
     {
       "mmsi": "677067100",
@@ -49,29 +49,29 @@
       "cable_band": "beyond_10km"
     },
     {
-      "mmsi": "413875311",
-      "name": "CHINACOASTGUARD14533",
+      "mmsi": "413699010",
+      "name": "HUA XIN 117",
       "risk_score": 21,
       "risk_level": "critical",
-      "vessel_type": "coastguard",
+      "vessel_type": "cargo",
       "zone": "eez",
-      "cable_band": "beyond_10km"
+      "cable_band": "within_10km"
     }
   ],
   "sar_ais_matching": {
-    "dark_total": 14663,
-    "infrastructure_filtered": 4626,
-    "rematched_local": 400,
-    "residual_dark": 9637,
-    "in_ais_coverage": 7446,
+    "dark_total": 14960,
+    "infrastructure_filtered": 4753,
+    "rematched_local": 432,
+    "residual_dark": 9775,
+    "in_ais_coverage": 7616,
     "no_ais_coverage": 2591,
-    "rematch_rate_of_coverage_pct": 5.4,
-    "false_dark_removed_pct": 34.3,
-    "ais_vessels_indexed": 19049,
-    "s1_real_pass_dates": 25,
-    "ais_coverage_start": "2026-09-29T05:18:27.997969Z",
-    "ais_coverage_end": "2026-10-27T04:34:53.693373Z",
-    "updated_at": "2026-10-27T04:35:21.722827Z"
+    "rematch_rate_of_coverage_pct": 5.7,
+    "false_dark_removed_pct": 34.7,
+    "ais_vessels_indexed": 18642,
+    "s1_real_pass_dates": 26,
+    "ais_coverage_start": "2026-09-29T17:29:56.900968Z",
+    "ais_coverage_end": "2026-10-27T17:16:51.374515Z",
+    "updated_at": "2026-10-27T17:17:24.414586Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-27",
