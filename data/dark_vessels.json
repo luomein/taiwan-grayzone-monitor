@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-10-26T18:05:54.439222Z",
+  "updated_at": "2026-10-27T04:35:09.263539Z",
   "bbox": {
     "lat_min": 15,
     "lat_max": 35,
@@ -7,15 +7,14 @@
     "lon_max": 128
   },
   "data_range": {
-    "start": "2026-09-26",
-    "end": "2026-10-26"
+    "start": "2026-09-27",
+    "end": "2026-10-27"
   },
   "overall": {
-    "total_detections": 37031,
-    "dark_vessels": 14965,
-    "dark_ratio": 40.4,
+    "total_detections": 36399,
+    "dark_vessels": 14663,
+    "dark_ratio": 40.3,
     "dark_by_date": {
-      "2026-09-26": 302,
       "2026-09-27": 2548,
       "2026-09-28": 1128,
       "2026-09-30": 830,
@@ -43,7 +42,6 @@
       "2026-10-22": 272
     },
     "total_by_date": {
-      "2026-09-26": 632,
       "2026-09-27": 6802,
       "2026-09-28": 2254,
       "2026-09-30": 2181,
@@ -74,12 +72,11 @@
   "regions": {
     "taiwan_region": {
       "name": "台灣周邊海域",
-      "total_detections": 37031,
-      "dark_vessels": 14965,
-      "matched_vessels": 22066,
-      "dark_ratio": 40.4,
+      "total_detections": 36399,
+      "dark_vessels": 14663,
+      "matched_vessels": 21736,
+      "dark_ratio": 40.3,
       "dark_by_date": {
-        "2026-09-26": 302,
         "2026-09-27": 2548,
         "2026-09-28": 1128,
         "2026-09-30": 830,
@@ -107,7 +104,6 @@
         "2026-10-22": 272
       },
       "total_by_date": {
-        "2026-09-26": 632,
         "2026-09-27": 6802,
         "2026-09-28": 2254,
         "2026-09-30": 2181,
@@ -135,55 +131,52 @@
         "2026-10-22": 1289
       },
       "matched_by_flag": {
-        "CHN": 14485,
-        "TWN": 368,
-        "GRC": 64,
-        "UNKNOWN": 2138,
-        "PAN": 780,
-        "KOR": 795,
-        "VNM": 26,
+        "CHN": 14275,
+        "TWN": 357,
+        "GRC": 59,
+        "UNKNOWN": 2100,
+        "PAN": 772,
+        "KOR": 793,
         "ITA": 7,
-        "IND": 4,
-        "FRA": 12,
-        "HKG": 427,
+        "IND": 3,
+        "HKG": 421,
         "NOR": 23,
-        "MHL": 350,
-        "LBR": 632,
+        "MHL": 339,
+        "LBR": 624,
         "BRB": 24,
         "COM": 41,
-        "SGP": 307,
-        "JPN": 133,
+        "SGP": 300,
+        "JPN": 132,
         "ZAF": 5,
         "SYR": 3,
-        "BHS": 108,
+        "BHS": 107,
         "MLT": 98,
         "VUT": 22,
-        "TCD": 12,
+        "TCD": 11,
         "SLE": 41,
         "GBR": 57,
-        "BEL": 26,
         "AND": 16,
-        "IDN": 21,
+        "IDN": 20,
         "IRL": 54,
         "IRN": 18,
-        "MOZ": 6,
+        "MOZ": 5,
         "FIN": 13,
-        "BLZ": 52,
+        "BLZ": 49,
         "KNA": 9,
         "POL": 13,
         "NIU": 8,
         "FRO": 10,
         "PRT": 69,
-        "CYP": 56,
+        "CYP": 55,
         "THA": 13,
         "MYS": 13,
         "STP": 21,
-        "LIE": 11,
-        "JAM": 23,
+        "LIE": 10,
+        "JAM": 22,
         "TGO": 9,
         "GNB": 30,
         "BTN": 6,
-        "LUX": 21,
+        "BEL": 24,
         "SHN": 8,
         "BHR": 2,
         "SDN": 1,
@@ -191,26 +184,27 @@
         "DEU": 10,
         "MNG": 25,
         "PAK": 3,
+        "LUX": 20,
         "ARE": 3,
         "PLW": 12,
         "RUS": 33,
         "COD": 2,
         "SWE": 18,
         "BEN": 10,
-        "NLD": 11,
+        "NLD": 10,
         "GUY": 1,
         "ARM": 4,
         "SOM": 8,
         "GNQ": 3,
         "NRU": 1,
         "KAZ": 3,
-        "TZA": 28,
-        "PHL": 63,
+        "TZA": 27,
+        "PHL": 62,
         "NIC": 2,
-        "BMU": 8,
-        "ATG": 24,
         "OMN": 5,
+        "BMU": 8,
         "MMR": 2,
+        "ATG": 24,
         "GRD": 2,
         "BRN": 4,
         "TON": 3,
@@ -218,80 +212,82 @@
         "ZWE": 9,
         "BWA": 3,
         "ARG": 2,
-        "AIA": 3,
-        "BES": 4,
-        "GIB": 6,
-        "BLR": 1,
-        "RWA": 3,
-        "CAF": 4,
-        "ESP": 4,
-        "PCN": 2,
-        "USA": 9,
-        "DNK": 30,
-        "MNE": 17,
-        "MEX": 4,
         "MCO": 15,
-        "HRV": 3,
-        "ISL": 5,
         "ALB": 5,
+        "DNK": 30,
         "SSD": 1,
         "MAC": 2,
         "AUS": 1,
+        "VNM": 25,
         "BGD": 3,
         "QAT": 4,
+        "USA": 9,
         "COK": 8,
-        "TUV": 5,
-        "WSM": 2,
-        "MDG": 4,
-        "PRK": 6,
-        "FSM": 3,
-        "SAU": 3,
+        "GIB": 6,
+        "EGY": 2,
+        "GRL": 3,
+        "MEX": 3,
+        "GTM": 5,
+        "TUN": 1,
+        "FRA": 11,
         "VCT": 8,
-        "NZL": 6,
+        "DZA": 1,
+        "AFG": 1,
+        "PRK": 6,
+        "MNE": 16,
+        "UKR": 2,
+        "TUV": 4,
+        "ISL": 5,
         "GMB": 9,
+        "LAO": 1,
+        "ATF": 3,
+        "REU": 1,
+        "MAR": 5,
+        "HRV": 3,
         "CHE": 3,
+        "CYM": 2,
+        "TUR": 2,
+        "ETH": 2,
+        "SAU": 3,
+        "MDG": 4,
+        "FJI": 2,
+        "PCN": 2,
+        "EST": 1,
+        "ESP": 4,
+        "FSM": 2,
         "HUN": 2,
         "VAT": 1,
         "TKM": 1,
         "COG": 1,
-        "ATF": 3,
+        "CAF": 4,
+        "RWA": 3,
+        "IRQ": 1,
+        "SMR": 3,
+        "NZL": 6,
+        "GUF": 1,
+        "DJI": 2,
+        "BFA": 1,
+        "WSM": 2,
+        "CRI": 3,
         "URY": 1,
         "CXR": 2,
         "KGZ": 1,
         "MLI": 2,
         "BOL": 2,
         "LKA": 1,
-        "GEO": 3,
-        "CZE": 1,
-        "PSE": 2,
-        "EGY": 2,
-        "GRL": 3,
-        "GTM": 5,
-        "TUN": 1,
-        "DZA": 1,
-        "AFG": 1,
-        "UKR": 2,
-        "LAO": 1,
-        "REU": 1,
-        "MAR": 5,
-        "CYM": 2,
-        "ECU": 1,
-        "ETH": 2,
-        "FJI": 2,
-        "EST": 1,
-        "TUR": 2,
-        "SMR": 3,
         "GAB": 1,
         "KHM": 1,
-        "CRI": 3,
+        "BES": 4,
+        "AIA": 3,
+        "BLR": 1,
+        "GEO": 3,
+        "PSE": 2,
+        "CAN": 1,
+        "ECU": 1,
+        "CZE": 1,
         "VEN": 1,
         "SUR": 1,
-        "NCL": 1,
-        "DJI": 2,
-        "CAN": 1,
-        "IRQ": 1,
-        "GUF": 1,
-        "BFA": 1
+        "NCL": 1
       },
       "dark_details": [
         {
@@ -604,12 +600,6 @@
           "lat": 33.46,
           "lon": 120.91,
           "date": "2026-09-27",
-          "detections": 1
-        },
-        {
-          "lat": 22.39,
-          "lon": 120.45,
-          "date": "2026-09-26",
           "detections": 1
         },
         {
@@ -1165,12 +1155,6 @@
           "detections": 1
         },
         {
-          "lat": 16.02,
-          "lon": 121.74,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
           "lat": 20.89,
           "lon": 111.83,
           "date": "2026-10-03",
@@ -1279,12 +1263,6 @@
           "detections": 1
         },
         {
-          "lat": 34.86,
-          "lon": 119.57,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
           "lat": 25.21,
           "lon": 121.71,
           "date": "2026-10-16",
@@ -1300,12 +1278,6 @@
           "lat": 25.23,
           "lon": 120.37,
           "date": "2026-09-28",
-          "detections": 1
-        },
-        {
-          "lat": 20.19,
-          "lon": 110.69,
-          "date": "2026-09-26",
           "detections": 1
         },
         {
@@ -1645,12 +1617,6 @@
           "detections": 1
         },
         {
-          "lat": 23.02,
-          "lon": 122.5,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
           "lat": 21.05,
           "lon": 112.1,
           "date": "2026-10-03",
@@ -1757,18 +1723,6 @@
           "lon": 111.91,
           "date": "2026-10-03",
           "detections": 2
-        },
-        {
-          "lat": 34.84,
-          "lon": 119.24,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
-          "lat": 22.07,
-          "lon": 122.07,
-          "date": "2026-09-26",
-          "detections": 1
         },
         {
           "lat": 20.97,
@@ -2017,12 +1971,6 @@
           "detections": 1
         },
         {
-          "lat": 20.73,
-          "lon": 110.5,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
           "lat": 33.98,
           "lon": 122.4,
           "date": "2026-09-27",
@@ -2191,12 +2139,6 @@
           "detections": 1
         },
         {
-          "lat": 34.91,
-          "lon": 119.22,
-          "date": "2026-09-26",
-          "detections": 2
-        },
-        {
           "lat": 33.93,
           "lon": 126.37,
           "date": "2026-10-12",
@@ -2311,12 +2253,6 @@
           "detections": 1
         },
         {
-          "lat": 34.59,
-          "lon": 119.96,
-          "date": "2026-09-26",
-          "detections": 1
-        },
-        {
           "lat": 33.23,
           "lon": 126.06,
           "date": "2026-09-30",
@@ -2392,12 +2328,6 @@
           "lat": 18.65,
           "lon": 110.45,
           "date": "2026-10-14",
-          "detections": 1
-        },
-        {
-          "lat": 34.43,
-          "lon": 120.07,
-          "date": "2026-09-26",
           "detections": 1
         },
         {
@@ -2693,6 +2623,72 @@
           "lon": 117.02,
           "date": "2026-09-30",
           "detections": 1
+        },
+        {
+          "lat": 33.6,
+          "lon": 122.22,
+          "date": "2026-10-09",
+          "detections": 1
+        },
+        {
+          "lat": 20.68,
+          "lon": 110.55,
+          "date": "2026-10-14",
+          "detections": 1
+        },
+        {
+          "lat": 18.44,
+          "lon": 111.04,
+          "date": "2026-10-02",
+          "detections": 1
+        },
+        {
+          "lat": 22.77,
+          "lon": 115.3,
+          "date": "2026-10-17",
+          "detections": 1
+        },
+        {
+          "lat": 30.22,
+          "lon": 122.03,
+          "date": "2026-10-09",
+          "detections": 1
+        },
+        {
+          "lat": 32.53,
+          "lon": 122.5,
+          "date": "2026-10-09",
+          "detections": 1
+        },
+        {
+          "lat": 25.09,
+          "lon": 119.85,
+          "date": "2026-10-16",
+          "detections": 1
+        },
+        {
+          "lat": 34.71,
+          "lon": 119.67,
+          "date": "2026-10-14",
+          "detections": 1
+        },
+        {
+          "lat": 21.19,
+          "lon": 111.27,
+          "date": "2026-10-03",
+          "detections": 1
+        },
+        {
+          "lat": 34.22,
+          "lon": 122.13,
+          "date": "2026-10-09",
+          "detections": 1
+        },
+        {
+          "lat": 33.39,
+          "lon": 126.18,
+          "date": "2026-09-30",
+          "detections": 1
         }
       ],
       "sub_zones": {
@@ -2704,15 +2700,15 @@
         },
         "east": {
           "name": "台灣東部",
-          "total_detections": 564,
-          "dark_vessels": 276,
-          "dark_ratio": 48.9
+          "total_detections": 527,
+          "dark_vessels": 258,
+          "dark_ratio": 49.0
         },
         "south": {
           "name": "南海北部",
-          "total_detections": 9321,
-          "dark_vessels": 3990,
-          "dark_ratio": 42.8
+          "total_detections": 9065,
+          "dark_vessels": 3831,
+          "dark_ratio": 42.3
         },
         "west": {
           "name": "台灣海峽",
