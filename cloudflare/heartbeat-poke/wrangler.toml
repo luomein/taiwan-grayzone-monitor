@@ -1,0 +1,13 @@
+name = "grayzone-heartbeat-poke"
+main = "worker.js"
+compatibility_date = "2024-09-23"
+# 不需要對外的 HTTP 路由：只有排程觸發
+workers_dev = false
+
+[vars]
+REPO = "s0914712/taiwan-grayzone-monitor"
+
+[triggers]
+# 每 20 分鐘；刻意與 pipeline-heartbeat.yml 自己的 7,27,47 錯開，
+# GitHub 偶爾也觸發時兩者不會互相取消（心跳的 concurrency 是 cancel-in-progress）
+crons = ["2,22,42 * * * *"]

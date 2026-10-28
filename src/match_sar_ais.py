@@ -107,6 +107,14 @@ STATIONARY_SPEED_KN = 0.5
 MAX_DT_HOURS = 3.0            # AIS 點與 SAR 時刻的最大時距（超過不推算）
 KN_TO_KMH = 1.852
 
+# 指派時的成本上限（cost = 距離 / 門檻）：超過門檻一半的配對寧可判暗。
+# 比對模擬（eval_trajectory sim，2026-10-28，真實快照當偵測、20% 暗船）val／test 一致：
+#   配錯船 7.4→5.5% / 12.0→9.0%、暗船被他船認領 10.9→7.9% / 18.4→13.3%，配對正確持平
+#   （12.1→11.9% / 18.2→18.2%）；代價是真船被判暗 +2~3 個百分點（原本配錯船的那些）。
+# 匈牙利法沒有「判暗」選項時會盡量讓每個偵測都配到船（寧可配錯），所以另給每個偵測
+# 一個成本 = 上限的虛擬「暗船」欄。沿航向的橢圓門檻實測沒有差別，沒有採用。
+MAX_MATCH_COST = 0.5
+
 # 固定設施重現性啟發式（跨執行歷史）
 #   單一 30 天 GFW 彙整窗內，暗偵測座標為全精度、每格幾乎不重現（實測 1040
 #   筆 = 1040 個相異 0.01° 格），時間重現訊號等於不存在。真正能區分固定設施
@@ -594,18 +602,20 @@ def candidates_for_detection(rec, est, grid):
     return out
 
 
-def solve_assignment(candidate_lists):
+def solve_assignment(candidate_lists, max_cost=MAX_MATCH_COST):
     """每個過境群組內的偵測↔船一對一指派。
 
     candidate_lists: {det_idx: [(cost, mmsi, dist, gate)]}
-    回傳 {det_idx: (cost, mmsi, dist, gate)}。
-    有 scipy 用匈牙利演算法（全域最小成本）；否則用全域成本排序貪婪
-    最近鄰（gating 後依 cost 升冪，一船一偵測）。
+    回傳 {det_idx: (cost, mmsi, dist, gate)}。成本 > max_cost 的候選先剔除。
+    有 scipy 用匈牙利演算法（全域最小成本，每個偵測另有成本 max_cost 的判暗
+    選項）；否則用全域成本排序貪婪最近鄰（依 cost 升冪，一船一偵測）。
     """
+    pruned = {d: [c for c in cands if c[0] <= max_cost]
+              for d, cands in candidate_lists.items()}
     try:
-        return _solve_hungarian(candidate_lists)
+        return _solve_hungarian(pruned, dark_cost=max_cost)
     except ImportError:
-        return _solve_greedy(candidate_lists)
+        return _solve_greedy(pruned)
 
 
 def _solve_greedy(candidate_lists):
@@ -625,7 +635,7 @@ def _solve_greedy(candidate_lists):
     return result
 
 
-def _solve_hungarian(candidate_lists):
+def _solve_hungarian(candidate_lists, dark_cost=None):
     import numpy as np
     from scipy.optimize import linear_sum_assignment
 
@@ -636,9 +646,14 @@ def _solve_hungarian(candidate_lists):
                       for _, mmsi, _, _ in candidate_lists[d]})
     v_index = {m: j for j, m in enumerate(vessels)}
     BIG = 1e6
-    cost = np.full((len(det_ids), len(vessels)), BIG)
+    n_ves = len(vessels)
+    # dark_cost：每個偵測多一欄只屬於自己的「判暗」選項
+    n_cols = n_ves + (len(det_ids) if dark_cost is not None else 0)
+    cost = np.full((len(det_ids), n_cols), BIG)
     info = {}
     for i, d in enumerate(det_ids):
+        if dark_cost is not None:
+            cost[i, n_ves + i] = dark_cost
         for c, mmsi, dist, g in candidate_lists[d]:
             j = v_index[mmsi]
             if c < cost[i, j]:
@@ -647,7 +662,7 @@ def _solve_hungarian(candidate_lists):
     rows, cols = linear_sum_assignment(cost)
     result = {}
     for i, j in zip(rows, cols):
-        if cost[i, j] >= BIG:
+        if j >= n_ves or cost[i, j] >= BIG:
             continue
         result[det_ids[i]] = info[(i, j)]
     return result
@@ -927,6 +942,7 @@ def run_matching(dark_records, tracks, static_mask=(), profiles=None,
             'min_gate_km': MIN_GATE_KM,
             'max_gate_km': MAX_GATE_KM,
             'max_dt_hours': MAX_DT_HOURS,
+            'max_match_cost': MAX_MATCH_COST,
             # p1 = trajectory_model（擬合參數 + r90 收件）；p0 = 原本的固定係數推算
             'estimator': 'p1' if motion_params else 'p0',
             **({'admit_max_r90_km': motion_params.get('admit_max_r90_km'),
