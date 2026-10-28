@@ -340,7 +340,7 @@ Actions 執行紀錄（10-05 → 10-19）：`update-ais.yml` 舊排程 243 個 c
 - **負荷**：心跳 job 只 sparse checkout 一個檔、用 runner 內建的 `gh`、跑幾秒；因為心跳本身也會被丟，實際約 **23 個/天**。比較過的方案：每條 workflow 各自加 20 分鐘閘門 = 兩倍的檢查 job；心跳改 30 分鐘 = ~16 個/天但 AIS 間隔中位數 2.5h、p90 4.75h
 - 以實測各時段觸發率模擬：AIS **~10 次/天、間隔中位數 2.25h（p90 ~3.9h）**，網路掃描 ~8 次/天、2.65h；舊排程是 AIS 5.4 次/天、4.4h（p90 7.1h），網路掃描 4.2 次/天。GitHub 正常時資料 run 次數等於原排程（AIS ~17、掃描 ~12/天）
 - 心跳停擺的保險：`update-data.yml`（仍自己排程）的 `validate_outputs` 在 AIS 快照 >24h 時判失敗。`gh` 查詢失敗時心跳不派發、job 變紅
-- 若之後要零浪費的觸發：外部排程器（例如 Cloudflare Workers Cron Trigger）呼叫 `workflow_dispatch`，但要多一把有 `actions:write` 的 PAT secret
+- **心跳自己的排程也被丟**（上線後實測約 6 次/天，AIS 間隔仍 ~4h：10-14 → 10-28 中位數 3.97h、p90 5.6h）。解法：`cloudflare/heartbeat-poke/`（Cloudflare Worker Cron，每 20 分鐘 `2,22,42` 呼叫心跳的 `workflow_dispatch`）。Worker 不含排程邏輯，派不派發仍由 `pipeline_heartbeat.py` 決定；GitHub 自己的 schedule 留作備援。需要一把只授權本 repo、只開 Actions: Read and write 的 fine-grained PAT（部署步驟見該目錄 README）。`tests/test_heartbeat_poke.py` 守住 Worker 指向的 workflow 存在且可 dispatch、分鐘與心跳排程錯開
 上線一兩週後應重量 `ais-archive` 的實際間隔，再重新擬合 P1（r90 表與收件門檻都是在 3h 間隔的資料上調的）。
 
 退回舊行為：刪掉 `data/trajectory_params.json`，或設 `TRAJECTORY_ESTIMATOR=p0`。`sar_ais_matches.json` 的 `params.estimator` 記錄本輪用哪一個。
@@ -444,7 +444,15 @@ Pipeline (per detection):
 4. **One-to-one assignment** — per (date × pass) group: Hungarian algorithm
    (`scipy.optimize.linear_sum_assignment`) when scipy is available, else globally
    cost-sorted greedy NN with gating. Prevents one vessel "absorbing" several
-   detections in dense areas.
+   detections in dense areas. **`MAX_MATCH_COST` = 0.5** (cost = dist/gate): pairs beyond
+   half the gate are dropped, and the Hungarian solver gets a per-detection "dark" column
+   at that cost — without it Hungarian forces as many pairings as possible, wrong ones
+   included. Decided on the sim (2026-10-28, val/test): wrong-vessel 7.4→5.5% / 12.0→9.0%,
+   dark claimed by another ship 10.9→7.9% / 18.4→13.3%, correct flat; cost: +2–3 pts of
+   real ships labelled dark. Tested and rejected: course-aligned elliptical gate (no
+   change). Not adopted yet: an ambiguity margin (leave near-ties undecided; wrong 3.4%,
+   claimed 6.4% but 19% undecided — needs a third map state). Recorded as
+   `params.max_match_cost`.
 5. **Length cross-validation** — when a detection carries a SAR length estimate and the
    AIS side has a registered length: relative diff >35% AND >30m → `length_mismatch`
    (identity-spoofing lead). Dormant until a detection-level SAR source is wired (the

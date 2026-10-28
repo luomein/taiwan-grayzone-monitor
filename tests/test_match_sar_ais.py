@@ -118,6 +118,25 @@ def test_hungarian_finds_globally_optimal_swap():
     assert result[1][1] == 'A'
 
 
+def test_solve_assignment_drops_candidates_beyond_max_cost():
+    # 超過門檻一半（cost > MAX_MATCH_COST）的配對寧可判暗
+    cands = {0: [(m.MAX_MATCH_COST + 0.1, 'A', 3.0, 5.0)],
+             1: [(m.MAX_MATCH_COST - 0.1, 'B', 2.0, 5.0)]}
+    result = m.solve_assignment(cands)
+    assert 0 not in result
+    assert result[1][1] == 'B'
+
+
+def test_solve_assignment_prefers_dark_over_forced_pairing():
+    # 沒有判暗選項的匈牙利法會配成 det0→A + det1→B（兩組都勉強在門檻內）；
+    # 有判暗選項時，det1→A 很近、det0 判暗的總成本更低。貪婪法結果相同。
+    cands = {0: [(0.30, 'A', 1.5, 5.0)],
+             1: [(0.05, 'A', 0.2, 5.0), (0.48, 'B', 2.4, 5.0)]}
+    result = m.solve_assignment(cands)
+    assert result[1][1] == 'A'
+    assert 0 not in result
+
+
 # ── 固定設施重現性啟發式 ─────────────────────────────────────────────────────
 
 def test_recurring_cell_flagged_as_infrastructure():
