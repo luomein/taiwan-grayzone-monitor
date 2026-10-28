@@ -163,7 +163,7 @@ var MapData = (function() {
     // Mirrors classify_gov_vessel() in src/fetch_ais_data.py — backend sets
     // v.gov_type / type_name; the name regex is a frontend fallback.
     const GOV_REGEX = {
-        coastguard: /COAST\s*GUARD|\bCCG\d*\b|HAI\s*JING|海警/i,
+        coastguard: /COAST\s*GUARD|\bCCG\d*\b|HAI\s*JING|海警|中国海警|中國海警|CHINA\s*COAST/i,
         msa: /HAI\s*XUN|海巡/i,
         rescue: /(DONG|NAN|BEI)\s*HAI\s*JIU|[东東南北]海救|海救/i,
         research: /XIANG\s*YANG\s*HONG|DONG\s*FANG\s*HONG|\bTONG\s*JI\b|\bKE\s*XUE\b|\bSHI\s*YAN|\bTAN\s*SUO|ZHU\s*HAI\s*YUN|向阳红|向陽紅|东方红|東方紅|同济|同濟|科学考察|科考|勘探|海洋调查|海洋調查|实验|實驗|探索/i

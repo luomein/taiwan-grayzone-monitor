@@ -151,10 +151,16 @@ def make_excluder():
     """與威脅評分同一套排除規則（analyze_suspicious.EXCLUSION_RULES：浮標、漁網
     信標、MMSI 長度錯誤、未分配 MID…）。只靠 is_nonvessel_ais 會漏掉 `321 12V2`、
     `7V7`、`NETFISHING 7V7` 這類信標 —— 第一版的 'other' 群組警示幾乎全是它們。"""
-    from analyze_suspicious import check_exclusion_rules
+    from analyze_suspicious import ALIAS_OVERRIDABLE_RULES, check_exclusion_rules
+    from fetch_ais_data import classify_gov_vessel
 
     def excluded(mmsi, name):
-        return check_exclusion_rules(str(mmsi or ''), [name or ''])[0]
+        hit, rules = check_exclusion_rules(str(mmsi or ''), [name or ''])
+        # 與評分同一個安全閥：只因 MMSI 無效被排除的公務船照常評估
+        if hit and all(r['id'] in ALIAS_OVERRIDABLE_RULES for r in rules) \
+                and classify_gov_vessel(name, mmsi):
+            return False
+        return hit
     return excluded
 
 

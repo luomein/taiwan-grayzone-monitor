@@ -225,3 +225,12 @@ def test_fit_end_to_end_parity_with_ci_predict():
     hot = cw.predict(model, 'commercial', 23.0, lon_at(30), 270.0, 8.0, 30.0)[12]
     cold = cw.predict(model, 'commercial', 23.0, lon_at(30), 0.0, 8.0, 30.0)[12]
     assert hot > 0.5 > cold                            # 同一格、航向不同 → 差很多
+
+
+def test_excluder_keeps_gov_vessels_with_invalid_mmsi():
+    excluded = cw.make_excluder()
+    # CHINACOASTGUARD14513 播 MMSI 766688888（MID 766 未指配），在金門外活動
+    assert excluded('766688888', 'CHINACOASTGUARD14513') is False
+    assert excluded('766688888', 'SOME FISHING BOAT') is True
+    # 信標類排除不在安全閥範圍內
+    assert excluded('901498040', 'CHINACOASTGUARD14513') is True
