@@ -237,7 +237,7 @@ var MapVesselsFactory = function(map, layers) {
                 iconAnchor: [r / 2, r / 2],
                 html: '<div class="vessel-cluster" style="width:' + r + 'px;height:' + r + 'px">' +
                       '<span class="cluster-count">' + g.total + '</span>' +
-                      '<span class="cluster-label">' + info.name + '</span>' +
+                      '<span class="cluster-label">' + ((typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? info.nameEn : info.name) + '</span>' +
                       suspBadge + '</div>'
             });
 
@@ -534,7 +534,7 @@ var MapVesselsFactory = function(map, layers) {
                     return '<b style="color:' + (riskColors[sv.risk_level] || '#ff3366') + '">' + ((sv.names && sv.names[0]) || sv.mmsi) + '</b><br>' +
                         t3('app.mmsi') + ' ' + sv.mmsi + flagLine3 + '<br>' +
                         '<b>' + t3('app.risk') + ' ' + sv.risk_level.toUpperCase() + '</b> (' + t3('app.score') + ' ' + sv.risk_score + ')<br>' +
-                        (sv.flags || []).map(function(f) { return '- ' + f; }).join('<br>') +
+                        (typeof i18n !== 'undefined' && i18n.flagsOf ? i18n.flagsOf(sv) : (sv.flags || [])).map(function(f) { return '- ' + f; }).join('<br>') +
                         sanctionLine + netMarkerNote3 +
                         '<br><button class="route-lookup-btn" onclick="MapModule.loadVesselRoute(\'' + sv.mmsi + '\'); return false;">' + t3('app.show_track') + '</button>' +
                         '<br><button class="route-lookup-btn vic-detail-btn" onclick="MapModule.showVesselInfoCard(\'' + sv.mmsi + '\'); return false;">ℹ️ ' + t3('vic.detail') + '</button>';
@@ -844,7 +844,7 @@ var MapVesselsFactory = function(map, layers) {
         const score = sv.risk_score || 0;
         const maxScore = 20;
         const pct = Math.min(100, Math.round((score / maxScore) * 100));
-        const flagsList = (sv.flags || []).map(f => `<div class="vic-flag-item">• ${f}</div>`).join('');
+        const flagsList = (typeof i18n !== 'undefined' && i18n.flagsOf ? i18n.flagsOf(sv) : (sv.flags || [])).map(f => `<div class="vic-flag-item">• ${f}</div>`).join('');
         const scoreHtml = `<div class="vic-section">
             <div class="vic-section-title">${t('vic.risk_score')}: ${score} / ${(sv.risk_level || '').toUpperCase()}</div>
             <div class="vic-score-bar-wrap">

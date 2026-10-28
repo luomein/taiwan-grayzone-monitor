@@ -146,7 +146,7 @@
                 let tip = name;
                 if (faults && faults.length > 0) {
                     const details = faults.map(ft =>
-                        '\u26a0 ' + ft.segment + ': ' + (ft.description_zh || ft.description_en)
+                        '\u26a0 ' + ft.segment + ': ' + ((i18n.getLang() === 'en' && ft.description_en) || ft.description_zh || ft.description_en)
                     ).join('<br>');
                     tip = '<b style="color:#ff0000">' + name + '</b><br>' + details;
                 }

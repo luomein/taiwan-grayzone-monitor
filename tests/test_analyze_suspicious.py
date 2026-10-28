@@ -951,3 +951,36 @@ def test_companion_bypasses_taiwan_flag_exclusion():
     assert asus.classify_vessel(profile, [])['excluded'] is True
     result = asus.classify_vessel(profile, [], companion_record=COMPANION_REC)
     assert result['excluded'] is False
+
+
+def test_flags_en_aligned_and_english_only():
+    """英文介面讀 flags_en：每一筆 flags 都要有對應英文，且英文不得夾中文。"""
+    import re
+    profile = {'mmsi': '572000001',
+               'names_seen': ['SHIP A', 'SHIP B', 'SHIP C'],
+               'types_seen': ['cargo', 'tanker'], 'total_snapshots': 5,
+               'last_seen_timestamps': ['2026-10-01T00:00:00+00:00',
+                                        '2026-10-03T00:00:00+00:00']}
+    result = asus.classify_vessel(
+        profile, [],
+        identity_events=[{'changes': [{'field': 'name', 'old': 'A', 'new': 'B'}]}],
+        sanctions_match={'source': 'blacklist', 'programs': ['OFAC'],
+                         'flag': 'Panama', 'name': 'OTHER NAME', 'matched_by': 'imo'},
+        formation_record={'count': 2, 'max_duration_hours': 7.5,
+                          'escorted_research': True},
+        companion_record=COMPANION_REC,
+        alias_record={'names': ['SHIPA01'],
+                      'aliases': [{'mmsi': '400000001', 'invalid': True}]},
+        sts_record={'count': 3, 'suspicious': True})
+    assert len(result['flags']) >= 8
+    assert len(result['flags_en']) == len(result['flags'])
+    for f in result['flags_en']:
+        assert not re.search(r'[一-鿿＀-￯]', f), f
+
+    excluded = asus.classify_vessel({'mmsi': '900000001', 'names_seen': ['BUOY 1']}, [])
+    assert excluded['flags_en'] and excluded['flags_en'][0].startswith('Excluded:')
+
+
+def test_cable_display_name_uses_committed_names():
+    assert 'TPKM3' in asus.cable_display_name('taiwan-penghu-kinmen-matsu-no-3-tpkm3')
+    assert asus.cable_display_name('unknown-cable-x') == 'Unknown Cable X'

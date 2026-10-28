@@ -50,7 +50,7 @@ var MapCablesFactory = function(map, layers) {
             const faulted = faultStatus ? faultStatus.faultedSlugs : new Set();
             const faultDetails = faultStatus ? faultStatus.faultsBySlug : {};
 
-            const lang = (typeof i18n !== 'undefined' && i18n.lang === 'en') ? 'en' : 'zh';
+            const lang = (typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? 'en' : 'zh';
             const L_ = {
                 status:  lang === 'en' ? 'Status'      : '\u72c0\u614b',
                 type:    lang === 'en' ? 'Type'        : '\u985e\u578b',
@@ -61,6 +61,14 @@ var MapCablesFactory = function(map, layers) {
                 cnland:  lang === 'en' ? 'CN landing'  : '\u4e2d\u570b\u767b\u9678',
                 faulted: lang === 'en' ? 'FAULT'       : '\u6545\u969c'
             };
+            // taiwan_cables.json 的狀態／類型值是中文
+            const VAL_EN = {
+                '營運中': 'In service', '規劃中': 'Planned', '國際幹線': 'International trunk',
+                '中國境內': 'China domestic', '海峽專線': 'Cross-strait', '離島連接': 'Outlying-island link'
+            };
+            const val = v => (lang === 'en' && v && VAL_EN[v]) || v;
+            const faultText = ft => lang === 'en'
+                ? (ft.description_en || ft.description_zh) : (ft.description_zh || ft.description_en);
 
             L.geoJSON(geoData, {
                 style: f => {
@@ -85,7 +93,7 @@ var MapCablesFactory = function(map, layers) {
                     let tip = name;
                     if (faults && faults.length > 0) {
                         const details = faults.map(ft =>
-                            '\u26a0 ' + ft.segment + ': ' + (ft.description_zh || ft.description_en)
+                            '\u26a0 ' + ft.segment + ': ' + faultText(ft)
                         ).join('<br>');
                         tip = '<b style="color:#ff2d55">' + name + '</b><br>' + details;
                     }
@@ -96,9 +104,9 @@ var MapCablesFactory = function(map, layers) {
                     const add = (label, val) => { if (val) rows.push('<div><b>' + label + '</b>: ' + val + '</div>'); };
                     const statusTxt = (faults && faults.length > 0)
                         ? '<span style="color:#ff3366;font-weight:700">\u26a0 ' + L_.faulted + '</span>'
-                        : (p.status || '');
+                        : val(p.status || '');
                     add(L_.status, statusTxt);
-                    add(L_.type, p.cable_type);
+                    add(L_.type, val(p.cable_type));
                     add(L_.length, p.length);
                     add(L_.rfs, p.rfs);
                     add(L_.owners, p.owners);
@@ -109,7 +117,7 @@ var MapCablesFactory = function(map, layers) {
                         + rows.join('');
                     if (faults && faults.length > 0) {
                         popup += '<div style="margin-top:4px;color:#ff6b6b">'
-                            + faults.map(ft => '\u26a0 ' + ft.segment + ': ' + (ft.description_zh || ft.description_en)).join('<br>')
+                            + faults.map(ft => '\u26a0 ' + ft.segment + ': ' + faultText(ft)).join('<br>')
                             + '</div>';
                     }
                     popup += '</div>';

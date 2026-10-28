@@ -910,17 +910,20 @@ const App = (function () {
 
             const listEl = document.getElementById('cableFaultList');
             if (listEl && faults.length > 0) {
+                const en = i18n.getLang() === 'en';
                 listEl.innerHTML = faults.map(f => {
+                    const alt = (en && f.alt_route_en) || f.alt_route;
                     const repairInfo = f.estimated_repair
                         ? '<br><span class="cable-fault-repair">⏱ ' + t('cable.est_repair') + ' ' + f.estimated_repair + '</span>'
                         : '';
-                    const altInfo = f.alt_route
-                        ? '<br><span class="cable-fault-alt">↔ ' + f.alt_route + '</span>'
+                    const altInfo = alt
+                        ? '<br><span class="cable-fault-alt">↔ ' + alt + '</span>'
                         : '';
                     return '<div class="cable-fault-row">' +
                         '<span class="cable-fault-name">⚠ ' + f.segment + '</span> ' +
-                        '<span style="opacity:0.7">' + (f.name_zh || '') + '</span><br>' +
-                        '<span class="cable-fault-meta">' + f.fault_date + ' | ' + (f.location_zh || '') + '</span>' +
+                        '<span style="opacity:0.7">' + ((en ? f.name_en : f.name_zh) || f.name_zh || '') + '</span><br>' +
+                        '<span class="cable-fault-meta">' + f.fault_date + ' | ' +
+                        ((en && f.description_en) || f.location_zh || '') + '</span>' +
                         repairInfo + altInfo +
                         '</div>';
                 }).join('');

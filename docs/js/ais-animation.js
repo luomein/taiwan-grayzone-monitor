@@ -206,7 +206,7 @@
                 let tip = name;
                 if (faults && faults.length > 0) {
                     const details = faults.map(ft =>
-                        '\u26a0 ' + ft.segment + ': ' + (ft.description_zh || ft.description_en)
+                        '\u26a0 ' + ft.segment + ': ' + ((i18n.getLang() === 'en' && ft.description_en) || ft.description_zh || ft.description_en)
                     ).join('<br>');
                     tip = '<b style="color:#ff2d55">' + name + '</b><br>' + details;
                 }
@@ -644,8 +644,8 @@
                         events.push({
                             type: 'cable_fault', ts: ft.fault_date || null,
                             lat: mid[1], lon: mid[0], mmsis: [],
-                            label: ft.name_zh || ft.segment || slug.replace(/-/g, ' '),
-                            detail: ft.description_zh || ft.description_en || '',
+                            label: (i18n.getLang() === 'en' ? ft.name_en : ft.name_zh) || ft.name_zh || ft.segment || slug.replace(/-/g, ' '),
+                            detail: (i18n.getLang() === 'en' && ft.description_en) || ft.description_zh || ft.description_en || '',
                             color: EVENT_COLORS.cable_fault, frameIdx: -1
                         });
                     });
@@ -680,7 +680,7 @@
                         type: 'highrisk', ts: v.last_seen, lat: v.last_lat, lon: v.last_lon,
                         mmsis: [String(v.mmsi)],
                         label: nm + ' · ' + riskLabel(lvl) + ' (' + (v.risk_score != null ? v.risk_score : '?') + ')',
-                        detail: (v.flags && v.flags.length ? v.flags.slice(0, 2).join('; ') : 'MMSI ' + v.mmsi),
+                        detail: (v.flags && v.flags.length ? i18n.flagsOf(v).slice(0, 2).join('; ') : 'MMSI ' + v.mmsi),
                         color: RISK_COLORS[lvl] || RISK_COLORS.normal,
                         risk_level: lvl, risk_score: v.risk_score, frameIdx: -1
                     });
@@ -882,7 +882,7 @@
             html += profs.slice(0, 50).map(p => {
                 const lvl = p.risk_level || 'normal';
                 const nm = (p.names && p.names.length) ? p.names[p.names.length - 1] : String(p.mmsi);
-                const flag = (p.flags && p.flags.length) ? p.flags[0] : '';
+                const flag = (p.flags && p.flags.length) ? i18n.flagsOf(p)[0] : '';
                 return '<div class="elog-row" onclick="enterFocus(\'' + p.mmsi + '\')">' +
                     '<span class="risk-badge ' + lvl + '">' + (p.risk_score != null ? p.risk_score : '--') + '</span>' +
                     '<span class="elog-main"><span class="elog-name">' + nm + '</span>' +
@@ -1665,7 +1665,7 @@
             }
             if (prof.flags && prof.flags.length) {
                 html += '<div class="case-row"><span class="k">' + i18n.t('ais_anim.focus_flags') + '</span>' +
-                    prof.flags.map(f => '<div class="case-flag">⚠ ' + f + '</div>').join('') + '</div>';
+                    i18n.flagsOf(prof).map(f => '<div class="case-flag">⚠ ' + f + '</div>').join('') + '</div>';
             }
         } else {
             html += '<div class="case-row" style="color:#8aa4c8">' + i18n.t('ais_anim.focus_no_profile') + '</div>';
