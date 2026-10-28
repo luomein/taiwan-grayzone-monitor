@@ -911,6 +911,19 @@ def test_invalid_mid_companion_is_analyzed_not_excluded():
     assert result['gov_companion'] is True
 
 
+def test_invalid_mid_gov_vessel_is_analyzed_not_excluded():
+    """CHINACOASTGUARD14528 播 MID 400（未指配），在馬祖外活動 —— 公務船本身不得因
+    MMSI 無效就整艘消失。"""
+    profile = _fishing_profile('400014528', 'CHINACOASTGUARD14528')
+    pts = [{'timestamp': '2026-10-24T00:00:00+00:00', 'lat': 26.2, 'lon': 119.8,
+            'speed': 8.0, 'heading': 90.0, 'gov': 'coastguard',
+            'name': 'CHINACOASTGUARD14528'}]
+    assert asus.classify_vessel(profile, [dict(pts[0], gov=None)])['excluded'] is True
+    result = asus.classify_vessel(profile, pts)
+    assert result['excluded'] is False
+    assert [r['id'] for r in result['exclusion_overridden']] == ['mmsi_unassigned_mid']
+
+
 def test_alias_does_not_rescue_beacons():
     """信標類排除（9 開頭等）不在安全閥範圍內。"""
     profile = _fishing_profile('901498040', 'MINFUDINGYU07902')

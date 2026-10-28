@@ -177,6 +177,8 @@ GOV_COMPANION_DARK_SCORE = 2         # 伴航期間自身關 AIS >18h（加在�
 # 就不排除、照常分析，並以「身分分身」計分。
 IDENTITY_ALIAS_SCORE = 2             # 無效 MMSI 冒用有效船的船名
 ALIAS_OVERRIDABLE_RULES = ('mmsi_malformed', 'mmsi_unassigned_mid')
+# 公務船本身也走同一個安全閥：CHINACOASTGUARD14517／14528 播 MID 400、
+# 14513 播 MID 766（皆未指配），在馬祖、金門外活動，卻整艘被排除在評分之外。
 # 建立船名索引時略過的信標類規則 — 漁網信標常沿用母船船名
 ALIAS_BEACON_RULES = ('mmsi_9xx', 'mmsi_898', 'name_percent', 'name_buoy',
                       'name_voltage_suffix', 'name_digit_percent_suffix')
@@ -1887,11 +1889,12 @@ def classify_vessel(profile, track_points, identity_events=None,
     # 提前檢查，避免對非船舶設備執行昂貴分析
     all_names = profile.get('names_seen', [])
     excluded, matched_rules = check_exclusion_rules(mmsi, all_names)
-    # 安全閥：只因 MMSI 無效而被排除的船，若與有效 MMSI 同名或本身是伴航船，
-    # 照常分析 —— 偽造身分的船不能因為身分是假的就消失
+    # 安全閥：只因 MMSI 無效而被排除的船，若與有效 MMSI 同名、本身是伴航船、
+    # 或本身就是公務船，照常分析 —— 偽造身分的船不能因為身分是假的就消失
     has_valid_alias = bool(alias_record) and any(
         not a['invalid'] for a in alias_record.get('aliases', []))
-    if (excluded and (has_valid_alias or companion_record)
+    is_gov = bool(formation_record) or any(p.get('gov') for p in track_points or [])
+    if (excluded and (has_valid_alias or companion_record or is_gov)
             and all(r['id'] in ALIAS_OVERRIDABLE_RULES for r in matched_rules)):
         excluded = False
         classification['exclusion_overridden'] = matched_rules

@@ -333,6 +333,19 @@ KNOWN_GOV_MMSI = {
 _PURE_DIGIT_NAME_RE = re.compile(r'^\d{3,5}$')
 _CN_MIDS = ('412', '413', '414')
 
+# 「HAI JING」單獨出現時也是台灣常見船名「海景」的拼音（實測 MID 416、花蓮外海的
+# HAI JING）。台灣 MID 的船只有在明確寫出 COAST GUARD／CCG／海警 時才算海警。
+_CCG_EXPLICIT_RE = re.compile(r'COAST\s*GUARD|\bCCG\d*\b|海警|CHINA\s*COAST', re.I)
+
+# 地方海上執法船（漁政／海監／交通執法／公安）與 AIS 船種 35（軍事行動）、55（執法）。
+# 不屬於上面四個子類別，也不會被船名漁船規則或商船分層收進航跡 —— 實測快照裡
+# 中国海监8027（金門外）、CMS8001（馬祖外）、中国渔政 33411 等每輪都在，卻從未累積航跡。
+# 只標候選旗標、保留 tier-1，不自動歸類。HAI JIAN(?!G) 避開 HAI JIANG（海江）。
+_ENFORCEMENT_NAME_RE = re.compile(
+    r'HAI\s*JIAN(?!G)|YU\s*ZHENG|ZHI\s*FA|GONG\s*AN\b|\bCMS\s*\d|'
+    r'海监|海監|渔政|漁政|执法|執法|公安', re.I)
+_ENFORCEMENT_TYPE_CODES = (35, 55)
+
 
 def classify_gov_vessel(name, mmsi=None):
     """回傳子類別 'coastguard'/'msa'/'rescue'/'research'，非目標船回傳 None。
@@ -342,18 +355,27 @@ def classify_gov_vessel(name, mmsi=None):
     if name:
         for category, pat in _GOV_VESSEL_PATTERNS:
             if pat.search(name):
+                if (category == 'coastguard' and str(mmsi or '').startswith('416')
+                        and not _CCG_EXPLICIT_RE.search(name)):
+                    continue
                 return category
     if mmsi:
         return KNOWN_GOV_MMSI.get(str(mmsi))
     return None
 
 
-def is_gov_candidate(name, mmsi):
-    """純數字船名＋中國 MID → 疑似公務/軍公船候選（不自動歸類，只標旗）。"""
-    if not name or not mmsi:
+def is_gov_candidate(name, mmsi, type_code=None):
+    """中國 MID ＋（純數字船名／地方執法船名／AIS 船種 35、55）→ 公務船候選
+    （不自動歸類，只標旗、保留 tier-1 航跡供人工檢視）。"""
+    if not mmsi or str(mmsi)[:3] not in _CN_MIDS:
         return False
-    return bool(_PURE_DIGIT_NAME_RE.match(name.replace(' ', ''))) and \
-        str(mmsi)[:3] in _CN_MIDS
+    if name and (_PURE_DIGIT_NAME_RE.match(name.replace(' ', ''))
+                 or _ENFORCEMENT_NAME_RE.search(name)):
+        return True
+    try:
+        return int(type_code) in _ENFORCEMENT_TYPE_CODES
+    except (TypeError, ValueError):
+        return False
 
 
 def is_coast_guard_vessel(name, mmsi=None):
@@ -466,7 +488,7 @@ def collect_ais_data():
         is_coast_guard = gov_type == 'coastguard'
         if gov_type:
             type_name = gov_type
-        gov_candidate = not gov_type and is_gov_candidate(ship_name, mmsi)
+        gov_candidate = not gov_type and is_gov_candidate(ship_name, mmsi, type_code)
 
         vessels[mmsi] = {
             'mmsi': mmsi,

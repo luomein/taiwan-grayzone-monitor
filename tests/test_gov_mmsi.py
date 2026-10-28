@@ -47,3 +47,38 @@ def test_candidate_edge_cases():
     assert not f.is_gov_candidate('1401', None)
     assert not f.is_gov_candidate('12', '413000999')       # 太短
     assert not f.is_gov_candidate('123456', '413000999')   # 太長（漁船編號）
+
+
+# ── 台灣 MID 的「HAI JING」＝海景，不是海警 ──────────────────────────────────
+
+def test_hai_jing_on_taiwan_mid_is_not_ccg():
+    assert f.classify_gov_vessel('HAI JING', '416002727') is None
+    assert f.classify_gov_vessel('HAI  JING  NO .7', '416006675') is None
+    # 明確寫出海警／COAST GUARD 的仍算（偽冒台灣 MMSI 的海警船）
+    assert f.classify_gov_vessel('CHINACOASTGUARD2302', '416000001') == 'coastguard'
+    # 非台灣 MID 不受影響
+    assert f.classify_gov_vessel('HAIJING2302', '413000001') == 'coastguard'
+    assert f.classify_gov_vessel('HAI JING', None) == 'coastguard'
+
+
+# ── 地方執法船（漁政／海監／交通執法／公安）與 AIS 船種 35、55 ──────────────
+
+def test_enforcement_names_are_candidates():
+    assert f.is_gov_candidate('ZHONGGUOHAIJIAN8027', '413698770')
+    assert f.is_gov_candidate('CMS8001', '413699560')
+    assert f.is_gov_candidate('ZHONGGUOYUZHENG33411', '412431916')
+    assert f.is_gov_candidate('MINJIAOZHIFARONG09', '413318690')
+    assert f.is_gov_candidate('MA WEI GONG AN 001', '412000001')
+
+
+def test_enforcement_type_codes_are_candidates():
+    assert f.is_gov_candidate('XIA MEN HAI YANG 01', '412445364', 55)
+    assert f.is_gov_candidate('SOME NAME', '413000001', '35')
+    assert not f.is_gov_candidate('SOME NAME', '413000001', 53)
+    assert not f.is_gov_candidate('SOME NAME', '413000001', 'x')
+
+
+def test_enforcement_candidates_need_cn_mid():
+    assert not f.is_gov_candidate('HAI JIANG WAN YANG 1', '412000001')   # 海江，不是海監
+    assert not f.is_gov_candidate('HAI JIAN 66', '352004497')
+    assert not f.is_gov_candidate('XIA MEN HAI YANG 01', '416000001', 55)
