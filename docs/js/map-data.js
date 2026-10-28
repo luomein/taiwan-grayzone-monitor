@@ -113,12 +113,12 @@ var MapData = (function() {
 
     // Cluster region centers for aggregate display
     const CLUSTER_CENTERS = {
-        taiwan_bank:   { center: [22.75, 118.25], name: '台灣灘', zoom: 9 },
-        penghu:        { center: [23.5, 119.5],   name: '澎湖',   zoom: 10 },
-        kuroshio_east: { center: [23.5, 121.5],   name: '東部',   zoom: 9 },
-        northeast:     { center: [25.3, 122.25],  name: '東北',   zoom: 9 },
-        southwest:     { center: [22.5, 120.4],   name: '西南',   zoom: 10 },
-        other:         { center: [23.5, 119.5],   name: '其他海域', zoom: 8 }
+        taiwan_bank:   { center: [22.75, 118.25], name: '台灣灘', nameEn: 'Taiwan Bank', zoom: 9 },
+        penghu:        { center: [23.5, 119.5],   name: '澎湖',   nameEn: 'Penghu', zoom: 10 },
+        kuroshio_east: { center: [23.5, 121.5],   name: '東部',   nameEn: 'East', zoom: 9 },
+        northeast:     { center: [25.3, 122.25],  name: '東北',   nameEn: 'Northeast', zoom: 9 },
+        southwest:     { center: [22.5, 120.4],   name: '西南',   nameEn: 'Southwest', zoom: 10 },
+        other:         { center: [23.5, 119.5],   name: '其他海域', nameEn: 'Other waters', zoom: 8 }
     };
 
     // Fishing hotspots

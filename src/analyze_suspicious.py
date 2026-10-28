@@ -1462,6 +1462,7 @@ def analyze_ais_anomalies(profile, identity_events=None):
         anomalies.append({
             'type': 'name_change',
             'description': f'使用 {name_count} 個不同船名',
+            'description_en': f'{name_count} different ship names',
             'names': profile['names_seen'],
             'severity': 'high' if name_count >= 5 else 'medium'
         })
@@ -1484,6 +1485,7 @@ def analyze_ais_anomalies(profile, identity_events=None):
         anomalies.append({
             'type': 'going_dark',
             'description': f'AIS 訊號消失 {dark_events} 次',
+            'description_en': f'AIS went dark {dark_events} times',
             'count': dark_events,
             'severity': 'high' if dark_events >= 3 else 'medium'
         })
@@ -1495,6 +1497,7 @@ def analyze_ais_anomalies(profile, identity_events=None):
         anomalies.append({
             'type': 'type_change',
             'description': f'船型變更: {" → ".join(real_types)}',
+            'description_en': f'Ship type changed: {" → ".join(real_types)}',
             'types': real_types,
             'severity': 'medium'
         })
@@ -1513,6 +1516,7 @@ def analyze_ais_anomalies(profile, identity_events=None):
             anomalies.append({
                 'type': 'identity_change',
                 'description': f'7 天內 {event_count} 次身分變更',
+                'description_en': f'{event_count} identity changes in 7 days',
                 'count': event_count,
                 'multi_field': has_multi,
                 'details': field_changes[:10],
@@ -1707,7 +1711,8 @@ def check_itu_mars_mismatch(profile, mars_record):
                 'field': 'ship_name',
                 'mars': mars_name,
                 'ais': ais_names,
-                'description': f'船名不符：登記 {mars_name}，AIS 使用 {", ".join(ais_names[:3])}'
+                'description': f'船名不符：登記 {mars_name}，AIS 使用 {", ".join(ais_names[:3])}',
+                'description_en': f'Name mismatch: registered {mars_name}, AIS uses {", ".join(ais_names[:3])}'
             })
 
     # 管理國 vs MMSI MID 比對
@@ -1727,7 +1732,8 @@ def check_itu_mars_mismatch(profile, mars_record):
             'field': 'imo_number',
             'mars': mars_imo,
             'ais': ais_imo,
-            'description': f'IMO不符：登記 {mars_imo}，AIS 回報 {ais_imo}'
+            'description': f'IMO不符：登記 {mars_imo}，AIS 回報 {ais_imo}',
+            'description_en': f'IMO mismatch: registered {mars_imo}, AIS reports {ais_imo}'
         })
 
     # 呼號比對
@@ -1738,7 +1744,8 @@ def check_itu_mars_mismatch(profile, mars_record):
             'field': 'call_sign',
             'mars': mars_cs,
             'ais': ais_cs,
-            'description': f'呼號不符：登記 {mars_cs}，AIS 回報 {ais_cs}'
+            'description': f'呼號不符：登記 {mars_cs}，AIS 回報 {ais_cs}',
+            'description_en': f'Call-sign mismatch: registered {mars_cs}, AIS reports {ais_cs}'
         })
 
     details['mismatches'] = mismatches
@@ -1833,6 +1840,32 @@ def annotate_port_points(track_points):
             pt['in_port'] = port
 
 
+def add_flag(classification, zh, en):
+    """flags（中文，LINE／Threads／週報沿用）與 flags_en（英文介面）逐筆對齊。"""
+    classification['flags'].append(zh)
+    classification['flags_en'].append(en)
+
+
+_cable_names = None
+
+
+def cable_display_name(slug):
+    """海纜 slug → 顯示名（docs/taiwan_cables.json 的 name，例 TPKM3）；查無則把 slug 轉成標題。"""
+    global _cable_names
+    if _cable_names is None:
+        _cable_names = {}
+        try:
+            path = Path(__file__).resolve().parent.parent / 'docs' / 'taiwan_cables.json'
+            with open(path, encoding='utf-8') as f:
+                for feat in json.load(f).get('features', []):
+                    p = feat.get('properties') or {}
+                    if p.get('slug') and p.get('name'):
+                        _cable_names.setdefault(p['slug'], p['name'])
+        except (OSError, ValueError):
+            pass
+    return _cable_names.get(slug) or str(slug).replace('-', ' ').title()
+
+
 def classify_vessel(profile, track_points, identity_events=None,
                      sanctions_match=None, mars_record=None,
                      sts_record=None, formation_record=None,
@@ -1883,6 +1916,7 @@ def classify_vessel(profile, track_points, identity_events=None,
         'ais_anomalies': [],
         'risk_level': 'normal',
         'flags': [],
+        'flags_en': [],
     }
 
     # ── 排除規則檢查（漁網、浮標、信標等非船舶設備）──
@@ -1910,6 +1944,8 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['vessel_type'] = 'unknown'
         classification['type_multiplier'] = 0
         classification['flags'] = [f'排除: {reasons}']
+        classification['flags_en'] = [
+            'Excluded: ' + ', '.join(r['id'] for r in matched_rules)]
         return classification
 
     # ── 港內點標註（供海纜鄰近/徘徊/緩衝帶排除）──
@@ -1942,6 +1978,8 @@ def classify_vessel(profile, track_points, identity_events=None,
             classification['vessel_type'] = 'unknown'
             classification['type_multiplier'] = 0
             classification['flags'] = [f'排除: {reasons}']
+            classification['flags_en'] = [
+                'Excluded: ' + ', '.join(r['id'] for r in tw_rules)]
             return classification
 
     # ── Criterion 1: 海纜鄰近活動 ──
@@ -1951,15 +1989,18 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['cable_details'] = cable_details
         if cable_near:
             cables_str = ', '.join(cable_details.get('cables_nearby', [])[:3])
-            classification['flags'].append(f'海纜鄰近活動：{cables_str}')
+            add_flag(classification, f'海纜鄰近活動：{cables_str}',
+                     'Near submarine cable: ' + ', '.join(
+                         cable_display_name(c)
+                         for c in cable_details.get('cables_nearby', [])[:3]))
 
         # Criterion 1b: 海纜鄰近低速徘徊 (>3hr, <8kn)
         if cable_details.get('loiter_triggered'):
             classification['cable_loitering'] = True
             hrs = cable_details.get('loiter_slow_hours', 0)
-            classification['flags'].append(
-                f'海纜低速徘徊：{hrs}h (<{CABLE_LOITER_MAX_KNOTS}kn)'
-            )
+            add_flag(classification,
+                     f'海纜低速徘徊：{hrs}h (<{CABLE_LOITER_MAX_KNOTS}kn)',
+                     f'Slow loitering near cable: {hrs}h (<{CABLE_LOITER_MAX_KNOTS}kn)')
 
     # ── Criterion 2: Z 字型移動 ──
     if track_points:
@@ -1967,9 +2008,9 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['zigzag_pattern'] = zigzag
         classification['zigzag_details'] = zigzag_details
         if zigzag:
-            classification['flags'].append(
-                f'Z字型移動模式：{zigzag_details["turn_count"]} 次大幅轉向'
-            )
+            add_flag(classification,
+                     f'Z字型移動模式：{zigzag_details["turn_count"]} 次大幅轉向',
+                     f'Zigzag pattern: {zigzag_details["turn_count"]} sharp turns')
 
     # ── Criterion 3: 200m 等深線活動 ──
     if track_points:
@@ -1978,19 +2019,22 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['depth_200m_details'] = depth_details
         if depth_near:
             pct = round(depth_details['contour_proximity_ratio'] * 100)
-            classification['flags'].append(f'200m等深線活動：{pct}% 時間')
+            add_flag(classification, f'200m等深線活動：{pct}% 時間',
+                     f'Near 200m depth contour: {pct}% of the time')
 
     # ── Criterion 4: AIS 異常 ──
     anomalies = analyze_ais_anomalies(profile, identity_events)
     classification['ais_anomalies'] = anomalies
     if anomalies:
-        classification['flags'].extend([a['description'] for a in anomalies])
+        for a in anomalies:
+            add_flag(classification, a['description'], a['description_en'])
 
     # ── Criterion 5: 非前十大船旗國 ──
     mid = mmsi[:3] if len(mmsi) >= 3 else ''
     if mid and mid not in TOP_10_FLAG_MIDS:
         classification['non_top10_flag'] = True
-        classification['flags'].append(f'非前十大船旗國 (MID {mid})')
+        add_flag(classification, f'非前十大船旗國 (MID {mid})',
+                 f'Not a top-10 flag state (MID {mid})')
 
     # ── Criterion 6: 制裁清單（UN 1718 + 多機構影子船隊黑名單）──
     if sanctions_match:
@@ -1998,31 +2042,35 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['sanction_info'] = sanctions_match
         name_only = sanctions_match.get('matched_by') == 'name'
         suffix = '｜僅船名匹配，無 IMO 佐證' if name_only else ''
+        suffix_en = ' | name match only, no IMO confirmation' if name_only else ''
 
         if sanctions_match.get('source') == 'blacklist':
             # 多機構黑名單：標出是哪些機構制裁 + 船旗
-            progs = ', '.join(sanctions_match.get('programs', [])) or '未列機構'
+            progs_list = sanctions_match.get('programs', [])
+            progs = ', '.join(progs_list) or '未列機構'
+            progs_en = ', '.join(progs_list) or 'programme not listed'
             flag_ctry = sanctions_match.get('flag', '')
             flag_str = f' 旗:{flag_ctry}' if flag_ctry else ''
-            classification['flags'].append(
-                f'⚠️ 受制裁油輪 ({progs}){flag_str}{suffix}'
-            )
+            flag_str_en = f' flag: {flag_ctry}' if flag_ctry else ''
+            add_flag(classification,
+                     f'⚠️ 受制裁油輪 ({progs}){flag_str}{suffix}',
+                     f'⚠️ Sanctioned tanker ({progs_en}){flag_str_en}{suffix_en}')
             # 身分掩蓋偵測：IMO 命中、但 AIS 廣播船名 ≠ 制裁登記名
             reg_name = (sanctions_match.get('name') or '').upper().strip()
             ais_names = {(n or '').upper().strip()
                          for n in profile.get('names_seen', [])}
             if not name_only and reg_name and ais_names and reg_name not in ais_names:
                 classification['sanction_identity_concealment'] = True
-                classification['flags'].append(
-                    f'🚨 身分掩蓋：AIS 船名 ≠ 制裁登記名（登記 {reg_name}）'
-                )
+                add_flag(classification,
+                         f'🚨 身分掩蓋：AIS 船名 ≠ 制裁登記名（登記 {reg_name}）',
+                         f'🚨 Identity concealment: AIS name ≠ sanctioned name (registered {reg_name})')
         else:
             # UN 1718 清單
             res = sanctions_match.get('resolution', '1718')
             measures = ', '.join(sanctions_match.get('measures', []))
-            classification['flags'].append(
-                f'⚠️ UN 制裁船舶 (UNSCR {res}: {measures}){suffix}'
-            )
+            add_flag(classification,
+                     f'⚠️ UN 制裁船舶 (UNSCR {res}: {measures}){suffix}',
+                     f'⚠️ UN-sanctioned vessel (UNSCR {res}: {measures}){suffix_en}')
 
     # ── Criterion 7: AIS 偽訊號偵測 (Spoofing) ──
     if track_points:
@@ -2030,35 +2078,40 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['spoof_impossible_physics'] = physics
         classification['spoof_physics_details'] = physics_details
         if physics:
-            parts = []
+            parts, parts_en = [], []
             if physics_details.get('teleport_count'):
                 parts.append(f'{physics_details["teleport_count"]}次瞬移')
+                parts_en.append(f'{physics_details["teleport_count"]} teleports')
             if physics_details.get('speed_mismatch_count'):
                 parts.append(f'速度不符{physics_details["speed_mismatch_count"]}次')
+                parts_en.append(f'{physics_details["speed_mismatch_count"]} speed mismatches')
             if physics_details.get('bearing_mismatch_count'):
                 parts.append(f'航向不符{physics_details["bearing_mismatch_count"]}次')
-            classification['flags'].append(
-                f'AIS異常物理：{", ".join(parts)}'
-            )
+                parts_en.append(f'{physics_details["bearing_mismatch_count"]} course mismatches')
+            add_flag(classification, f'AIS異常物理：{", ".join(parts)}',
+                     f'Impossible AIS physics: {", ".join(parts_en)}')
 
         box, box_details = check_box_pattern(track_points)
         classification['spoof_box_pattern'] = box
         classification['spoof_box_details'] = box_details
         if box:
-            classification['flags'].append(
-                f'AIS方形軌跡：{box_details["right_angle_turns"]}次直角轉彎 '
-                f'(bbox {box_details["bounding_box_km"]}km)'
-            )
+            add_flag(classification,
+                     f'AIS方形軌跡：{box_details["right_angle_turns"]}次直角轉彎 '
+                     f'(bbox {box_details["bounding_box_km"]}km)',
+                     f'AIS box pattern: {box_details["right_angle_turns"]} right-angle turns '
+                     f'(bbox {box_details["bounding_box_km"]}km)')
 
         circle, circle_details = check_circle_pattern(track_points)
         classification['spoof_circle_pattern'] = circle
         classification['spoof_circle_details'] = circle_details
         if circle:
-            classification['flags'].append(
-                f'AIS圓形軌跡：半徑{circle_details["mean_radius_km"]}km '
-                f'CV={circle_details["radius_cv"]} '
-                f'弧度{circle_details["arc_coverage_deg"]}°'
-            )
+            add_flag(classification,
+                     f'AIS圓形軌跡：半徑{circle_details["mean_radius_km"]}km '
+                     f'CV={circle_details["radius_cv"]} '
+                     f'弧度{circle_details["arc_coverage_deg"]}°',
+                     f'AIS circle pattern: radius {circle_details["mean_radius_km"]}km '
+                     f'CV={circle_details["radius_cv"]} '
+                     f'arc {circle_details["arc_coverage_deg"]}°')
 
     # ── Criterion 8: ITU MARS 登記比對 ──
     if mars_record:
@@ -2068,9 +2121,8 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['itu_mars_details'] = mars_details
         if has_mismatch:
             for m in mars_details.get('mismatches', []):
-                classification['flags'].append(
-                    f'ITU登記不符：{m["description"]}'
-                )
+                add_flag(classification, f'ITU登記不符：{m["description"]}',
+                         f'ITU registry mismatch: {m.get("description_en") or m["description"]}')
     else:
         classification['itu_mars_mismatch'] = False
         classification['itu_mars_details'] = {}
@@ -2099,12 +2151,15 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['spoof_starburst_pattern'] = starburst
         classification['spoof_starburst_details'] = starburst_details
         if starburst:
-            classification['flags'].append(
-                f"AIS星爆軌跡（非漁船）：{starburst_details['spoke_count']}條輻條 "
-                f"中心({starburst_details['center_lat']:.4f}, "
-                f"{starburst_details['center_lon']:.4f}) "
-                f"半徑{starburst_details['mean_radius_km']}km"
-            )
+            add_flag(classification,
+                     f"AIS星爆軌跡（非漁船）：{starburst_details['spoke_count']}條輻條 "
+                     f"中心({starburst_details['center_lat']:.4f}, "
+                     f"{starburst_details['center_lon']:.4f}) "
+                     f"半徑{starburst_details['mean_radius_km']}km",
+                     f"AIS starburst pattern (non-fishing): {starburst_details['spoke_count']} spokes "
+                     f"around ({starburst_details['center_lat']:.4f}, "
+                     f"{starburst_details['center_lon']:.4f}), "
+                     f"radius {starburst_details['mean_radius_km']}km")
 
     # ── Criterion 11: 割草式測線（測繪意圖）──
     classification['survey_pattern'] = False
@@ -2118,15 +2173,19 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['survey_pattern'] = survey
         classification['survey_details'] = survey_details
         if survey:
-            label = ('階梯式網格' if survey_details['survey_type'] == 'grid'
-                     else '重複測線')
-            classification['flags'].append(
-                f"割草式測線（{label}）：{survey_details['leg_count']} 條測線 "
-                f"/ {survey_details['reversals']} 次反向，"
-                f"主軸 {survey_details['axis_deg']}°，"
-                f"平均線長 {survey_details['mean_leg_km']}km，"
-                f"{survey_details['median_speed_kn']}kn"
-            )
+            grid = survey_details['survey_type'] == 'grid'
+            label = '階梯式網格' if grid else '重複測線'
+            add_flag(classification,
+                     f"割草式測線（{label}）：{survey_details['leg_count']} 條測線 "
+                     f"/ {survey_details['reversals']} 次反向，"
+                     f"主軸 {survey_details['axis_deg']}°，"
+                     f"平均線長 {survey_details['mean_leg_km']}km，"
+                     f"{survey_details['median_speed_kn']}kn",
+                     f"Survey pattern ({'grid' if grid else 'repeated transect'}): "
+                     f"{survey_details['leg_count']} lines / {survey_details['reversals']} reversals, "
+                     f"axis {survey_details['axis_deg']}°, "
+                     f"mean line {survey_details['mean_leg_km']}km, "
+                     f"{survey_details['median_speed_kn']}kn")
 
     # ── Criterion 12: 公務船編隊（detect_gov_formation.py）──
     if formation_record:
@@ -2134,27 +2193,37 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['gov_formation_details'] = formation_record
         hrs = formation_record.get('max_duration_hours', 0)
         if formation_record.get('escorted_research'):
-            classification['flags'].append(
-                f'🛡️ 護航科考編隊：科研船 + 執法船同框 {hrs}h '
-                f'（{formation_record.get("count", 1)} 次）')
+            add_flag(classification,
+                     f'🛡️ 護航科考編隊：科研船 + 執法船同框 {hrs}h '
+                     f'（{formation_record.get("count", 1)} 次）',
+                     f'🛡️ Escorted research formation: research + enforcement vessels '
+                     f'together {hrs}h ({formation_record.get("count", 1)} times)')
         else:
-            classification['flags'].append(
-                f'公務船編隊：{formation_record.get("count", 1)} 次，最長 {hrs}h')
+            add_flag(classification,
+                     f'公務船編隊：{formation_record.get("count", 1)} 次，最長 {hrs}h',
+                     f'Gov vessel formation: {formation_record.get("count", 1)} times, '
+                     f'longest {hrs}h')
 
     # ── Criterion 13: 伴航船（跟著公務船移動的非公務船）──
     if companion_record:
         classification['gov_companion'] = True
         classification['gov_companion_details'] = companion_record
         # 船名是未驗證的 AIS 廣播字串，前端以 innerHTML 呈現 flags → 去掉標記字元
-        anchors = '、'.join(re.sub(r'[<>&"\']', '', a.get('name') or a.get('mmsi') or '')
-                           for a in companion_record.get('anchors', [])[:3])
+        anchor_names = [re.sub(r'[<>&"\']', '', a.get('name') or a.get('mmsi') or '')
+                        for a in companion_record.get('anchors', [])[:3]]
+        anchors = '、'.join(anchor_names)
         dark = companion_record.get('max_dark_gap_hours', 0)
         dark_txt = f'，伴航中關 AIS {dark}h' if dark else ''
-        classification['flags'].append(
-            f'🚤 伴航公務船：跟隨 {anchors} '
-            f'{companion_record.get("max_observations", 0)} 個快照 / '
-            f'{companion_record.get("max_duration_hours", 0)}h，'
-            f'位移 {companion_record.get("max_travel_km", 0)}km{dark_txt}')
+        dark_txt_en = f', AIS off {dark}h while escorting' if dark else ''
+        add_flag(classification,
+                 f'🚤 伴航公務船：跟隨 {anchors} '
+                 f'{companion_record.get("max_observations", 0)} 個快照 / '
+                 f'{companion_record.get("max_duration_hours", 0)}h，'
+                 f'位移 {companion_record.get("max_travel_km", 0)}km{dark_txt}',
+                 f'🚤 Gov vessel companion: followed {", ".join(anchor_names)} for '
+                 f'{companion_record.get("max_observations", 0)} snapshots / '
+                 f'{companion_record.get("max_duration_hours", 0)}h, '
+                 f'travelled {companion_record.get("max_travel_km", 0)}km{dark_txt_en}')
 
     # ── Criterion 14: 同名分身（同一船名出現在多個 MMSI）──
     if alias_record and alias_record.get('aliases'):
@@ -2162,14 +2231,19 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['name_aliases'] = aliases
         others = '、'.join(a['mmsi'] + ('(無效)' if a['invalid'] else '')
                           for a in aliases[:4])
+        others_en = ', '.join(a['mmsi'] + (' (invalid)' if a['invalid'] else '')
+                              for a in aliases[:4])
         if is_invalid_mmsi(mmsi) and has_valid_alias:
             # 無效 MMSI 冒用有效船名 → 計分；有效那一側只標註、不加分
             classification['identity_alias'] = True
-            classification['flags'].append(
-                f'🪪 身分分身：無效 MMSI 與 {others} 同名'
-                f'（{"、".join(alias_record["names"][:2])}）')
+            add_flag(classification,
+                     f'🪪 身分分身：無效 MMSI 與 {others} 同名'
+                     f'（{"、".join(alias_record["names"][:2])}）',
+                     f'🪪 Identity alias: invalid MMSI shares a name with {others_en} '
+                     f'({", ".join(alias_record["names"][:2])})')
         else:
-            classification['flags'].append(f'同名 MMSI：{others}')
+            add_flag(classification, f'同名 MMSI：{others}',
+                     f'Same name as MMSI {others_en}')
 
     # ── 離岸長期徘徊（商船，獨立於海纜）──
     classification['offshore_loitering'] = False
@@ -2179,11 +2253,13 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['offshore_loitering'] = offshore
         classification['offshore_loiter_details'] = offshore_details
         if offshore:
-            classification['flags'].append(
-                f"離岸長期徘徊：{offshore_details['loiter_days']}天原地"
-                f"（{offshore_details['low_speed_fraction']*100:.0f}%低速, "
-                f"中位半徑{offshore_details['median_radius_km']}km）"
-            )
+            add_flag(classification,
+                     f"離岸長期徘徊：{offshore_details['loiter_days']}天原地"
+                     f"（{offshore_details['low_speed_fraction']*100:.0f}%低速, "
+                     f"中位半徑{offshore_details['median_radius_km']}km）",
+                     f"Long offshore loitering: {offshore_details['loiter_days']} days in place "
+                     f"({offshore_details['low_speed_fraction']*100:.0f}% low speed, "
+                     f"median radius {offshore_details['median_radius_km']}km)")
 
     # ── 海域法域 + 海纜緩衝帶（最近位置）──────────────────────
     # 先算出 geofence 標註，供計分與輸出共用（失敗安全降級，不影響評分）。
@@ -2207,10 +2283,10 @@ def classify_vessel(profile, track_points, identity_events=None,
             zone = gf.get('zone')
             if zone in JURISDICTION_ZONES:
                 classification['cable_buffer_jurisdiction'] = True
-                classification['flags'].append(
-                    f'緊貼海纜 ≤1km（{zone}）')
+                add_flag(classification, f'緊貼海纜 ≤1km（{zone}）',
+                         f'Within 1km of a cable ({zone.replace("_", " ")})')
             else:
-                classification['flags'].append('緊貼海纜 ≤1km')
+                add_flag(classification, '緊貼海纜 ≤1km', 'Within 1km of a cable')
 
     # ── 風險計分 ──
     raw_score = 0
@@ -2299,12 +2375,12 @@ def classify_vessel(profile, track_points, identity_events=None,
         classification['sts_suspicious'] = sts_record['suspicious']
         if sts_record['suspicious']:
             score += STS_SUSPICIOUS_SCORE
-            classification['flags'].append(
-                f'可疑旁靠 (STS)：{sts_record["count"]} 次')
+            add_flag(classification, f'可疑旁靠 (STS)：{sts_record["count"]} 次',
+                     f'Suspicious ship-to-ship transfer: {sts_record["count"]} times')
         else:
             score += STS_ANY_SCORE
-            classification['flags'].append(
-                f'旁靠紀錄：{sts_record["count"]} 次')
+            add_flag(classification, f'旁靠紀錄：{sts_record["count"]} 次',
+                     f'Ship-to-ship rendezvous: {sts_record["count"]} times')
 
     # ── 割草式測線（不受船型乘數影響）──
     if classification['survey_pattern']:

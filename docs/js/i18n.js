@@ -497,6 +497,7 @@ const i18n = (function () {
         'app.csis_suspicious':   { zh: '⚠️ 海纜威脅可疑', en: '⚠️ Cable Threat Suspect' },
         'app.mmsi':              { zh: 'MMSI:', en: 'MMSI:' },
         'app.search':            { zh: '查詢', en: 'Search' },
+        'app.mmsi_search_ph':    { zh: 'MMSI 查詢航跡...', en: 'Search route by MMSI...' },
         'app.type':              { zh: '類型:', en: 'Type:' },
         'app.coastguard':        { zh: '海警公務船', en: 'Coast Guard Vessel' },
         'app.msa':               { zh: '海巡公務船(海事局)', en: 'MSA Patrol Vessel' },
@@ -697,6 +698,16 @@ const i18n = (function () {
         return currentLang;
     }
 
+    /**
+     * 船舶風險旗標（analyze_suspicious 的 flags / flags_en）依語言取用。
+     * 英文清單缺漏或與中文不對齊時退回中文 —— 寧可顯示中文，也不錯配。
+     */
+    function flagsOf(v) {
+        const zh = (v && v.flags) || [];
+        const en = v && v.flags_en;
+        return (currentLang === 'en' && Array.isArray(en) && en.length === zh.length) ? en : zh;
+    }
+
     // ========================================================================
     // 初始化
     // ========================================================================
@@ -713,6 +724,6 @@ const i18n = (function () {
     // ========================================================================
     // 公開 API
     // ========================================================================
-    return { t, toggle, setLang, getLang, applyAll };
+    return { t, toggle, setLang, getLang, applyAll, flagsOf };
 
 })();

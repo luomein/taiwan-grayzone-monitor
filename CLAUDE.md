@@ -257,6 +257,7 @@ final_score = round(raw_behavioral_score × type_multiplier) + high_threat_indic
 - `data/suspicious_vessels.json` — Top 50 suspicious vessels + top 200 classifications + full summary stats
 - `data/highrisk_snapshot.json`（**gitignored** — update-ais.yml 一天寫 ~17 次）— 全部 suspicious 的 compact 列（`compact_highrisk_row`），供 `aggregate_highrisk.py` 累積成週/月報；`cable_details` 另帶 `loiter_events`（每段 ≥3h 徘徊的起訖/中心/均速，cap 5）與 `loiter_avg_speed_kn`
 - Summary includes per-criterion trigger counts, risk distribution, exclusion breakdown
+- Every classification carries `flags` (Chinese — LINE/Threads/weekly reports use these) **and an index-aligned `flags_en`** for the English UI. Always add a flag with `add_flag(classification, zh, en)`, never by appending to `flags` directly — `tests/test_analyze_suspicious.py::test_flags_en_aligned_and_english_only` checks alignment and that no CJK leaks into `flags_en`. The frontend reads them through `i18n.flagsOf(v)`, which falls back to `flags` if the lists ever disagree in length. English cable names come from `cable_display_name(slug)` (`docs/taiwan_cables.json` `name`).
 
 ### Performance Optimization
 - **Exclusion early return**: Buoys/beacons skip all expensive analysis

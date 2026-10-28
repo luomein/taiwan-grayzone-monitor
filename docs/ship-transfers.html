@@ -519,7 +519,7 @@
                 const evId = eventId(t);
 
                 const color = CLASS_COLORS[t.classification] || '#ffd700';
-                const lang = (typeof i18n !== 'undefined' && i18n.lang === 'en') ? 'en' : 'zh';
+                const lang = (typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? 'en' : 'zh';
                 const classLabel = CLASS_LABELS[t.classification] ? CLASS_LABELS[t.classification][lang] : t.classification;
 
                 // Main marker
@@ -566,7 +566,7 @@
 
         function renderTable(transfers) {
             const tbody = document.getElementById('transferTableBody');
-            const lang = (typeof i18n !== 'undefined' && i18n.lang === 'en') ? 'en' : 'zh';
+            const lang = (typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? 'en' : 'zh';
 
             if (!transfers.length) {
                 tbody.innerHTML = `<tr><td colspan="6" class="empty-state">${i18n.t('common.no_data')}</td></tr>`;

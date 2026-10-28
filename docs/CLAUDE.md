@@ -107,6 +107,11 @@ i18n.t('app.mmsi')        // simple
 i18n.t('idx.ago_h', 24)   // {0} replacement
 ```
 
+### English mode on app pages
+- Language check: `i18n.getLang() === 'en'` — there is **no** `i18n.lang` property (that typo kept cable/baseline popups and all ship-transfer badges Chinese until 2026-10).
+- Pipeline text with an English twin: vessel risk flags → `i18n.flagsOf(v)` (`flags_en`); cable faults → `description_en` / `alt_route_en` / `name_en` in `cable_status.json` (`fetch_cable_status.add_english_fields`, pattern + place-name table; an untranslatable fault leaves `description_en` empty and the UI falls back to Chinese).
+- Known gaps (2026-10 review): the two animation pages, weekly-report port names, `document.title`, Chinese chips on root blog pages, `reports/index.html`, and lists rendered once on load that don't re-render on `langchange`.
+
 ### Bilingual evergreen articles + `/en/` mirror
 `blog-*.html` explainer/pillar/glossary pages carry both languages inline
 (`lang-zh-only` / `lang-en-only` + `data-i18n`) and toggle client-side. Their

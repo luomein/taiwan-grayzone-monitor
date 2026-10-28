@@ -50,7 +50,7 @@ var MapBaselineFactory = function(map, layers) {
      * Draw baseline layers using detailed SHP coordinates
      */
     function _drawBaselineLayers(layer) {
-        var lang = (typeof i18n !== 'undefined' && i18n.lang === 'en') ? 'en' : 'zh';
+        var lang = (typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? 'en' : 'zh';
 
         ['taiwan', 'dongsha'].forEach(function(region) {
             var markers = TERRITORIAL_BASEPOINT_MARKERS[region];
@@ -125,7 +125,7 @@ var MapBaselineFactory = function(map, layers) {
      * Fallback: draw baseline from basepoints only (if JSON load fails)
      */
     function _drawBaselineFromPoints(layer) {
-        var lang = (typeof i18n !== 'undefined' && i18n.lang === 'en') ? 'en' : 'zh';
+        var lang = (typeof i18n !== 'undefined' && i18n.getLang() === 'en') ? 'en' : 'zh';
 
         ['taiwan', 'dongsha'].forEach(function(region) {
             var pts = TERRITORIAL_BASEPOINT_MARKERS[region];

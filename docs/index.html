@@ -243,8 +243,8 @@
             <div id="map"></div>
 
             <div class="route-search" role="search">
-                <input type="text" id="mmsiSearchInput" placeholder="MMSI 查詢航跡..." aria-label="MMSI 查詢航跡 / Search vessel route by MMSI" maxlength="9" inputmode="numeric" pattern="[0-9]*">
-                <button onclick="MapModule.searchVesselRoute()" aria-label="查詢航跡 / Search route">查詢</button>
+                <input type="text" id="mmsiSearchInput" placeholder="MMSI 查詢航跡..." data-i18n-placeholder="app.mmsi_search_ph" aria-label="MMSI 查詢航跡 / Search vessel route by MMSI" maxlength="9" inputmode="numeric" pattern="[0-9]*">
+                <button onclick="MapModule.searchVesselRoute()" aria-label="查詢航跡 / Search route" data-i18n="app.search">查詢</button>
             </div>
 
             <div class="layer-toggles" id="layerToggles">

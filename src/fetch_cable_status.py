@@ -191,6 +191,74 @@ def _determine_status(fault_desc: str, repair_date_str: str) -> str:
     return "fault"
 
 
+# ── 英文介面用的障礙描述 ────────────────────────────────────────────────
+# MODA 的障礙情形是固定句型「距{地點}約{N}公里處{斷纜|發生部分芯線受損障礙}」，
+# 以地名表＋句型產生英文；比不到句型或地名不在表內就留空，前端退回中文。
+PLACE_EN = {
+    '淡水沙崙': 'Shalun, Tamsui', '淡水': 'Tamsui', '新北八里': 'Bali, New Taipei',
+    '八里': 'Bali, New Taipei', '頭城': 'Toucheng', '宜蘭頭城': 'Toucheng, Yilan',
+    '枋山': 'Fangshan', '屏東枋山': 'Fangshan, Pingtung', '臺南': 'Tainan', '台南': 'Tainan',
+    '澎湖': 'Penghu', '澎湖馬公': 'Magong, Penghu', '馬公': 'Magong, Penghu',
+    '金門': 'Kinmen', '馬祖': 'Matsu', '馬祖南竿': 'Nangan, Matsu',
+    '馬祖北竿': 'Beigan, Matsu', '馬祖東引': 'Dongyin, Matsu', '東引': 'Dongyin, Matsu',
+    '南竿': 'Nangan, Matsu', '北竿': 'Beigan, Matsu', '桃園': 'Taoyuan', '大武': 'Dawu',
+    '香港': 'Hong Kong', '香港舂坎角': 'Chung Hom Kok, Hong Kong', '舂坎角': 'Chung Hom Kok, Hong Kong',
+    '馬來西亞關丹': 'Kuantan, Malaysia', '關丹': 'Kuantan, Malaysia',
+    '新加坡': 'Singapore', '菲律賓': 'the Philippines', '日本': 'Japan',
+    '韓國': 'South Korea', '越南': 'Vietnam', '泰國': 'Thailand',
+}
+FAULT_KIND_EN = {'斷纜': 'Cable cut', '發生部分芯線受損障礙': 'Partial fibre damage',
+                 '芯線受損': 'Fibre damage'}
+_FAULT_RE = re.compile(r'^距(?P<place>.+?)約?(?P<km>[\d.]+)\s*公里處(?P<kind>.+?)[。]?$')
+
+
+def describe_fault_en(desc_zh):
+    """'距馬祖東引約45.3公里處斷纜' → 'Cable cut about 45.3 km from Dongyin, Matsu'；無法翻譯回傳 ''。"""
+    m = _FAULT_RE.match((desc_zh or '').strip())
+    if not m:
+        return ''
+    place = PLACE_EN.get(m.group('place').strip())
+    kind = FAULT_KIND_EN.get(m.group('kind').strip())
+    if not place or not kind:
+        return ''
+    return f"{kind} about {m.group('km')} km from {place}"
+
+
+def translate_alt_route(alt_zh, name_to_segment):
+    """替代路由「臺馬三號海纜、APG」→「TM3, APG」；無法對應的中文名整段留空。"""
+    if not alt_zh:
+        return ''
+    out = []
+    for part in re.split(r'[、,，]\s*', alt_zh):
+        part = part.strip()
+        if not part:
+            continue
+        if re.search(r'[\u4e00-\u9fff]', part):
+            seg = name_to_segment.get(part) or name_to_segment.get(
+                re.sub(r'海纜(系統)?$', '海纜', part))
+            if not seg:
+                return ''
+            part = seg
+        out.append(part)
+    return ', '.join(out)
+
+
+# 只出現在替代路由欄、不在障礙主表的海纜（主表的中文名→代號由當輪資料自動建立）
+ALT_ROUTE_SEGMENTS = {'臺馬一號海纜': 'Taiwan–Matsu No.1'}
+
+
+def add_english_fields(faults):
+    """補上 description_en / alt_route_en（就地修改並回傳）。"""
+    name_to_segment = dict(ALT_ROUTE_SEGMENTS)
+    for f in faults:
+        if f.get('name_zh') and f.get('segment'):
+            name_to_segment.setdefault(f['name_zh'], f['segment'])
+    for f in faults:
+        f['description_en'] = describe_fault_en(f.get('description_zh'))
+        f['alt_route_en'] = translate_alt_route(f.get('alt_route'), name_to_segment)
+    return faults
+
+
 def scrape_moda() -> list:
     """Scrape MODA submarine cable fault table."""
     print(f"🌐 正在請求 MODA 海纜障礙頁面: {MODA_URL}")
@@ -302,6 +370,7 @@ def main():
         print("⚠️ 未取得任何障礙資料，保留原有 cable_status.json")
         sys.exit(0)
 
+    add_english_fields(faults)
     active = [f for f in faults if f["status"] == "fault"]
     repaired = [f for f in faults if f["status"] == "repaired"]
 
