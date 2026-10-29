@@ -1,26 +1,17 @@
 {
   "date": "2026-10-29",
-  "generated_at": "2026-10-29T06:34:06.260503Z",
-  "data_updated_at": "2026-10-29T06:34:05.536424Z",
+  "generated_at": "2026-10-29T17:58:15.836134Z",
+  "data_updated_at": "2026-10-29T17:58:15.089657Z",
   "ais_vessels": 8413,
   "dark_vessels": 11309,
   "dark_ratio": 39.5,
-  "suspicious_count": 99,
+  "suspicious_count": 98,
   "critical_count": 21,
-  "high_count": 78,
+  "high_count": 77,
   "cable_near_count": 151,
   "sts_active": 64,
   "sts_suspicious": 170,
   "top_suspicious": [
-    {
-      "mmsi": "413000000",
-      "name": "123",
-      "risk_score": 21,
-      "risk_level": "critical",
-      "vessel_type": "cargo",
-      "zone": "eez",
-      "cable_band": "within_5km"
-    },
     {
       "mmsi": "412447678",
       "name": "MIN PING YU 60666",
@@ -40,6 +31,15 @@
       "cable_band": "beyond_10km"
     },
     {
+      "mmsi": "413000000",
+      "name": "123",
+      "risk_score": 16,
+      "risk_level": "critical",
+      "vessel_type": "cargo",
+      "zone": "eez",
+      "cable_band": "within_5km"
+    },
+    {
       "mmsi": "412466829",
       "name": "66829",
       "risk_score": 16,
@@ -49,8 +49,8 @@
       "cable_band": "beyond_10km"
     },
     {
-      "mmsi": "276055210",
-      "name": "YU60552--10 60%",
+      "mmsi": "276055211",
+      "name": "YU60552--11 90%",
       "risk_score": 14,
       "risk_level": "critical",
       "vessel_type": "unknown",
@@ -71,7 +71,7 @@
     "s1_real_pass_dates": 19,
     "ais_coverage_start": "2026-10-15T10:08:57.590538Z",
     "ais_coverage_end": "2026-10-29T05:20:02.614372Z",
-    "updated_at": "2026-10-29T06:33:09.718559Z"
+    "updated_at": "2026-10-29T17:57:18.604406Z"
   },
   "darkship_forensics": {
     "latest_run": "2026-10-29",
