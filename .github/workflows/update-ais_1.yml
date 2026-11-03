@@ -1,0 +1,200 @@
+name: Update AIS & Identity Tracking_1
+
+on:
+  # 不自己排程：由 pipeline-heartbeat.yml 在逾期時派發（白天每小時、夜間每 2h）。
+  # 舊的 cron（'30 0-8' + '0 9,11,…,23'）在 2026-10-05 → 10-19 只觸發 31%
+  # （GitHub 丟掉 schedule 事件），實際間隔 4.4h。見 src/pipeline_heartbeat.py。
+  workflow_dispatch:
+
+concurrency:
+  group: data-pipeline
+  cancel-in-progress: false
+
+jobs:
+  update-ais:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests pysocks
+
+      - name: Restore large data cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            data/vessel_profiles.json
+            data/ais_track_commercial.json
+          key: large-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            large-data-${{ runner.os }}-
+
+      - name: Fetch AIS data via SOCKS5 proxy
+        run: python src/fetch_ais_data.py
+        env:
+          USE_PROXY: "false"
+          POOL: ${{ secrets.POOL }}
+        continue-on-error: true
+
+      - name: Analyze suspicious vessels (CSIS methodology)
+        run: python src/analyze_suspicious.py
+        continue-on-error: true
+
+      # 海纜接近預警（shadow，不進評分）：歷史行為表預測 6/12/24h 內低速進入海纜
+      # 5km 的船，併入上一步的風險分數 → docs/cable_warnings.json。見 src/cable_warning.py
+      - name: Cable approach early warning
+        run: python src/cable_warning.py
+        continue-on-error: true
+
+      - name: Extract all vessel routes
+        run: python src/extract_all_routes.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        continue-on-error: true
+
+      - name: Detect ship-to-ship transfers
+        run: python src/detect_ship_transfers.py
+        continue-on-error: true
+
+      - name: Generate dashboard data
+        run: python src/generate_dashboard.py
+
+      # Mini Taiwan Pulse 兵推地圖「灰色地帶情資」圖層的精簡檔（24h 航跡＋高風險＋暗船＋海纜障礙）
+      - name: Build Pulse feed
+        run: python src/build_pulse_feed.py
+        continue-on-error: true
+
+      - name: Save large data cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: |
+            data/vessel_profiles.json
+            data/ais_track_commercial.json
+          key: large-data-${{ runner.os }}-${{ github.run_id }}
+
+      # 驗證關鍵輸出檔；失敗的檔案以 --restore 還原上次好版本再 commit，
+      # 並於最後一步讓整個 job 顯示失敗（取代原 inline VESSEL_COUNT 守衛）
+      - name: Validate pipeline outputs
+        id: validate
+        run: python src/validate_outputs.py --restore
+        continue-on-error: true
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/ docs/
+          git diff --staged --quiet || git commit -m "📡 AIS update $(date +'%Y-%m-%d %H:%M') UTC"
+          git pull --rebase -X theirs origin main || {
+            echo "⚠️ Rebase 失敗，改用 merge 策略"
+            git rebase --abort
+            git pull -X ours origin main
+          }
+          git push
+
+      # 永久歸檔：主檔 append-and-trim（14/28 天）會丟棄舊 snapshot。此步把 fetch 腳本
+      # 寫出的本輪 delta（單行 JSONL）存進 ais-archive 分支，累積全部歷史，供離線
+      # （本機）航跡預測模型訓練。與 vessel-data 不同：這裡是一般 push（累積），不可
+      # force。ais-archive 不進 Pages artifact。
+      #
+      # 佈局：archive/<YYYY-MM>/<DD>/ais_{track,commercial}_<YYYYMMDDTHHMMSSZ>.jsonl.gz
+      # ——每輪一個新檔，不再 append 進月度單一大檔。舊做法在 2026-08 撞牆：
+      # ais_commercial_2026-08.jsonl 已累積到 99.95 MiB，下一次 append 就超過 GitHub
+      # 的 100 MiB 單檔硬上限，push 被 GH001 擋掉，且之後每一輪都會再撞一次（整個月
+      # 的歸檔從此全滅）。每輪一檔後單檔只有幾十 KB，永遠碰不到上限；clone 也改成
+      # blob:none + sparse（只取當日目錄），不必再下載既有歸檔（舊做法每輪拉 ~180MB）。
+      #
+      # 本機重組（檔名即時序，glob 展開就是正確順序）：
+      #   cat archive/2026-08/*/ais_track_*.jsonl.gz | gunzip > ais_track_2026-08.jsonl
+      # 既有的 archive/ais_*_2026-0{7,8}.jsonl 月度檔保持原樣不動，照舊可直接下載。
+      - name: Append snapshot to ais-archive branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          if [ ! -s data/track_delta.jsonl ] && [ ! -s data/track_commercial_delta.jsonl ]; then
+            echo "無 delta，跳過"; exit 0
+          fi
+          DAY_DIR="archive/$(date -u +%Y-%m)/$(date -u +%d)"
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          TMP=$(mktemp -d)
+          URL="https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          # 淺 clone 既有分支（不取 blob、只 checkout 當日目錄）；不存在則初始化 orphan 分支
+          if git clone --depth 1 --filter=blob:none --sparse --branch ais-archive "$URL" "$TMP" 2>/dev/null; then
+            # --no-cone：cone 模式連祖先目錄的檔案一起 checkout，也就是 archive/ 根
+            # 目錄那幾個舊月度大檔；非 cone 的路徑樣式才能只取當日目錄
+            git -C "$TMP" sparse-checkout set --no-cone "/$DAY_DIR/"
+          else
+            git init -q -b ais-archive "$TMP"
+            git -C "$TMP" remote add origin "$URL"
+          fi
+          mkdir -p "$TMP/$DAY_DIR"
+          if [ -s data/track_delta.jsonl ]; then
+            gzip -c data/track_delta.jsonl > "$TMP/$DAY_DIR/ais_track_${STAMP}.jsonl.gz"
+          fi
+          if [ -s data/track_commercial_delta.jsonl ]; then
+            gzip -c data/track_commercial_delta.jsonl > "$TMP/$DAY_DIR/ais_commercial_${STAMP}.jsonl.gz"
+          fi
+          git -C "$TMP" config user.email "action@github.com"
+          git -C "$TMP" config user.name "GitHub Action"
+          git -C "$TMP" add "$DAY_DIR"
+          git -C "$TMP" commit -qm "archive snapshot $(date -u +'%Y-%m-%d %H:%M') UTC" || { echo "無變更"; exit 0; }
+          # 併發組已排除同 repo 互撞，但仍留重試：被搶先時 rebase 後再推
+          for i in 1 2 3; do
+            if git -C "$TMP" push origin ais-archive; then exit 0; fi
+            echo "push 失敗（第 $i 次），rebase 後重試"
+            git -C "$TMP" pull --rebase origin ais-archive || true
+            sleep $((i * 5))
+          done
+          echo "::error::ais-archive push 連續 3 次失敗"
+          exit 1
+
+      # 航跡檔不進 main（27k 檔的歷史讓 repo 膨脹到 200MB+）。航跡的正式存放
+      # 位置已改為 Supabase vessel_routes（見 src/supabase_store.py）；本步驟是
+      # 尚未設定 SUPABASE_SERVICE_KEY 時的後備路徑：以單一 commit force push 到
+      # vessel-data 分支，前端經 raw.githubusercontent.com/.../vessel-data/ 讀取。
+      - name: Push vessel routes to vessel-data branch (fallback)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: |
+          set -e
+          if [ -n "$SUPABASE_SERVICE_KEY" ]; then
+            echo "航跡已上傳 Supabase，跳過 vessel-data 分支 force push"
+            exit 0
+          fi
+          if [ ! -d data/vessel_routes ] || [ -z "$(ls -A data/vessel_routes 2>/dev/null)" ]; then
+            echo "data/vessel_routes 不存在或為空，跳過"
+            exit 0
+          fi
+          TMP=$(mktemp -d)
+          mkdir -p "$TMP/data"
+          cp -r data/vessel_routes "$TMP/data/"
+          cd "$TMP"
+          git init -q -b vessel-data
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add -A
+          git commit -qm "vessel routes snapshot $(date -u +'%Y-%m-%d %H:%M') UTC"
+          git push --force "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" vessel-data
+
+      - name: Fail if validation failed
+        if: steps.validate.outcome == 'failure'
+        run: |
+          echo "::error::管線輸出驗證失敗 — 詳見 Validate pipeline outputs 步驟。壞檔已還原為上次好版本後才 commit。"
+          exit 1
+
+      # 不再自帶 deploy job：push 到 main 會觸發內建的 pages-build-deployment。
+      # 先前兩條部署路徑（內建 + 自訂 deploy-pages）互搶，導致
+      # "Deployment request failed ... due to in progress deployment" 連鎖失敗。
